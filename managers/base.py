@@ -5,10 +5,12 @@ from typing import (
     Type,
 )
 
+from pydantic import BaseModel
 from sqlalchemy import (
     func,
     select,
 )
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import Executable
 
@@ -18,7 +20,7 @@ from models.base import SQLModel
 class SessionMixin:
     """Provides instance of database session."""
 
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
 
@@ -36,8 +38,10 @@ class BaseDataManager(SessionMixin):
     def get_one(self, select_stmt: Executable) -> Any:
         return self.session.scalar(select_stmt)
 
-    def get_all(self, select_stmt: Executable) -> List[Any]:
-        return list(self.session.scalars(select_stmt).all())
+    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[Any]:
+        values = await self.session.scalars(select_stmt)
+
+        return [schema.model_validate(i) for i in values]
 
     def get_from_tvf(self, model: Type[SQLModel], *args: Any) -> List[Any]:
         """Query from table valued function.

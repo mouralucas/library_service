@@ -1,10 +1,11 @@
+import uuid
 from typing import (
     Any,
     Dict,
     List,
 )
 
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class SQLModel(DeclarativeBase):
@@ -13,6 +14,8 @@ class SQLModel(DeclarativeBase):
     Provides convenience methods that can be used to convert model
     to the corresponding schema.
     """
+
+    id: Mapped[uuid.UUID] = mapped_column('id', primary_key=True)
 
     @classmethod
     def schema(cls) -> str:

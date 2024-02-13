@@ -10,12 +10,12 @@ class DatabaseConfig(BaseModel):
             DSN for target database.
     """
     dsn: str = Field(
-        default="postgresql://user:password@host:port/dbname",
+        default="postgresql+asyncpg://user:password@host:port/dbname",
         env="MYAPI_DATABASE__DSN"
     )
 
 
-class Config(BaseSettings):
+class Settings(BaseSettings):
     """API configuration parameters.
 
     Automatically read modifications to the configuration parameters
@@ -41,4 +41,4 @@ class Config(BaseSettings):
     )
 
 
-config = Config()
+settings = Settings()

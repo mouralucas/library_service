@@ -1,49 +1,22 @@
-from contextlib import contextmanager
-from typing import Iterator
+from collections.abc import AsyncGenerator
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import (
-    Session,
-    sessionmaker, declarative_base,
+from sqlalchemy import exc
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
 )
 
-from backend.config import config
-
-# create session factory to generate new database sessions
-SessionFactory = sessionmaker(
-    bind=create_engine(config.database.dsn),
-    autocommit=False,
-    autoflush=False,
-    expire_on_commit=False,
-)
-
-Base = declarative_base()
-
-def create_session() -> Iterator[Session]:
-    """Create new database session.
-
-    Yields:
-        Database session.
-    """
-
-    session = SessionFactory()
-
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+from backend.settings import settings
 
 
-@contextmanager
-def open_session() -> Iterator[Session]:
-    """Create new database session with context manager.
-
-    Yields:
-        Database session.
-    """
-
-    return create_session()
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    engine = create_async_engine(settings.database.dsn)
+    factory = async_sessionmaker(engine)
+    async with factory() as session:
+        try:
+            yield session
+            await session.commit()
+        except exc.SQLAlchemyError as error:
+            await session.rollback()
+            raise

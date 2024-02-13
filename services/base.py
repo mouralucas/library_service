@@ -1,21 +1,10 @@
-from typing import (
-    Any,
-    List,
-    Sequence,
-    Type,
-)
-
-from sqlalchemy import (
-    func,
-    select,
-)
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SessionMixin:
     """Provides instance of database session."""
 
-    def __init__(self, session: Session) -> None:
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
 

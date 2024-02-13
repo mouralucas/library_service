@@ -10,7 +10,6 @@ class ReadingModel(SQLModel):
     __tablename__ = "reading"
     __table_args__ = {"schema": "library"}
 
-    id: Mapped[uuid.UUID] = mapped_column('id', primary_key=True, default=uuid.uuid4)
     owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
     item_id: Mapped[int] = mapped_column('item_id')
     item: Mapped[ItemModel] = relationship('ItemModel', foreign_keys=[item_id], primaryjoin='ReadingModel.item_id == ItemModel.id')
@@ -24,7 +23,6 @@ class ReadingProgressModel(SQLModel):
     __tablename__ = "reading_progress"
     __table_args__ = {"schema": "library"}
 
-    id: Mapped[uuid.UUID] = mapped_column('id', primary_key=True, default=uuid.uuid4)
     reading_id: Mapped[uuid.UUID] = mapped_column('reading_id')
     reading: Mapped[ReadingModel] = relationship('ReadingModel', foreign_keys=[reading_id], primaryjoin='ReadingProgressModel.reading_id == ReadingModel.id')
     date: Mapped[str] = mapped_column('date')
