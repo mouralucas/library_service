@@ -12,7 +12,7 @@ class CreateReadingRequest(BaseModel):
 
 
 class GetReadingRequest(BaseModel):
-    item_id: int = Query(..., alias='itemId', description="The id of the item")
+    item_id: int = Query(..., alias='itemId', description="The id of the item", summary="The id of the item")
 
 
 class GetReadingResponse(BaseModel):
