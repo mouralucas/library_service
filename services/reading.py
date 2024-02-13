@@ -1,7 +1,9 @@
+from typing import Type
+
 from sqlalchemy import select
 
 from models.reading import ReadingModel
-from schemas.reading import CreateReadingRequest, GetRedingResponse
+from schemas.reading import CreateReadingRequest, GetReadingResponse, GetReadingRequest
 from services.base import BaseService
 from managers.reading import ReadingDataManager
 
@@ -21,9 +23,9 @@ class ReadingService(BaseService):
 
         return new_reading
 
-    async def get_reading(self):
-        stmt = select(ReadingModel).where(ReadingModel.id == '06f26836-cf1d-472e-add5-ab573cf7a018')
+    async def get_reading(self, params: GetReadingRequest) -> list[GetReadingResponse]:
+        stmt = select(ReadingModel).where(ReadingModel.id == params.item_id)
 
-        reading = await ReadingDataManager(self.session).get_all(stmt, GetRedingResponse)
+        reading = await ReadingDataManager(self.session).get_all(stmt, GetReadingResponse)
 
         return reading

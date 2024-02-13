@@ -1,7 +1,7 @@
 import uuid
 
+from fastapi import Query
 from pydantic import BaseModel, Field, ConfigDict
-from sqlalchemy import DateTime
 
 
 class CreateReadingRequest(BaseModel):
@@ -11,7 +11,11 @@ class CreateReadingRequest(BaseModel):
     is_dropped: bool = Field(False, alias='isDropped', description="Indicate if the user has dropped the item")
 
 
-class GetRedingResponse(BaseModel):
+class GetReadingRequest(BaseModel):
+    item_id: int = Query(..., alias='itemId', description="The id of the item")
+
+
+class GetReadingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
