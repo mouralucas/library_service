@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.session import get_db_session
-from schemas.reading import CreateReadingRequest, GetReadingRequest, GetReadingResponse
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest
+from schemas.response.reading import GetReadingResponse
 from services.reading import ReadingService
 
 router = APIRouter(prefix="/reading")
@@ -18,7 +19,7 @@ def create_reading(params: CreateReadingRequest, session: AsyncSession = Depends
 @router.get('', summary='Get a reading', description='Get a reading by id')
 async def get_reading(params: GetReadingRequest = Depends(),
                       session: AsyncSession = Depends(get_db_session)
-                      ) -> list[GetReadingResponse]:
+                      ) -> GetReadingResponse:
     response = await ReadingService(session=session).get_reading(params=params)
 
     return response

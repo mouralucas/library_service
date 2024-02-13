@@ -3,7 +3,9 @@ from typing import Type
 from sqlalchemy import select
 
 from models.reading import ReadingModel
-from schemas.reading import CreateReadingRequest, GetReadingResponse, GetReadingRequest
+from schemas.reading import ReadingSchema
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest
+from schemas.response.reading import GetReadingResponse
 from services.base import BaseService
 from managers.reading import ReadingDataManager
 
@@ -23,9 +25,15 @@ class ReadingService(BaseService):
 
         return new_reading
 
-    async def get_reading(self, params: GetReadingRequest) -> list[GetReadingResponse]:
-        stmt = select(ReadingModel).where(ReadingModel.id == params.item_id)
+    async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
+        stmt = select(ReadingModel).where(ReadingModel.item_id == params.item_id)
 
-        reading = await ReadingDataManager(self.session).get_all(stmt, GetReadingResponse)
+        reading = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema)
 
-        return reading
+        response = GetReadingResponse(
+            success=True,
+            status_code=200,
+            reading=reading
+        )
+
+        return response
