@@ -2,9 +2,9 @@ from typing import Type
 
 from sqlalchemy import select
 
-from models.reading import ReadingModel
-from schemas.reading import ReadingSchema
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest
+from models.reading import ReadingModel, ReadingProgressModel
+from schemas.reading import ReadingSchema, ProgressSchema
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
 from schemas.response.reading import GetReadingResponse
 from services.base import BaseService
 from managers.reading import ReadingDataManager
@@ -33,7 +33,16 @@ class ReadingService(BaseService):
         response = GetReadingResponse(
             success=True,
             status_code=200,
-            reading=reading
+            quantity=len(reading),
+            readings=reading
         )
 
         return response
+
+    async def create_progress(self, progress: CreateProgressRequest):
+        pass
+
+    async def get_progress(self, params: GetProgressRequest):
+        stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == params.reading_id)
+
+        progress = await ReadingDataManager(self.session).get_all(stmt, ProgressSchema)
