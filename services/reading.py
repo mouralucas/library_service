@@ -5,7 +5,7 @@ from sqlalchemy import select
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema, ProgressSchema
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
-from schemas.response.reading import GetReadingResponse
+from schemas.response.reading import GetReadingResponse, GetProgressResponse
 from services.base import BaseService
 from managers.reading import ReadingDataManager
 
@@ -42,7 +42,16 @@ class ReadingService(BaseService):
     async def create_progress(self, progress: CreateProgressRequest):
         pass
 
-    async def get_progress(self, params: GetProgressRequest):
+    async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == params.reading_id)
 
         progress = await ReadingDataManager(self.session).get_all(stmt, ProgressSchema)
+
+        response = GetProgressResponse(
+            success=True,
+            status_code=200,
+            quantity=len(progress),
+            readingProgress=progress
+        )
+
+        return response

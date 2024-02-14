@@ -21,9 +21,9 @@ class CreateProgressionResponse(SuccessResponseBase):
 
 
 class CreateProgressResponse(SuccessResponseBase):
-    progress: ProgressSchema = Field(..., description="The current progress")
+    readingProgress: ProgressSchema = Field(..., description="The current progress")
 
 
 class GetProgressResponse(SuccessResponseBase):
     quantity: int = Field(..., description="The number of entries returned")
-    progress: list[ProgressSchema] = Field(..., description="The reading progress information")
+    readingProgress: list[ProgressSchema] = Field(..., description="The reading progress information")

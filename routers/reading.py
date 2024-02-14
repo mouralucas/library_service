@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.session import get_db_session
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest
-from schemas.response.reading import GetReadingResponse, CreateProgressResponse
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
+from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse
 from services.reading import ReadingService
 
 router = APIRouter(prefix="/reading")
@@ -25,8 +25,15 @@ async def get_reading(params: GetReadingRequest = Depends(),
     return response
 
 
-@router.post(path='/progress', summary='Add progress', description='Add a new progress for a reading')
+@router.post('/progress', summary='Add progress', description='Add a new progress for a reading')
 async def create_reading_progress(progress: CreateProgressRequest, session: AsyncSession = Depends(get_db_session)) -> CreateProgressResponse:
     response = await ReadingService(session=session).create_progress(progress=progress)
+
+    return response
+
+
+@router.get('/progress', summary='Get progress', description='Get the progress for a reading', response_model_exclude_none=True)
+async def get_reading_progress(params: GetProgressRequest = Depends(), session: AsyncSession = Depends(get_db_session)) -> GetProgressResponse:
+    response = await ReadingService(session=session).get_progress(params=params)
 
     return response
