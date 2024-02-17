@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field, ConfigDict
 import uuid
 import datetime
 
+
 class ReadingSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

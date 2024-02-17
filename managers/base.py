@@ -5,16 +5,17 @@ from typing import (
     Type,
 )
 
+from fastapi import HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import (
     func,
     select,
 )
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import Executable
 
 from models.base import SQLModel
+from schemas.reading import ProgressSchema
 
 
 class SessionMixin:
@@ -35,8 +36,16 @@ class BaseDataManager(SessionMixin):
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
-    def get_one(self, select_stmt: Executable) -> Any:
-        return self.session.scalar(select_stmt)
+    def get_one(self, model: Type[SQLModel], filters: Any, schema: Type[BaseModel]) -> Any:
+        c = self.session.get(model, filters)
+        if c is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Ingredient does not exist",
+            )
+        a = ProgressSchema.model_validate(c)
+
+        return a
 
     async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[Any]:
         values = await self.session.scalars(select_stmt)
