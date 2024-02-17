@@ -36,14 +36,14 @@ class BaseDataManager(SessionMixin):
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
-    def get_one(self, model: Type[SQLModel], filters: Any, schema: Type[BaseModel]) -> Any:
-        c = self.session.get(model, filters)
+    async def get_one(self, select_stmt: Executable, schema: Type[BaseModel]) -> Any:
+        c = await self.session.scalar(select_stmt)
         if c is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Ingredient does not exist",
             )
-        a = ProgressSchema.model_validate(c)
+        a = schema.model_validate(c)
 
         return a
 

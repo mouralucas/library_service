@@ -40,7 +40,9 @@ class ReadingService(BaseService):
         return response
 
     async def create_progress(self, progress: CreateProgressRequest):
-        reading = ReadingDataManager(self.session).get_reading(progress.reading_id)
+        reading = await ReadingDataManager(self.session).get_reading(progress.reading_id)
+
+        print('')
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == params.reading_id)
