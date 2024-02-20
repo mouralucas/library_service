@@ -1,31 +1,19 @@
-from typing import (
-    Any,
-    List,
-    Sequence,
-    Type,
-)
+from typing import Any, List, Sequence, Type, Optional
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel
-from sqlalchemy import (
-    func,
-    select,
-)
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import Executable
 
 from models.base import SQLModel
-from schemas.reading import ProgressSchema
+from schemas.reading import ReadingSchema
 
 
-class SessionMixin:
-    """Provides instance of database session."""
-
+class BaseDataManager:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-
-class BaseDataManager(SessionMixin):
     """Base data manager class responsible for operations over database."""
 
     def add_one(self, model: Any) -> Any:
@@ -36,18 +24,20 @@ class BaseDataManager(SessionMixin):
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
-    async def get_one(self, select_stmt: Executable, schema: Type[BaseModel]) -> Any:
-        c = await self.session.scalar(select_stmt)
-        if c is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Ingredient does not exist",
-            )
-        a = schema.model_validate(c)
+    async def get_one(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> BaseModel | None:
+        entry = await self.session.scalar(select_stmt)
 
-        return a
+        if entry is not None:
+            return ReadingSchema.model_validate(entry).transform()
 
-    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[Any]:
+        if raise_exception:
+            # TODO: the text could be better
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
+
+        return None
+
+    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[BaseModel]:
+        # TODO: add validation for null responses
         values = await self.session.scalars(select_stmt)
 
         return [schema.model_validate(i) for i in values]

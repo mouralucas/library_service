@@ -1,20 +1,31 @@
 from typing import Optional
 
 from fastapi.openapi.models import Schema
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, validator, field_validator, root_validator, model_validator
 import uuid
 import datetime
 
+from schemas.item import ItemSchema
+
 
 class ReadingSchema(BaseModel):
+    __repr_name__ = 'Reading'
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
     item_id: int = Field(..., serialization_alias='itemId', description="The id of the item")
-    # TODO: add other fields
+    item: ItemSchema = Field(..., description="The")
+    start_at: datetime.date = Field(..., serialization_alias='startAt', description="The date the reading start")
+    # finish_at: datetime.date = Field(..., serialization_alias='finishAt', description="The date the reading ends")
+    number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
+    is_dropped: bool = Field(..., serialization_alias='isDropped', description='Indicates if the item was dropped')
+
+    def transform(cls):
+        print('asdasd')
 
 
 class ProgressSchema(BaseModel):
+    __repr_name__ = 'Reading Progress'
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID = Field(..., serialization_alias='readingProgressId', description='The identification of the progress entry')
@@ -24,4 +35,3 @@ class ProgressSchema(BaseModel):
     percentage: float = Field(..., serialization_alias='percentage', description='The current percentage')
     rate: Optional[int] = Field(None, serialization_alias='rate', description='The rate for this entry')
     comment: Optional[str] = Field(None, serialization_alias='comment', description='The comment for this entry')
-    # TODO: add other fields

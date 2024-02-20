@@ -38,9 +38,13 @@ class PublisherModel(SQLModel):
 
 
 class ItemModel(SQLModel):
-    __tablename__ = "library"
+    __tablename__ = "item"
     __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
-    owner: Mapped[uuid.UUID] = mapped_column('owner_id')
-    isbn: Mapped[int] = mapped_column('isbn')
+    owner_id: Mapped[uuid.UUID]
+    isbn_formatted: Mapped[int]
+    isbn10_formatted: Mapped[int]
+
+    title: Mapped[str]
+    subtitle: Mapped[str]

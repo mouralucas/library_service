@@ -13,7 +13,7 @@ class ReadingModel(SQLModel):
 
     owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
     item_id: Mapped[int] = mapped_column('item_id')
-    item: Mapped[ItemModel] = relationship('ItemModel', foreign_keys=[item_id], primaryjoin='ReadingModel.item_id == ItemModel.id')
+    item: Mapped[ItemModel] = relationship('ItemModel', foreign_keys=[item_id], lazy='joined', primaryjoin='ReadingModel.item_id == ItemModel.id')
     start_at: Mapped[datetime.date] = mapped_column('start_at')
     end_at: Mapped[datetime.date] = mapped_column('end_at')
     number: Mapped[int] = mapped_column('number')
