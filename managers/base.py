@@ -28,7 +28,7 @@ class BaseDataManager:
         entry = await self.session.scalar(select_stmt)
 
         if entry is not None:
-            return ReadingSchema.model_validate(entry).transform()
+            return ReadingSchema.model_validate(entry)
 
         if raise_exception:
             # TODO: the text could be better

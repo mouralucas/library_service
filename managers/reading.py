@@ -17,7 +17,7 @@ class ReadingDataManager(BaseDataManager):
 
         reading = await self.get_one(stmt, ReadingSchema, raise_exception=True)
 
-        return reading
+        return reading.transform()
 
     async def get_progress(self, reading_id):
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id)
