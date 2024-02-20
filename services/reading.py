@@ -45,7 +45,8 @@ class ReadingService(BaseService):
         reading = await ReadingDataManager(self.session).get_reading(progress.reading_id)
 
         new_entry = ReadingProgressModel(**progress.model_dump())
-        print('')
+
+        return reading
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         progress = await ReadingDataManager(self.session).get_progress(reading_id=params.reading_id)

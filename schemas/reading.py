@@ -14,20 +14,16 @@ class ReadingSchema(BaseModel):
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
     item_id: int = Field(..., serialization_alias='itemId', description="The id of the item")
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The id of the item")
-    item: ItemSchema = Field(..., description="The")
+    item: ItemSchema = Field(..., description="The", exclude=True)
     start_at: datetime.date = Field(..., serialization_alias='startAt', description="The date the reading start")
     # finish_at: datetime.date = Field(..., serialization_alias='finishAt', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
     is_dropped: bool = Field(..., serialization_alias='isDropped', description='Indicates if the item was dropped')
+    teste: str = Field()
 
-    @field_validator('item_title', mode='before')
-    def validate_item_title(cls, v: Optional[dict], values: dict):
-        print('asdasd')
-
-    def transform(cls):
-        cls.item_title = cls.item.title
-
-        return cls
+    def transform(self):
+        self.item_title = self.item.title
+        return self
 
 
 class ProgressSchema(BaseModel):

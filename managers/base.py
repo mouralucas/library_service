@@ -16,7 +16,7 @@ class BaseDataManager:
 
     """Base data manager class responsible for operations over database."""
 
-    def add_one(self, model: Any) -> Any:
+    def add_one(self, model: Type[SQLModel]) -> Any:
         self.session.add(model)
 
         return model

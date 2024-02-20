@@ -11,7 +11,7 @@ class ReadingModel(SQLModel):
     __tablename__ = "reading"
     __table_args__ = {"schema": "library"}
 
-    owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
+    owner_id: Mapped[uuid.UUID]
     item_id: Mapped[int] = mapped_column('item_id')
     item: Mapped[ItemModel] = relationship('ItemModel', foreign_keys=[item_id], lazy='joined', primaryjoin='ReadingModel.item_id == ItemModel.id')
     start_at: Mapped[datetime.date] = mapped_column('start_at')
