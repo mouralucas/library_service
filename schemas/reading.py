@@ -19,7 +19,6 @@ class ReadingSchema(BaseModel):
     # finish_at: datetime.date = Field(..., serialization_alias='finishAt', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
     is_dropped: bool = Field(..., serialization_alias='isDropped', description='Indicates if the item was dropped')
-    teste: str = Field()
 
     def transform(self):
         self.item_title = self.item.title

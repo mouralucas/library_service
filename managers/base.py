@@ -16,8 +16,10 @@ class BaseDataManager:
 
     """Base data manager class responsible for operations over database."""
 
-    def add_one(self, model: Type[SQLModel]) -> Any:
+    async def add_one(self, model: SQLModel) -> SQLModel:
         self.session.add(model)
+        await self.session.commit()
+        await self.session.refresh(model)
 
         return model
 

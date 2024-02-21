@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import select
 
 from managers.reading import ReadingDataManager
@@ -44,7 +46,27 @@ class ReadingService(BaseService):
         #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
         reading = await ReadingDataManager(self.session).get_reading(progress.reading_id)
 
-        new_entry = ReadingProgressModel(**progress.model_dump())
+        item_pages = reading.item.pages
+
+        new_progress_entry = ReadingProgressModel(
+            reading_id=reading.id,
+            date=datetime.datetime.now().date(),
+            rate=progress.rate,
+            comment=progress.comment
+        )
+
+        if progress.page is not None:
+            perc = ((progress.page / item_pages) * 100) if item_pages else 0
+
+            new_progress_entry.page = progress.page
+            new_progress_entry.percentage = perc
+
+        if progress.percentage is not None:
+            page = (progress.percentage / 100) * item_pages if item_pages else 0
+            new_progress_entry.page = int(page)
+            new_progress_entry.percentage = progress.percentage
+
+        new_entry = await ReadingDataManager(self.session).create_progress(progress=new_progress_entry)
 
         return reading
 

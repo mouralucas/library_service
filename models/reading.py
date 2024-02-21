@@ -25,7 +25,7 @@ class ReadingProgressModel(SQLModel):
     __table_args__ = {"schema": "library"}
 
     reading_id: Mapped[uuid.UUID] = mapped_column('reading_id')
-    reading: Mapped[ReadingModel] = relationship('ReadingModel', foreign_keys=[reading_id], primaryjoin='ReadingProgressModel.reading_id == ReadingModel.id')
+    reading: Mapped[ReadingModel] = relationship('ReadingModel', foreign_keys=[reading_id], lazy='joined', primaryjoin='ReadingProgressModel.reading_id == ReadingModel.id')
     date: Mapped[datetime.date] = mapped_column('date')
     page: Mapped[int] = mapped_column('page')
     percentage: Mapped[float] = mapped_column('percentage')

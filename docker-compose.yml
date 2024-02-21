@@ -4,12 +4,13 @@ services:
   web:
     build: .
     ports:
-      - "80:80"
+      - "8035:8035"
     depends_on:
       - db
 
   db:
     image: postgres:latest
+    restart: on-failure
     environment:
       POSTGRES_DB: library_dev
       POSTGRES_USER: library_user
