@@ -27,6 +27,9 @@ class BaseDataManager:
         self.session.add_all(models)
 
     async def get_one(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> BaseModel | None:
+        """
+            Get one register, if no row can return None or raise an exception, if more than one raise exception
+        """
         entry = await self.session.scalar(select_stmt)
 
         if entry is not None:
@@ -37,6 +40,10 @@ class BaseDataManager:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
 
         return None
+
+    async def get_first(self):
+        # TODO: create function to get first register in a list, maybe a param to order by
+        pass
 
     async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[BaseModel]:
         # TODO: add validation for null responses

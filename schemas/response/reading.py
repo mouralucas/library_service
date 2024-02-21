@@ -1,6 +1,3 @@
-import uuid
-from typing import Any
-
 from pydantic import Field
 
 from schemas.base import SuccessResponseBase
@@ -21,7 +18,7 @@ class CreateProgressionResponse(SuccessResponseBase):
 
 
 class CreateProgressResponse(SuccessResponseBase):
-    readingProgress: ProgressSchema = Field(..., description="The current progress")
+    currentReadingProgress: ProgressSchema = Field(..., description="The current reading progress for an item")
 
 
 class GetProgressResponse(SuccessResponseBase):
