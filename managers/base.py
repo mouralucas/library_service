@@ -1,4 +1,4 @@
-from typing import Any, List, Sequence, Type, Optional
+from typing import Any, List, Sequence, Type
 
 from fastapi import HTTPException, status
 from pydantic import BaseModel
@@ -33,7 +33,7 @@ class BaseDataManager:
         entry = await self.session.scalar(select_stmt)
 
         if entry is not None:
-            return ReadingSchema.model_validate(entry)
+            return schema.model_validate(entry)
 
         if raise_exception:
             # TODO: the text could be better
@@ -45,11 +45,16 @@ class BaseDataManager:
         # TODO: create function to get first register in a list, maybe a param to order by
         pass
 
-    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel]) -> list[BaseModel]:
-        # TODO: add validation for null responses
+    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> list[BaseModel] | None:
         values = await self.session.scalars(select_stmt)
 
-        return [schema.model_validate(i) for i in values]
+        if values:
+            return [schema.model_validate(i) for i in values]
+
+        if raise_exception:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
+
+        return None
 
     def get_from_tvf(self, model: Type[SQLModel], *args: Any) -> List[Any]:
         """Query from table valued function.
