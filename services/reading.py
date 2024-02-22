@@ -22,7 +22,7 @@ class ReadingService(BaseService):
             is_dropped=reading.is_dropped
         )
 
-        new_reading = ReadingDataManager(self.session).add_one(new_reading)
+        new_reading = ReadingDataManager(self.session).create_reading(reading=new_reading)
 
         return new_reading
 
@@ -34,7 +34,7 @@ class ReadingService(BaseService):
 
         response = GetReadingResponse(
             success=True,
-            status_code=200,
+            status_code=status.HTTP_200_OK,
             quantity=len(reading),
             readings=reading
         )
@@ -46,7 +46,7 @@ class ReadingService(BaseService):
         #   The return must contain the reading description with the item name
         #   One entry must not save a page and/or percentage less than the last entry
         #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
-        reading = await ReadingDataManager(self.session).get_reading(progress.reading_id)
+        reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         # TODO: Fetch last entry to validate date and current page/percentage
 
         item_pages = reading.item.pages
