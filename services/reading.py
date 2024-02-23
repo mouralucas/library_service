@@ -43,11 +43,10 @@ class ReadingService(BaseService):
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
         # TODO: Rules:
-        #   The return must contain the reading description with the item name
         #   One entry must not save a page and/or percentage less than the last entry
         #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
-        # TODO: Fetch last entry to validate date and current page/percentage
+        last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
         item_pages = reading.item.pages
 

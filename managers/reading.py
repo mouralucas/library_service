@@ -1,4 +1,7 @@
+from typing import Type
+
 from fastapi import HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
@@ -17,19 +20,18 @@ class ReadingDataManager(BaseDataManager):
     async def create_reading(self, reading: ReadingModel):
         new_reading = self.add_one(reading)
 
-    async def get_reading_by_id(self, reading_id):
-        # TODO: create a param to chose if return is transformed or not (if that makes sense)
+    async def get_reading_by_id(self, reading_id, transform_result: bool = False) -> ReadingModel:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
 
-        reading: ReadingSchema | None = await self.get_one(stmt, ReadingSchema, raise_exception=True)
+        reading: BaseModel = await self.get_only_one(stmt, ReadingSchema)
 
-        return reading.transform()
+        return reading.transform() if transform_result else reading
 
     async def get_readings(self, params: dict):
         stmt = select(ReadingModel)
 
-        for key, value in params:
-            stmt.where(getattr(ReadingModel, key) == value)
+        for key, value in params.items():
+            stmt = stmt.where(getattr(ReadingModel, key) == value)
 
         readings = self.get_all(stmt, ReadingSchema)
 
@@ -45,5 +47,9 @@ class ReadingDataManager(BaseDataManager):
 
         return progress_list
 
-    async def __get_reading(self, stmt):
-        reading: ReadingSchema | None = await self.get_one(stmt, ReadingSchema, raise_exception=True)
+    async def get_latest_progress(self, reading_id):
+        stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
+
+        latest_progress = await self.get_first(stmt, ProgressSchema)
+
+        return latest_progress

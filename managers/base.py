@@ -26,24 +26,23 @@ class BaseDataManager:
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
-    async def get_one(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> BaseModel | None:
+    async def get_first(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> BaseModel | None:
         """
-            Get one register, if no row can return None or raise an exception, if more than one raise exception
+            Similar to get_only_one, but if none is found can return None or raise an exception, if more than one is found return first element
         """
-        entry = await self.session.scalar(select_stmt)
+        result = await self.session.execute(select_stmt)
+        result = result.scalar()
 
-        if entry is not None:
-            return schema.model_validate(entry)
+        return schema.model_validate(result)
 
-        if raise_exception:
-            # TODO: the text could be better
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
+    async def get_only_one(self, select_stmt: Executable, schema: Type[BaseModel]) -> BaseModel:
+        """
+            Get one register, and one only, if none or more than one is found raise an exception
+        """
+        result = await self.session.execute(select_stmt)
+        result = result.scalar_one()
 
-        return None
-
-    async def get_first(self):
-        # TODO: create function to get first register in a list, maybe a param to order by
-        pass
+        return schema.model_validate(result)
 
     async def get_all(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> list[BaseModel] | None:
         values = await self.session.scalars(select_stmt)
