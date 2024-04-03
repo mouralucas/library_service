@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, AnyHttpUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
 
 
 class DatabaseConfig(BaseModel):
@@ -15,6 +16,14 @@ class DatabaseConfig(BaseModel):
     )
 
 
+class AppSettings(BaseSettings):
+    name: str = 'Library service'
+    description: str = 'This service contains all necessary functions to manage a library'
+    version: str = '0.0.2'
+    contact_email: str = 'lucaspenha471@gmail.com'
+    license_url: AnyHttpUrl = "https://www.apache.org/licenses/LICENSE-2.0.html"
+
+
 class Settings(BaseSettings):
     """API configuration parameters.
 
@@ -22,14 +31,15 @@ class Settings(BaseSettings):
     from environment variables and ``.env`` file.
 
     Attributes:
-        database:
+        DATABASE:
             Database configuration settings.
             Instance of :class:`app.backend.config.DatabaseConfig`.
         token_key:
             Random secret key used to sign JWT tokens.
     """
 
-    database: DatabaseConfig = DatabaseConfig()
+    DATABASE: DatabaseConfig = DatabaseConfig()
+    APP_SETTINGS: AppSettings = AppSettings()
     token_key: str = ""
 
     model_config = SettingsConfigDict(
@@ -41,4 +51,7 @@ class Settings(BaseSettings):
     )
 
 
-settings = Settings()
+# TODO: research lru caching with functools
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()

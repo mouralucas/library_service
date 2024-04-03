@@ -7,11 +7,11 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from backend.settings import settings
+from backend.settings import get_settings
 
 
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
-    engine = create_async_engine(settings.database.dsn)
+    engine = create_async_engine(get_settings().DATABASE.dsn)
     factory = async_sessionmaker(engine)
     async with factory() as session:
         try:
