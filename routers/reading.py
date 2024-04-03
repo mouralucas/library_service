@@ -19,7 +19,7 @@ def create_reading(
     return response
 
 
-@router.get('', summary='Get readings', description='Get all readings for a item')
+@router.get('', summary='Get readings', description='Get all readings for a item', response_model_exclude_none=True)
 async def get_reading(
         params: GetReadingRequest = Depends(),
         session: AsyncSession = Depends(get_db_session)

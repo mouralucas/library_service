@@ -9,6 +9,7 @@ class CreateReadingResponse(SuccessResponseBase):
 
 
 class GetReadingResponse(SuccessResponseBase):
+    item_title: str = Field(..., description="The title of the item")
     quantity: int = Field(..., description="The number of returned readings")
     readings: list[ReadingSchema]
 

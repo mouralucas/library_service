@@ -3,6 +3,7 @@ import datetime
 from fastapi import status
 from sqlalchemy import select
 
+from managers.item import ItemDataManager
 from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
@@ -30,11 +31,13 @@ class ReadingService(BaseService):
         # TODO: add param checking if user want to include available progress in reading
         stmt = select(ReadingModel).where(ReadingModel.item_id == params.item_id)
 
+        item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
         reading = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema)
 
         response = GetReadingResponse(
             success=True,
             status_code=status.HTTP_200_OK,
+            item_title=item.title,
             quantity=len(reading),
             readings=reading
         )

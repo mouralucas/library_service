@@ -43,7 +43,7 @@ class ReadingDataManager(BaseDataManager):
     async def get_progress(self, reading_id):
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id)
 
-        progress_list = self.get_all(stmt, ProgressSchema)
+        progress_list = await self.get_all(stmt, ProgressSchema)
 
         return progress_list
 

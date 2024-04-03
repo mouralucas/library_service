@@ -66,7 +66,10 @@ class BaseDataManager:
 
         return schema.model_validate(result) if not return_db_model else result
 
-    async def get_all(self, select_stmt: Executable, schema: Type[BaseModel], raise_exception: bool = False) -> list[BaseModel] | None:
+    async def get_all(self, select_stmt: Executable,
+                      schema: Type[BaseModel],
+                      transform: bool = False,
+                      raise_exception: bool = False) -> list[BaseModel] | None:
         """
         :Name: get_only_one
         :Created by: Lucas Penha de Moura - 09/02/2024
@@ -76,12 +79,13 @@ class BaseDataManager:
             Params:
                 select_stmt : An Executable SQLAlchemy statement, usually "select"
                 schema : The Pydantic model class to convert the result
+                transform : Transform the result accordingly with the transform() method in schema class
                 raise_exception : If true, raise an exception if no data is found, if false, return None
         """
         values = await self.session.scalars(select_stmt)
 
         if values:
-            return [schema.model_validate(i) for i in values]
+            return [schema.model_validate(i).transform() if transform else schema.model_validate(i) for i in values]
 
         if raise_exception:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
