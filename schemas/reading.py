@@ -25,15 +25,14 @@ class ReadingSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
-    # item_id: int = Field(..., serialization_alias='itemId', description="The id of the item")
-    # item_title: str | None = Field(None, serialization_alias='itemTitle', description="The id of the item")
-    item: ItemSchema = Field(..., description="The", exclude=True)
-    start_dt: datetime.date = Field(..., serialization_alias='startDate', description="The date the reading start")
-    finish_dt: datetime.date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
+    # item: ItemSchema = Field(..., description="The", exclude=True)
+    start_date: datetime.date = Field(..., serialization_alias='startDate', description="The date the reading start")
+    finish_date: datetime.date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
-    is_dropped: bool = Field(..., serialization_alias='isDropped', description='Indicates if the item was dropped')
+    active: bool = Field(..., serialization_alias='active', description='If false reading could be finished or dropped, if true is reading now, check status')
     progress: ProgressSchema | None = Field(None, serialization_alias='progress', description="The current progress of the reading")
 
     def transform(self):
-        self.item_title = self.item.title
+        # self.item_title = self.item.title
+        # Add transformation needed
         return self

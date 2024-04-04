@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from dataclasses import dataclass
 from typing import Optional, Any
@@ -8,8 +9,8 @@ from pydantic import BaseModel, Field, field_validator, ValidationInfo, model_va
 
 class CreateReadingRequest(BaseModel):
     item_id: int = Field(..., alias='itemId', description="The id of the item")
-    start_at: str = Field(..., alias='startAt', description="The date that the user start reading the item")
-    finish_at: str = Field(None, alias='finishAt', description="The date that the user finish reading the item")
+    start_at: datetime.date = Field(..., alias='startAt', description="The date that the user start reading the item")
+    finish_at: datetime.date = Field(None, alias='finishAt', description="The date that the user finish reading the item")
     is_dropped: bool = Field(False, alias='isDropped', description="Indicate if the user has dropped the item")
 
 

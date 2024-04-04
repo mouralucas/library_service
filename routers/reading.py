@@ -10,11 +10,11 @@ router = APIRouter(prefix="/reading")
 
 
 @router.post('', summary='Create a reading', description='Create a new reading for selected item', )
-def create_reading(
+async def create_reading(
         reading: CreateReadingRequest,
         session: AsyncSession = Depends(get_db_session)
 ) -> CreateReadingResponse:
-    response = ReadingService(session=session).create_reading(reading=reading)
+    response = await ReadingService(session=session).create_reading(reading=reading)
 
     return response
 

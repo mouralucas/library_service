@@ -1,6 +1,6 @@
 import datetime
 
-from fastapi import status
+from fastapi import status, HTTPException
 from sqlalchemy import select
 
 from managers.item import ItemDataManager
@@ -8,24 +8,48 @@ from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
-from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse
+from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse
 from services.base import BaseService
 
 
 class ReadingService(BaseService):
 
-    def create_reading(self, reading: CreateReadingRequest):
+    async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
+        """ TODO:
+                1: Check if the item already have a reading
+                2: If a previous reading exist:
+                    2.1: Check if the reading is active, if so cannot create a new one, if not, create a new one
+                    2.2: Count the number of readings and set a variable with the value
+                    2.3: A new reading cannot start before the previous finish, check the dates
+        """
+        param = {
+            'item_id': reading.item_id
+        }
+        previous_readings = await ReadingDataManager(self.session).get_readings(params=param)
+        last_reading = previous_readings[0] if previous_readings else None
+
+        # Cannot start a new reading with another still active
+        if last_reading and last_reading.active:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Já existe uma leitura ativa para este item')
+
+        # The new reading cannot start before the last one finishes
+        if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_at:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
+
         new_reading = ReadingModel(
             item_id=reading.item_id,
-            number=1,
-            start_at=reading.start_at,
-            end_at=reading.finish_at,
-            is_dropped=reading.is_dropped
+            number=len(previous_readings) + 1,
+            start_date=reading.start_at,
+            finish_date=reading.finish_at,
+            status_id='reading'  # maybe a param?
         )
-
-        new_reading = ReadingDataManager(self.session).create_reading(reading=new_reading)
-
-        return new_reading
+        #
+        new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
+        response = CreateReadingResponse(
+            status_code=status.HTTP_201_CREATED,
+            reading=new_reading
+        )
+        return response
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
         # TODO: add param checking if user want to include available progress in reading

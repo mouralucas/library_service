@@ -17,8 +17,10 @@ class ReadingDataManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session=session)
 
-    async def create_reading(self, reading: ReadingModel):
-        new_reading = self.add_one(reading)
+    async def create_reading(self, reading: ReadingModel) -> BaseModel:
+        new_reading = await self.add_one(reading, ReadingSchema)
+
+        return new_reading
 
     async def get_reading_by_id(self, reading_id, transform_result: bool = False) -> ReadingModel:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
@@ -33,7 +35,11 @@ class ReadingDataManager(BaseDataManager):
         for key, value in params.items():
             stmt = stmt.where(getattr(ReadingModel, key) == value)
 
-        readings = self.get_all(stmt, ReadingSchema)
+        stmt = stmt.order_by(ReadingModel.start_date.desc())
+
+        readings = await self.get_all(stmt, ReadingSchema)
+
+        return readings
 
     async def create_progress(self, progress: ReadingProgressModel) -> SQLModel:
         new_progress = await self.add_one(progress)

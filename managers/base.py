@@ -16,18 +16,21 @@ class BaseDataManager:
 
     """Base data manager class responsible for operations over database."""
 
-    async def add_one(self, model: SQLModel) -> SQLModel:
+    async def add_one(self, model: SQLModel, schema: Type[BaseModel], return_db_model: bool = False) -> SQLModel | BaseModel:
         self.session.add(model)
         await self.session.commit()
         await self.session.refresh(model)
 
-        return model
+        return schema.model_validate(model) if not return_db_model else model
 
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
     # TODO: maybe add kwargs to simplify params
-    async def get_first(self, select_stmt: Executable, schema: Type[BaseModel], return_db_model: bool = False, raise_exception: bool = False) -> BaseModel | None:
+    async def get_first(self, select_stmt: Executable,
+                        schema: Type[BaseModel],
+                        return_db_model: bool = False,
+                        raise_exception: bool = False) -> BaseModel | None:
         """
         :Name: get_only_one
         :Created by: Lucas Penha de Moura - 19/02/2024
@@ -71,7 +74,7 @@ class BaseDataManager:
                       transform: bool = False,
                       raise_exception: bool = False) -> list[BaseModel] | None:
         """
-        :Name: get_only_one
+        :Name: get_all
         :Created by: Lucas Penha de Moura - 09/02/2024
 
             Get one register, and one only, if none or more than one is found raise an exception
