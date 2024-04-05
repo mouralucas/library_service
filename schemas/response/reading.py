@@ -14,6 +14,11 @@ class GetReadingResponse(SuccessResponseBase):
     readings: list[ReadingSchema]
 
 
+class GetActiveReadingsResponse(SuccessResponseBase):
+    quantity: int = Field(..., description="The number of active readings")
+    readings: list[ReadingSchema]
+
+
 class CreateProgressionResponse(SuccessResponseBase):
     progress: ProgressSchema = Field(..., description="The reading progress information")
 

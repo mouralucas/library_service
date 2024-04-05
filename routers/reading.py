@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.session import get_db_session
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
-from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, CreateReadingResponse
+from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.reading import ReadingService
 
 router = APIRouter(prefix="/reading")
@@ -25,6 +25,14 @@ async def get_reading(
         session: AsyncSession = Depends(get_db_session)
 ) -> GetReadingResponse:
     response = await ReadingService(session=session).get_reading(params=params)
+
+    return response
+
+
+@router.get('/active', summary='Get active readings', description='Get active readings for a item')
+async def get_active_reading(session: AsyncSession = Depends(get_db_session)) -> GetActiveReadingsResponse:
+    # TODO: it need to add user param/filter
+    response = await ReadingService(session=session).get_active_readings()
 
     return response
 

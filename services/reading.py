@@ -9,7 +9,7 @@ from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
-from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse
+from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.base import BaseService
 
 
@@ -68,6 +68,19 @@ class ReadingService(BaseService):
             item_title=item.title,
             quantity=len(reading) if reading else 0,
             readings=reading
+        )
+
+        return response
+
+    async def get_active_readings(self) -> GetActiveReadingsResponse:
+        stmt = select(ReadingModel).where(ReadingModel.active == True).options(noload(ReadingModel.progress))
+
+        readings = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema, transform=True)
+
+        response = GetActiveReadingsResponse(
+            status_code=status.HTTP_200_OK,
+            quantity=len(readings) if readings else 0,
+            readings=readings
         )
 
         return response
