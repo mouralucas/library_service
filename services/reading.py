@@ -2,6 +2,7 @@ import datetime
 
 from fastapi import status, HTTPException
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from managers.item import ItemDataManager
 from managers.reading import ReadingDataManager
@@ -41,7 +42,7 @@ class ReadingService(BaseService):
             number=len(previous_readings) + 1,
             start_date=reading.start_at,
             finish_date=reading.finish_at,
-            status_id='reading'  # maybe a param?
+            status_id='reading'  # maybe a param? If a param, update status column in Item model?
         )
         #
         new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
@@ -53,16 +54,16 @@ class ReadingService(BaseService):
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
         # TODO: add param checking if user want to include available progress in reading
-        stmt = select(ReadingModel).where(ReadingModel.item_id == params.item_id)
+        stmt = select(ReadingModel).options(joinedload(ReadingModel.progress)).where(ReadingModel.item_id == params.item_id)
 
         item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
-        reading = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema)
+        reading = await ReadingDataManager(self.session).get_all(stmt, schema=ReadingSchema, unique_result=True)
 
         response = GetReadingResponse(
             success=True,
             status_code=status.HTTP_200_OK,
             item_title=item.title,
-            quantity=len(reading),
+            quantity=len(reading) if reading else 0,
             readings=reading
         )
 
