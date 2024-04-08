@@ -53,7 +53,7 @@ class ReadingDataManager(BaseDataManager):
 
         return progress_list
 
-    async def get_latest_progress(self, reading_id):
+    async def get_latest_progress(self, reading_id) -> BaseModel | None:
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
 
         latest_progress = await self.get_first(stmt, ProgressSchema)

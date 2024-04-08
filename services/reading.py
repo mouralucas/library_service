@@ -89,8 +89,12 @@ class ReadingService(BaseService):
         # TODO: Rules:
         #   One entry must not save a page and/or percentage less than the last entry
         #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
+
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
+
+        if last_progress and last_progress.page > progress.page:
+            pass
 
         item_pages = reading.item.pages
 
