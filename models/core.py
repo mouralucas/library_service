@@ -6,7 +6,7 @@ class StatusModel(SQLModel):
     __tablename__ = "status"
     __table_args__ = {"schema": "public"}
 
-    id: Mapped[str]
+    id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
     order: Mapped[int]

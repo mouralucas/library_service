@@ -2,7 +2,7 @@ import datetime
 
 from fastapi import status, HTTPException
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, noload
+from sqlalchemy.orm import joinedload
 
 from managers.item import ItemDataManager
 from managers.reading import ReadingDataManager
@@ -56,8 +56,6 @@ class ReadingService(BaseService):
         stmt = select(ReadingModel).where(ReadingModel.item_id == params.item_id)
         if params.get_progress:
             stmt = stmt.options(joinedload(ReadingModel.progress))
-        else:
-            stmt = stmt.options(noload(ReadingModel.progress))
 
         item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
         reading = await ReadingDataManager(self.session).get_all(stmt, schema=ReadingSchema, unique_result=True)
@@ -73,7 +71,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
-        stmt = select(ReadingModel).where(ReadingModel.active == True).options(noload(ReadingModel.progress))
+        stmt = select(ReadingModel).where(ReadingModel.active == True)
 
         readings = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema, transform=True)
 
@@ -93,10 +91,14 @@ class ReadingService(BaseService):
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
-        if last_progress and last_progress.page > progress.page:
-            pass
-
         item_pages = reading.item.pages
+
+        if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
+
+        # if last_progress and last_progress.date == progress.date:
+        #     # update last_progress
+        #     pass
 
         new_progress_entry = ReadingProgressModel(
             reading_id=reading.id,

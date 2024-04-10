@@ -42,7 +42,7 @@ class ReadingDataManager(BaseDataManager):
         return readings
 
     async def create_progress(self, progress: ReadingProgressModel) -> SQLModel:
-        new_progress = await self.add_one(progress)
+        new_progress = await self.add_one(progress, schema=ProgressSchema)
 
         return new_progress
 

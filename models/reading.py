@@ -26,7 +26,7 @@ class ReadingModel(SQLModel):
     number: Mapped[int] = mapped_column('number', default=1)
     status_id: Mapped[str] = mapped_column(ForeignKey('public.status.id'))
     status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id])
-    progress: Mapped[list['ReadingProgressModel']] = relationship(back_populates='reading')
+    progress: Mapped[list['ReadingProgressModel']] = relationship(back_populates='reading', lazy='noload')
 
 
 class ReadingProgressModel(SQLModel):
