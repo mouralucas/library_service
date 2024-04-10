@@ -22,10 +22,10 @@ class ReadingDataManager(BaseDataManager):
 
         return new_reading
 
-    async def get_reading_by_id(self, reading_id, transform_result: bool = False) -> ReadingModel:
+    async def get_reading_by_id(self, reading_id, transform_result: bool = False, return_db_model=False) -> ReadingModel | ReadingSchema:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
 
-        reading: BaseModel = await self.get_only_one(stmt, ReadingSchema)
+        reading: BaseModel = await self.get_only_one(stmt, ReadingSchema, return_db_model=return_db_model)
 
         return reading.transform() if transform_result else reading
 

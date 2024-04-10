@@ -96,9 +96,8 @@ class ReadingService(BaseService):
         if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
-        # if last_progress and last_progress.date == progress.date:
-        #     # update last_progress
-        #     pass
+        if last_progress and last_progress.date == datetime.datetime.now().date():
+            pass
 
         new_progress_entry = ReadingProgressModel(
             reading_id=reading.id,
