@@ -58,14 +58,14 @@ class ReadingService(BaseService):
             stmt = stmt.options(joinedload(ReadingModel.progress))
 
         item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
-        reading = await ReadingDataManager(self.session).get_all(stmt, schema=ReadingSchema, unique_result=True)
+        readings = await ReadingDataManager(self.session).get_all(stmt, schema=ReadingSchema, unique_result=True)
 
         response = GetReadingResponse(
             success=True,
             status_code=status.HTTP_200_OK,
             item_title=item.title,
-            quantity=len(reading) if reading else 0,
-            readings=reading
+            quantity=len(readings) if readings else 0,
+            readings=[ReadingSchema.model_validate(reading) for reading in readings]
         )
 
         return response

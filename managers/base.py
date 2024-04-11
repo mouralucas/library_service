@@ -15,20 +15,18 @@ class BaseDataManager:
 
     """Base data manager class responsible for operations over database."""
 
-    async def add_one(self, model: SQLModel, schema: Type[BaseModel], return_db_model: bool = False) -> SQLModel | BaseModel:
+    async def add_one(self, model: SQLModel) -> SQLModel:
         self.session.add(model)
         await self.session.commit()
         await self.session.refresh(model)
 
-        return schema.model_validate(model) if not return_db_model else model
+        return model
 
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
     # TODO: maybe add kwargs to simplify params
     async def get_first(self, select_stmt: Executable,
-                        schema: Type[BaseModel],
-                        return_db_model: bool = False,
                         raise_exception: bool = False) -> BaseModel | None:
         """
         :Name: get_only_one
@@ -47,11 +45,9 @@ class BaseDataManager:
         if raise_exception and result is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
 
-        return schema.model_validate(result) if not return_db_model else result
+        return result
 
-    async def get_only_one(self, select_stmt: Executable,
-                           schema: Type[BaseModel],
-                           return_db_model: bool = False) -> BaseModel:
+    async def get_only_one(self, select_stmt: Executable) -> BaseModel:
         """
         :Name: get_only_one
         :Created by: Lucas Penha de Moura - 09/02/2024
@@ -68,13 +64,11 @@ class BaseDataManager:
 
         # TODO: maybe handle exceptions to return default values
 
-        return schema.model_validate(result) if not return_db_model else result
+        return result
 
     async def get_all(self, select_stmt: Executable,
-                      schema: Type[BaseModel],
-                      transform: bool = False,
                       unique_result: bool = False,
-                      raise_exception: bool = False) -> list[BaseModel] | None:
+                      raise_exception: bool = False) -> list[SQLModel] | None:
         """
         :Name: get_all
         :Created by: Lucas Penha de Moura - 09/02/2024
@@ -83,20 +77,21 @@ class BaseDataManager:
 
             Params:
                 select_stmt : An Executable SQLAlchemy statement, usually "select"
-                schema : The Pydantic model class to convert the result
-                transform : Transform the result accordingly with the transform() method in schema class
+                unique_result: If true, apply unique to the query, used when query contains joins ***(investigate reason)***
                 raise_exception : If true, raise an exception if no data is found, if false, return None
         """
-        values = await self.session.execute(select_stmt)
-        values = values.scalars()
+        result = await self.session.scalars(select_stmt)
         if unique_result:
-            values = values.unique()
+            result = result.unique()
 
-        if values:
-            return [schema.model_validate(i).transform() if transform else schema.model_validate(i) for i in values]
+        result = result.all()
+
+        if result:
+            return list(result)
 
         if raise_exception:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
+            # TODO: adjust detail to show model name
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in model')
 
         return None
 

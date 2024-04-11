@@ -17,6 +17,6 @@ class ItemDataManager(BaseDataManager):
     async def get_item_by_id(self, item_id: int) -> BaseModel:
         stmt = select(ItemModel).where(ItemModel.id == item_id)
 
-        item: BaseModel = await self.get_only_one(stmt, ItemSchema)
+        item: BaseModel = await self.get_only_one(stmt)
 
         return item
