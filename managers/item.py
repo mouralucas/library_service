@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.base import BaseDataManager
 from models.item import ItemModel
-from schemas.item import ItemSchema
 
 
 class ItemDataManager(BaseDataManager):
@@ -14,7 +13,9 @@ class ItemDataManager(BaseDataManager):
     async def create_item(self, item: ItemModel):
         new_item = self.add_one(item)
 
-    async def get_item_by_id(self, item_id: int) -> BaseModel:
+        return new_item
+
+    async def get_item_by_id(self, item_id: int) -> BaseModel | None:
         stmt = select(ItemModel).where(ItemModel.id == item_id)
 
         item: BaseModel = await self.get_only_one(stmt)

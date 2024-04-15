@@ -46,5 +46,7 @@ class ItemModel(SQLModel):
     isbn_formatted: Mapped[int]
     isbn10_formatted: Mapped[int]
 
+    pages: Mapped[int]
+
     title: Mapped[str]
     subtitle: Mapped[str]

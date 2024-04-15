@@ -39,7 +39,7 @@ class ReadingService(BaseService):
 
         new_reading = ReadingModel(
             item_id=reading.item_id,
-            number=len(previous_readings) + 1,
+            number=len(previous_readings) + 1 if previous_readings else 1,
             start_date=reading.start_at,
             finish_date=reading.finish_at,
             status_id='reading'  # maybe a param? If a param, update status column in Item model?
@@ -58,7 +58,10 @@ class ReadingService(BaseService):
             stmt = stmt.options(joinedload(ReadingModel.progress))
 
         item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
-        readings = await ReadingDataManager(self.session).get_all(stmt, schema=ReadingSchema, unique_result=True)
+        if not item:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item não encontrado')
+
+        readings = await ReadingDataManager(self.session).get_all(stmt, unique_result=True)
 
         response = GetReadingResponse(
             success=True,
@@ -73,12 +76,12 @@ class ReadingService(BaseService):
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         stmt = select(ReadingModel).where(ReadingModel.active == True)
 
-        readings = await ReadingDataManager(self.session).get_all(stmt, ReadingSchema, transform=True)
+        readings = await ReadingDataManager(self.session).get_all(stmt)
 
         response = GetActiveReadingsResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(readings) if readings else 0,
-            readings=readings
+            readings=[ReadingSchema.model_validate(reading).transform() for reading in readings]
         )
 
         return response
@@ -93,8 +96,8 @@ class ReadingService(BaseService):
 
         item_pages = reading.item.pages
 
-        if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
+        # if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
+        #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
         if last_progress and last_progress.date == datetime.datetime.now().date():
             pass
@@ -133,8 +136,8 @@ class ReadingService(BaseService):
         response = GetProgressResponse(
             success=True,
             status_code=status.HTTP_200_OK,
-            quantity=len(progress),
-            readingProgress=progress
+            quantity=len(progress) if progress else 0,
+            readingProgress=progress if progress else []
         )
 
         return response

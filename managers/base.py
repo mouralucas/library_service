@@ -3,6 +3,7 @@ from typing import Any, List, Sequence, Type
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import func, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import Executable
 
@@ -36,18 +37,17 @@ class BaseDataManager:
             Params:
                 select_stmt : An Executable SQLAlchemy statement, usually "select"
                 schema : The Pydantic model class to convert the result
-                return_db_model : If true, return the result from database, without converto to Pydantic class
                 raise_exception : If true, raise an exception if no data is found, if false, return None
         """
         result = await self.session.execute(select_stmt)
         result = result.scalar()
 
         if raise_exception and result is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found in {schema_name}'.format(schema_name=schema.__repr_name__))
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No data found')
 
         return result
 
-    async def get_only_one(self, select_stmt: Executable) -> BaseModel:
+    async def get_only_one(self, select_stmt: Executable) -> BaseModel | None:
         """
         :Name: get_only_one
         :Created by: Lucas Penha de Moura - 09/02/2024
@@ -59,9 +59,12 @@ class BaseDataManager:
                 schema : The Pydantic model class to convert the result
                 return_db_model : If true, return the result from database, without converto to Pydantic class
         """
-        result = await self.session.execute(select_stmt)
-        result = result.scalar_one()
+        try:
+            result = await self.session.execute(select_stmt)
+            result = result.scalar_one()
+        except NoResultFound as e:
 
+            result = None
         # TODO: maybe handle exceptions to return default values
 
         return result
