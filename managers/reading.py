@@ -1,5 +1,8 @@
+import datetime
+from typing import Any
+
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.base import BaseDataManager
@@ -40,6 +43,20 @@ class ReadingDataManager(BaseDataManager):
 
         return new_progress
 
+    async def update_progress(self, progress: ReadingProgressModel, fields: dict[str, Any]) -> ReadingProgressModel:
+        fields['edited_at'] = datetime.datetime.utcnow()
+        stmt = (
+            update(ReadingProgressModel)
+            .where(ReadingProgressModel.id == progress.id)
+            .values(**fields)
+        )
+
+        await self.session.execute(stmt)
+        await self.session.commit()
+        await self.session.refresh(progress)
+
+        return progress
+
     async def get_progress(self, reading_id):
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id)
 
@@ -47,7 +64,7 @@ class ReadingDataManager(BaseDataManager):
 
         return progress_list
 
-    async def get_latest_progress(self, reading_id) -> BaseModel | None:
+    async def get_latest_progress(self, reading_id) -> ReadingProgressModel | None:
         stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
 
         latest_progress = await self.get_first(stmt)

@@ -2,6 +2,7 @@ import datetime
 
 from fastapi import status, HTTPException
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from managers.item import ItemDataManager
@@ -14,6 +15,10 @@ from services.base import BaseService
 
 
 class ReadingService(BaseService):
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+        self.item_pages = None
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
         """ TODO:
@@ -92,35 +97,27 @@ class ReadingService(BaseService):
         #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
 
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
+        if not reading:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Leitura não encontrada')
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
-        item_pages = reading.item.pages
+        self.item_pages = reading.item.pages
 
         # if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
         #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
         if last_progress and last_progress.date == datetime.datetime.now().date():
-            pass
+            progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(last_progress, progress.page, progress.percentage), {'page': progress.page})
+            new_entry = progress_updated
+        else:
+            new_progress_entry = ReadingProgressModel(
+                reading_id=reading.id,
+                date=datetime.datetime.now().date(),
+                rate=progress.rate,
+                comment=progress.comment
+            )
 
-        new_progress_entry = ReadingProgressModel(
-            reading_id=reading.id,
-            date=datetime.datetime.now().date(),
-            rate=progress.rate,
-            comment=progress.comment
-        )
-
-        if progress.page is not None:
-            perc = ((progress.page / item_pages) * 100) if item_pages else 0
-
-            new_progress_entry.page = progress.page
-            new_progress_entry.percentage = perc
-
-        if progress.percentage is not None:
-            page = (progress.percentage / 100) * item_pages if item_pages else 0
-            new_progress_entry.page = int(page)
-            new_progress_entry.percentage = progress.percentage
-
-        new_entry = await ReadingDataManager(self.session).create_progress(progress=new_progress_entry)
+            new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(new_progress_entry, progress.page, progress.percentage))
 
         response = CreateProgressResponse(
             success=True,
@@ -141,3 +138,17 @@ class ReadingService(BaseService):
         )
 
         return response
+
+    def __set_values(self, progress_entry: ReadingProgressModel, page, percentage):
+        if page is not None:
+            perc = ((page / self.item_pages) * 100) if self.item_pages else 0
+
+            progress_entry.page = page
+            progress_entry.percentage = perc
+
+        if percentage is not None:
+            page = (percentage / 100) * self.item_pages if self.item_pages else 0
+            progress_entry.page = int(page)
+            progress_entry.percentage = percentage
+
+        return progress_entry
