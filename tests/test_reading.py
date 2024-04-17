@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from main import app
 
@@ -10,9 +11,9 @@ def setup_function():
     pass
 
 
-def test_reading():
+def test_reading(db_session: AsyncSession):
     param = {
-        'item_id': 1
+        'itemId': 1
     }
     response = client.get("/reading", params=param)
     assert response.status_code == 200

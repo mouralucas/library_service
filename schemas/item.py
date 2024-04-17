@@ -21,7 +21,7 @@ class ItemSchema(BaseModel):
     volume: int = Field(0, description='The volume of the item')
     edition: int = Field(1, description='The edition of the item')
     published_at: datetime.date = Field(None, serialization_alias='publishedAt', description='The date of publication of the item')
-    published_original_at: datetime.date = Field(None, serialization='publishedOriginalAt', description='The original date of publication')
+    published_original_at: datetime.date = Field(None, serialization_alias='publishedOriginalAt', description='The original date of publication')
     # serie
     # collection
     # publisher

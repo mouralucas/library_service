@@ -12,7 +12,20 @@ class DatabaseConfig(BaseModel):
     """
     dsn: str = Field(
         default="postgresql+asyncpg://user:password@host:port/dbname",
-        env="MYAPI_DATABASE__DSN"
+        env="LIBRARY_SERVICE_DATABASE__DSN"
+    )
+
+
+class TestDatabaseConfig(BaseModel):
+    """Backend database configuration parameters.
+
+    Attributes:
+        dsn:
+            DSN for test database.
+    """
+    test_dsn: str = Field(
+        default="postgresql+asyncpg://user:password@host:port/dbname",
+        env="LIBRARY_SERVICE_TEST_DATABASE__DSN"
     )
 
 
@@ -34,18 +47,19 @@ class Settings(BaseSettings):
         DATABASE:
             Database configuration settings.
             Instance of :class:`app.backend.config.DatabaseConfig`.
-        token_key:
+        TOKEN_KEY:
             Random secret key used to sign JWT tokens.
     """
 
     DATABASE: DatabaseConfig = DatabaseConfig()
+    TEST_DATABASE: TestDatabaseConfig = TestDatabaseConfig()
     APP_SETTINGS: AppSettings = AppSettings()
-    token_key: str = ""
+    TOKEN_KEY: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        env_prefix="MYAPI_",
+        env_prefix="LIBRARY_SERVICE_",
         env_nested_delimiter="__",
         case_sensitive=False,
     )
