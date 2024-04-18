@@ -8,6 +8,7 @@ from backend.settings import get_settings
 
 class Settings(BaseSettings):
     database_url: str
+    test_database_url: str
     echo_sql: bool = True
     test: bool = False
     project_name: str = "My FastAPI project"
@@ -21,6 +22,14 @@ class DatabaseSessionManager:
     def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}):
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine)
+
+    async def close(self):
+        if self._engine is None:
+            raise Exception("DatabaseSessionManager is not initialized")
+        await self._engine.dispose()
+
+        self._engine = None
+        self._sessionmaker = None
 
     @contextlib.asynccontextmanager
     async def connect(self) -> AsyncIterator[AsyncConnection]:
@@ -50,6 +59,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
+test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_sql})
 
 
 async def db_session():

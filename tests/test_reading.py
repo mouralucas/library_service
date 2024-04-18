@@ -1,17 +1,6 @@
-from fastapi import FastAPI
-from fastapi.testclient import TestClient
-from sqlalchemy.ext.asyncio import AsyncSession
+# client = TestClient(app)
 
-from main import app
-
-client = TestClient(app)
-
-
-def setup_function():
-    pass
-
-
-def test_reading(db_session: AsyncSession):
+def test_reading(client):
     param = {
         'itemId': 1
     }
