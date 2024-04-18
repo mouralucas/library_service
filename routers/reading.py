@@ -6,6 +6,9 @@ from schemas.request.reading import CreateReadingRequest, GetReadingRequest, Cre
 from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.reading import ReadingService
 
+# Test new db connection
+from backend.database import get_db_session
+
 router = APIRouter(prefix="/reading")
 
 
@@ -22,7 +25,7 @@ async def create_reading(
 @router.get('', summary='Get readings', description='Get all readings for a item', response_model_exclude_none=True)
 async def get_reading(
         params: GetReadingRequest = Depends(),
-        session: AsyncSession = Depends(db_session)
+        session: AsyncSession = Depends(get_db_session)
 ) -> GetReadingResponse:
     response = await ReadingService(session=session).get_reading(params=params)
 
