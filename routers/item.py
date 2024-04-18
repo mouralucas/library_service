@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.session import db_session
+from backend.database import db_session
 from schemas.item import Request
 
 router = APIRouter(prefix="/item")
