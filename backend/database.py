@@ -47,7 +47,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
-test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_sql})
+test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql})
 
 
 async def db_session():
