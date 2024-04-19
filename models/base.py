@@ -18,7 +18,7 @@ class SQLModel(DeclarativeBase):
 
     id: Mapped[uuid.UUID] = mapped_column('id', primary_key=True, default=uuid.uuid4)
     status: Mapped[bool] = mapped_column('status', default=True)
-    created_at: Mapped[datetime.datetime] = mapped_column('created_at', default=datetime.datetime.now())
+    created_at: Mapped[datetime.datetime] = mapped_column('created_at', default=datetime.datetime.utcnow())
     edited_at: Mapped[datetime.datetime] = mapped_column('edited_at')
     deleted_at: Mapped[datetime.datetime] = mapped_column('deleted_at')
 
