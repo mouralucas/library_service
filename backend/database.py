@@ -1,21 +1,9 @@
 import contextlib
 from typing import Any, AsyncIterator
 
-from pydantic_settings import BaseSettings
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession, create_async_engine, async_sessionmaker
-from backend.settings import get_settings
 
-
-class Settings(BaseSettings):
-    database_url: str
-    test_database_url: str
-    echo_sql: bool = True
-    test: bool = False
-    project_name: str = "My FastAPI project"
-    oauth_token_secret: str = "my_dev_secret"
-
-
-settings = Settings()
+from backend.settings import settings
 
 
 class DatabaseSessionManager:

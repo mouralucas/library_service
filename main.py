@@ -1,13 +1,12 @@
 from fastapi import FastAPI
 
+from backend.settings import settings
 from routers import reading, item
 
-from backend.settings import get_settings
-
 app = FastAPI(
-    title=get_settings().APP_SETTINGS.name,
-    description=get_settings().APP_SETTINGS.description,
-    version=get_settings().APP_SETTINGS.version,
+    title=settings.project_name,
+    description=settings.project_description,
+    version=settings.project_version,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
 )
 
