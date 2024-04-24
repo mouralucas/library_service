@@ -6,15 +6,19 @@ from typing import (
     List,
 )
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import MetaData, Table
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base
+
+Base = declarative_base()
 
 
-class SQLModel(DeclarativeBase):
+class SQLModel(Base):
     """Base class used for model definitions.
 
     Provides convenience methods that can be used to convert model
     to the corresponding schema.
     """
+    __abstract__ = True
 
     id: Mapped[uuid.UUID] = mapped_column('id', primary_key=True, default=uuid.uuid4)
     status: Mapped[bool] = mapped_column('status', default=True)
@@ -50,3 +54,11 @@ class SQLModel(DeclarativeBase):
         for key in self.__mapper__.c.keys():
             _dict[key] = getattr(self, key)
         return _dict
+
+    @classmethod
+    def gather_metadata(cls) -> MetaData:
+        """Gather metadata from all subclasses."""
+        metadata = MetaData()
+        for subclass in cls.__subclasses__():
+            Table(subclass.__tablename__, metadata, autoload_with=subclass.metadata.bind)
+        return metadata

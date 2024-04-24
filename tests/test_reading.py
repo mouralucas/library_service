@@ -1,6 +1,6 @@
 # client = TestClient(app)
 
-def test_reading(client):
+def test_get_reading(client):
     param = {
         'itemId': 1
     }
@@ -17,3 +17,5 @@ def test_reading(client):
     # Check types from response
     assert type(response_json['quantity']) is int
     assert type(response_json['readings']) is list
+
+
