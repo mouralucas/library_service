@@ -19,3 +19,6 @@ def test_get_reading(client):
     assert type(response_json['readings']) is list
 
 
+def test_create_reading(client):
+    # TODO: item title does not return while creating a reading
+    pass
