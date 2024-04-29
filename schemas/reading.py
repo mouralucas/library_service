@@ -26,7 +26,8 @@ class ReadingSchema(BaseModel):
 
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
     item: ItemSchema = Field(..., description="The", exclude=True)
-    item_title: str = Field(None, description="The title of the item")
+    item_id: int = Field(..., serialization_alias='itemId', description="The id of the item")
+    item_title: str = Field(None, serialization_alias='itemTitle', description="The title of the item")
     start_date: datetime.date = Field(..., serialization_alias='startDate', description="The date the reading start")
     finish_date: datetime.date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
