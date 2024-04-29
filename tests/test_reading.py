@@ -1,4 +1,10 @@
+from fastapi import status
+from starlette.testclient import TestClient
+
+from main import app
+
 # client = TestClient(app)
+
 
 def test_get_reading(client):
     param = {
@@ -7,7 +13,7 @@ def test_get_reading(client):
     response = client.get("/reading", params=param)
     response_json = response.json()
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert response_json['success'] is True
 
     assert 'item_title' in response_json
@@ -21,4 +27,15 @@ def test_get_reading(client):
 
 def test_create_reading(client):
     # TODO: item title does not return while creating a reading
-    pass
+    params = {
+        "itemId": 4,
+        "startDate": "2024-04-25"
+    }
+    response = client.post("/reading", json=params)
+
+    assert response.status_code == status.HTTP_200_OK
+
+    response_json = response.json()
+
+    assert response_json['success'] is True
+    assert 'reading' in response_json

@@ -43,6 +43,11 @@ class DatabaseSessionManager:
             await session.rollback()
             raise
         finally:
+            """
+                Closes the database session after the context is exited.
+                The commit is only applied when the context is exited.
+            """
+            await session.commit()
             await session.close()
 
 

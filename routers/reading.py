@@ -11,7 +11,7 @@ from backend.database import db_session
 router = APIRouter(prefix="/reading")
 
 
-@router.post('', summary='Create a reading', description='Create a new reading for selected item', )
+@router.post('', summary='Create a reading', description='Create a new reading for selected item')
 async def create_reading(
         reading: CreateReadingRequest,
         session: AsyncSession = Depends(db_session)

@@ -23,10 +23,6 @@ class ReadingService(BaseService):
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
         """ TODO:
                 1: Check if the item already have a reading
-                2: If a previous reading exist:
-                    2.1: Check if the reading is active, if so cannot create a new one, if not, create a new one
-                    2.2: Count the number of readings and set a variable with the value
-                    2.3: A new reading cannot start before the previous finish, check the dates
         """
         param = {
             'item_id': reading.item_id
@@ -39,17 +35,17 @@ class ReadingService(BaseService):
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Já existe uma leitura ativa para este item')
 
         # The new reading cannot start before the last one finishes
-        if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_at:
+        if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
         new_reading = ReadingModel(
             item_id=reading.item_id,
             number=len(previous_readings) + 1 if previous_readings else 1,
-            start_date=reading.start_at,
-            finish_date=reading.finish_at,
+            start_date=reading.start_date,
+            finish_date=reading.finish_date,
             status_id='reading'  # maybe a param? If a param, update status column in Item model?
         )
-        #
+
         new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
         response = CreateReadingResponse(
             status_code=status.HTTP_201_CREATED,
@@ -73,7 +69,7 @@ class ReadingService(BaseService):
             status_code=status.HTTP_200_OK,
             item_title=item.title,
             quantity=len(readings) if readings else 0,
-            readings=[ReadingSchema.model_validate(reading) for reading in readings]
+            readings=[ReadingSchema.model_validate(reading) for reading in readings] if readings else []
         )
 
         return response
@@ -94,8 +90,6 @@ class ReadingService(BaseService):
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
         # TODO: Rules:
         #   One entry must not save a page and/or percentage less than the last entry
-        #   If more than one entry is set in same day, the entry is update, not create another line (only one entry per day)
-
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Leitura não encontrada')
@@ -106,6 +100,7 @@ class ReadingService(BaseService):
         # if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
         #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
+        # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.datetime.now().date():
             progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(last_progress, progress.page, progress.percentage), {'page': progress.page})
             new_entry = progress_updated

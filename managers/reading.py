@@ -43,7 +43,7 @@ class ReadingDataManager(BaseDataManager):
 
         return new_progress
 
-    async def update_progress(self, progress: ReadingProgressModel, fields: dict[str, Any]) -> ReadingProgressModel:
+    async def update_progress(self, progress: ReadingProgressModel, fields: dict[str, Any]) -> SQLModel:
         fields['edited_at'] = datetime.datetime.utcnow()
         stmt = (
             update(ReadingProgressModel)
@@ -51,10 +51,12 @@ class ReadingDataManager(BaseDataManager):
             .values(**fields)
         )
 
-        await self.session.execute(stmt)
-        await self.session.commit()
-        await self.session.refresh(progress)
-
+        progress = await self.update_one(sql_statement=stmt, model=progress)
+        # TODO: this code must go to mother class
+        # await self.session.execute(stmt)
+        # await self.session.flush()
+        # await self.session.refresh(progress)
+        #
         return progress
 
     async def get_progress(self, reading_id):

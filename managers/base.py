@@ -18,7 +18,7 @@ class BaseDataManager:
 
     async def add_one(self, model: SQLModel) -> SQLModel:
         self.session.add(model)
-        await self.session.commit()
+        await self.session.flush()
         await self.session.refresh(model)
 
         return model
@@ -26,8 +26,30 @@ class BaseDataManager:
     def add_all(self, models: Sequence[Any]) -> None:
         self.session.add_all(models)
 
+    async def update_one(self, sql_statement: Executable, model: SQLModel) -> SQLModel:
+        """
+        :Name: update_one
+        :Created by: Lucas Penha de Moura - 28/04/2024
+            Update one item from a model
+
+            Params:
+                sql_statement : An Executable SQLAlchemy statement
+                raise_exception : If true, raise an exception if no data is found, if false, return None
+        """
+        if not sql_statement.is_update:
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED)
+
+        try:
+            await self.session.execute(sql_statement)
+            await self.session.flush()
+            await self.session.refresh(model)
+        except Exception as e:
+            raise e
+
+        return model
+
     # TODO: maybe add kwargs to simplify params
-    async def get_first(self, select_stmt: Executable,
+    async def get_first(self, sql_statement: Executable,
                         raise_exception: bool = False) -> BaseModel | None:
         """
         :Name: get_only_one
@@ -39,7 +61,7 @@ class BaseDataManager:
                 schema : The Pydantic model class to convert the result
                 raise_exception : If true, raise an exception if no data is found, if false, return None
         """
-        result = await self.session.execute(select_stmt)
+        result = await self.session.execute(sql_statement)
         result = result.scalar()
 
         if raise_exception and result is None:
