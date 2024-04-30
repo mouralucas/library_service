@@ -52,11 +52,7 @@ class ReadingDataManager(BaseDataManager):
         )
 
         progress = await self.update_one(sql_statement=stmt, model=progress)
-        # TODO: this code must go to mother class
-        # await self.session.execute(stmt)
-        # await self.session.flush()
-        # await self.session.refresh(progress)
-        #
+
         return progress
 
     async def get_progress(self, reading_id):

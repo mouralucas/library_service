@@ -5,14 +5,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from managers.base import BaseDataManager
 from models import SQLModel
 from models.item import ItemModel
+from schemas.request.item import CreateItemRequest
 
 
 class ItemDataManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session=session)
 
-    async def create_item(self, item: ItemModel):
-        new_item = self.add_one(item)
+    async def create_item(self, item: ItemModel) -> SQLModel:
+        new_item = await self.add_one(item)
 
         return new_item
 

@@ -30,7 +30,6 @@ def test_get_reading(client):
 
 
 def test_create_reading(client):
-    # TODO: item title does not return while creating a reading
     item_id = 4 # create item
     start_date = '2024-01-01'
     params = {

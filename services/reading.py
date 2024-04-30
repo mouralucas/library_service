@@ -38,6 +38,7 @@ class ReadingService(BaseService):
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
+        # Change to ReadingModel(**reading)?
         new_reading = ReadingModel(
             item_id=reading.item_id,
             number=len(previous_readings) + 1 if previous_readings else 1,
