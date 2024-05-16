@@ -6,7 +6,7 @@ from managers.item import ItemDataManager
 from models import SQLModel, ItemModel
 from schemas.item import ItemSchema
 from schemas.request.item import GetItemRequest, CreateItemRequest
-from schemas.response.item import GetItemResponse
+from schemas.response.item import GetItemResponse, CreateItemResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.base import BaseService
@@ -16,10 +16,15 @@ class ItemService(BaseService):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def create_item(self, item: CreateItemRequest) -> Any:
-
+    async def create_item(self, item: CreateItemRequest) -> CreateItemResponse:
         new_item = ItemDataManager(session=self.session).create_item(ItemModel(**item.dict()))
 
+        response = CreateItemResponse(
+            status_code=status.HTTP_201_CREATED,
+            item=ItemSchema.model_validate(new_item)
+        )
+
+        return response
 
     async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
         items: list[SQLModel] = await ItemDataManager(self.session).get_items()
