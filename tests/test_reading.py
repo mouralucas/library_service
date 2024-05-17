@@ -49,7 +49,7 @@ async def test_create_reading():
         }
         response = await client.post("/reading", json=params)
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_201_CREATED
 
         response_json = response.json()
 

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
 from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
@@ -11,7 +12,8 @@ from backend.database import db_session
 router = APIRouter(prefix="/reading")
 
 
-@router.post('', summary='Create a reading', description='Create a new reading for selected item')
+@router.post('', summary='Create a reading', description='Create a new reading for selected item',
+             status_code=status.HTTP_201_CREATED)
 async def create_reading(
         reading: CreateReadingRequest,
         session: AsyncSession = Depends(db_session)
@@ -39,7 +41,8 @@ async def get_active_reading(session: AsyncSession = Depends(db_session)) -> Get
     return response
 
 
-@router.post('/progress', summary='Add progress', description='Add a new progress for a reading')
+@router.post('/progress', summary='Add progress', description='Add a new progress for a reading',
+             status_code=status.HTTP_201_CREATED)
 async def create_reading_progress(
         progress: CreateProgressRequest,
         session: AsyncSession = Depends(db_session)
