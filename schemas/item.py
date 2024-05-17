@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from fastapi import Query
 from pydantic import BaseModel, Field, ConfigDict
 
-from schemas.core import LanguageSchema
+from schemas.core import LanguageSchema, StatusSchema
 
 
 class SerieSchema(BaseModel):
@@ -57,6 +57,9 @@ class ItemSchema(BaseModel):
     language: LanguageSchema | None = Field(None, description='The language of the item')
     cover_price: float | None = Field(None, serialization_alias='coverPrice', description='The cover price of the item')
     paid_price: float | None = Field(None, serialization_alias='paidPrice', description='The item paid price')
+
+    last_status: StatusSchema | None = Field(None, serialization_alias='lastStatus')
+    last_status_date: datetime.date | None = Field(None, serialization_alias='lastStatusDate')
 
 
 class GetItemResponse(BaseModel):

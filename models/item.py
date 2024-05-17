@@ -4,7 +4,7 @@ import datetime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import LanguageModel
+from models import LanguageModel, StatusModel
 from models.base import SQLModel
 
 
@@ -62,8 +62,8 @@ class ItemModel(SQLModel):
     subtitle: Mapped[str] = mapped_column('subtitle', nullable=True)
     subtitle_original: Mapped[str] = mapped_column('subtitle_original', nullable=True)
     pages: Mapped[int] = mapped_column('pages', default=0)
-    published_at: Mapped[datetime.date] = mapped_column('published_at', nullable=True)
-    published_original_at: Mapped[datetime.date] = mapped_column('published_original_at', nullable=True)
+    publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
+    original_publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     edition: Mapped[int] = mapped_column('edition', default=1)
     serie_id: Mapped[int] = mapped_column(ForeignKey('library.serie.id'))
     serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='selectin')
@@ -78,9 +78,11 @@ class ItemModel(SQLModel):
     main_author: Mapped['AuthorModel'] = relationship(foreign_keys=[main_author_id], lazy='selectin')
     collection_id: Mapped[int] = mapped_column(ForeignKey('library.collection.id'))
     collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='selectin')
-    # format -- create table?
-    # type -- create table?
-    # status
+    format: Mapped[str] = mapped_column('format', nullable=True)
+    type: Mapped[str] = mapped_column('type', nullable=True)
+    last_status_id: Mapped[str] = mapped_column(ForeignKey('public.status.id'))
+    last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='selectin')
+    last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
     # status at
     # log status
     cover_price: Mapped[float] = mapped_column('cover_price', default=0)
@@ -95,3 +97,5 @@ class ItemModel(SQLModel):
     observation: Mapped[str]
 
     origin: Mapped[str] = mapped_column('origin', default='SYSTEM')
+
+    cover: Mapped[str] = mapped_column('cover')

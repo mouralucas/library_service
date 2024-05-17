@@ -17,7 +17,7 @@ class ItemService(BaseService):
         super().__init__(session)
 
     async def create_item(self, item: CreateItemRequest) -> CreateItemResponse:
-        new_item = ItemDataManager(session=self.session).create_item(ItemModel(**item.dict()))
+        new_item = await ItemDataManager(session=self.session).create_item(ItemModel(**item.dict()))
 
         response = CreateItemResponse(
             status_code=status.HTTP_201_CREATED,

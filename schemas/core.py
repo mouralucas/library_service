@@ -6,3 +6,10 @@ class LanguageSchema(BaseModel):
 
     id: str
     name: str
+
+
+class StatusSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
