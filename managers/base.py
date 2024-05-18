@@ -33,7 +33,7 @@ class BaseDataManager:
             Update one item from a model
 
             Params:
-                sql_statement : An Executable SQLAlchemy statement
+                sql_statement : An Executable SQLAlchemy statement - Must be update
                 raise_exception : If true, raise an exception if no data is found, if false, return None
         """
         if not sql_statement.is_update:

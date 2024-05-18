@@ -9,13 +9,6 @@ from main import app
 from httpx import AsyncClient
 
 
-@pytest.fixture(scope="session")
-def event_loop(request):
-    loop = asyncio.get_event_loop_policy().new_event_loop()
-    yield loop
-    loop.close()
-
-
 @pytest.mark.asyncio
 async def test_get_reading():
     async with AsyncClient(app=app, base_url="http://test") as client:
