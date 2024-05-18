@@ -18,7 +18,7 @@ class BaseDataManager:
 
     async def add_one(self, model: SQLModel) -> SQLModel:
         self.session.add(model)
-        await self.session.flush()
+        await self.session.commit()
         await self.session.refresh(model)
 
         return model
@@ -41,7 +41,7 @@ class BaseDataManager:
 
         try:
             await self.session.execute(sql_statement)
-            await self.session.flush()
+            await self.session.commit()
             await self.session.refresh(model)
         except Exception as e:
             raise e

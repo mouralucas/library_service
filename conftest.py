@@ -1,12 +1,16 @@
 import asyncio
 
 import pytest
+import pytest_asyncio
 from alembic.config import Config
 from starlette.testclient import TestClient
 
 from backend.database import test_sessionmanager
 from main import app
 from backend.database import db_session
+from managers.reading import ReadingDataManager
+from models import ReadingModel
+from models.base import Base
 
 
 @pytest.fixture(scope="session")
@@ -16,27 +20,29 @@ def event_loop(request):
     loop.close()
 
 
-@pytest.fixture(scope='function', autouse=True)
-def override_db_session():
+@pytest_asyncio.fixture(scope='function')
+async def create_test_connection():
+    async with test_sessionmanager.connect() as connection:
+        await connection.run_sync(Base.metadata.drop_all)
+        await connection.run_sync(Base.metadata.create_all)
+
+    async with test_sessionmanager.session() as session:
+        yield session
+
+
+@pytest_asyncio.fixture(scope='function', autouse=True)
+def override_db_session(create_test_connection):
     """
     Overrides the database session, in this case using test_sessionmanager.
     In session end it rolls back all database operations.
     """
-
-    async def _override_db_session():
-        async with test_sessionmanager.session() as session:
-
-            try:
-                transaction = session.begin_nested()
-                yield session
-            finally:
-                transaction.rollback()
-                await session.rollback()
-
-    app.dependency_overrides[db_session] = _override_db_session
+    app.dependency_overrides[db_session] = lambda: create_test_connection
 
 
-# @pytest.fixture(scope='session')
-# def client():
-#     with TestClient(app) as c:
-#         yield c
+# Create data for tests
+@pytest_asyncio.fixture
+async def items(create_test_connection):
+    new_reading = ReadingModel(
+        item_id=10,
+    )
+    await ReadingDataManager(session=create_test_connection).create_reading(new_reading)
