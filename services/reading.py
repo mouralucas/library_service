@@ -40,6 +40,7 @@ class ReadingService(BaseService):
 
         # Change to ReadingModel(**reading)?
         new_reading = ReadingModel(
+            owner_id=reading.owner_id,
             item_id=reading.item_id,
             number=len(previous_readings) + 1 if previous_readings else 1,
             start_date=reading.start_date,

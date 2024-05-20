@@ -15,7 +15,6 @@ from models.item import ItemModel
 
 class ReadingModel(SQLModel):
     __tablename__ = "reading"
-    __table_args__ = {"schema": "library"}
 
     owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
     active: Mapped[bool] = mapped_column('active', default=True)
@@ -24,16 +23,15 @@ class ReadingModel(SQLModel):
     start_date: Mapped[datetime.date]
     finish_date: Mapped[datetime.date] = mapped_column('finish_date', nullable=True)
     number: Mapped[int] = mapped_column('number', default=1)
-    status_id: Mapped[str] = mapped_column(ForeignKey('public.status.id'))
+    status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
     status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id])
     progress: Mapped[list['ReadingProgressModel']] = relationship(back_populates='reading', lazy='noload')
 
 
 class ReadingProgressModel(SQLModel):
     __tablename__ = "reading_progress"
-    __table_args__ = {"schema": "library"}
 
-    reading_id: Mapped[uuid.UUID] = mapped_column("reading_id", ForeignKey("library.reading.id"))
+    reading_id: Mapped[uuid.UUID] = mapped_column("reading_id", ForeignKey("reading.id"))
     reading: Mapped["ReadingModel"] = relationship(back_populates='progress')
     date: Mapped[datetime.date] = mapped_column('date')
     page: Mapped[int] = mapped_column('page', nullable=True)

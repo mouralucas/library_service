@@ -10,7 +10,6 @@ from models.base import SQLModel
 
 class SerieModel(SQLModel):
     __tablename__ = "serie"
-    __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     name: Mapped[str] = mapped_column('name')
@@ -21,7 +20,6 @@ class SerieModel(SQLModel):
 
 class CollectionModel(SQLModel):
     __tablename__ = "collection"
-    __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     name: Mapped[str] = mapped_column('name')
@@ -30,7 +28,6 @@ class CollectionModel(SQLModel):
 
 class PublisherModel(SQLModel):
     __tablename__ = "publisher"
-    __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     name: Mapped[str] = mapped_column('name')
@@ -41,7 +38,6 @@ class PublisherModel(SQLModel):
 
 class AuthorModel(SQLModel):
     __tablename__ = "author"
-    __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     nm_full: Mapped[str] = mapped_column('nm_full')
@@ -50,7 +46,6 @@ class AuthorModel(SQLModel):
 class ItemModel(SQLModel):
     # TODO: remove all selectin after tests
     __tablename__ = "item"
-    __table_args__ = {"schema": "library"}
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     owner_id: Mapped[uuid.UUID]
@@ -65,22 +60,22 @@ class ItemModel(SQLModel):
     publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     original_publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     edition: Mapped[int] = mapped_column('edition', default=1)
-    serie_id: Mapped[int] = mapped_column(ForeignKey('library.serie.id'))
+    serie_id: Mapped[int] = mapped_column(ForeignKey('serie.id'), nullable=True)
     serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='selectin')
-    language_id: Mapped[str] = mapped_column(ForeignKey('public.language.id'))
+    language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
     # # cover
     volume: Mapped[int] = mapped_column('volume', default=1)
-    publisher_id: Mapped[int] = mapped_column(ForeignKey('library.publisher.id'))
+    publisher_id: Mapped[int] = mapped_column(ForeignKey('publisher.id'), nullable=True)
     publisher: Mapped['PublisherModel'] = relationship(foreign_keys=[publisher_id], lazy='selectin')
     # authors
-    main_author_id: Mapped[int] = mapped_column(ForeignKey('library.author.id'))
+    main_author_id: Mapped[int] = mapped_column(ForeignKey('author.id'))
     main_author: Mapped['AuthorModel'] = relationship(foreign_keys=[main_author_id], lazy='selectin')
-    collection_id: Mapped[int] = mapped_column(ForeignKey('library.collection.id'))
+    collection_id: Mapped[int] = mapped_column(ForeignKey('collection.id'))
     collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='selectin')
     format: Mapped[str] = mapped_column('format', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
-    last_status_id: Mapped[str] = mapped_column(ForeignKey('public.status.id'))
+    last_status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
     last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='selectin')
     last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
     # status at

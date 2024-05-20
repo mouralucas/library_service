@@ -7,7 +7,7 @@ from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 import models.base
-# from backend.database import settings
+from backend.settings import settings
 
 ''
 # this is the Alembic Config object, which provides
@@ -28,8 +28,8 @@ target_metadata = models.base.Base.metadata
 # ... etc.
 def get_url():
     # TODO, if it works use settings dict
-    # return settings.database_url
-    return 'postgresql+asyncpg://lucas:ezt710sh@67.205.180.83:5432/library_qa'
+    return settings.database_url
+    # return 'postgresql+asyncpg://lucas:ezt710sh@67.205.180.83:5432/library_qa'
 
 
 def run_migrations_offline() -> None:

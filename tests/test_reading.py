@@ -1,19 +1,47 @@
 import asyncio
+import uuid
 
 import pytest
+import pytest_asyncio
 from fastapi import status
 from managers.base import BaseDataManager
-from models import ReadingModel
+from managers.item import ItemDataManager
+from managers.reading import ReadingDataManager
+from models import ReadingModel, ItemModel
 import datetime
 from main import app
 from httpx import AsyncClient
 
 
+@pytest_asyncio.fixture
+async def create_item(create_test_connection):
+    item_list = []
+
+    new_item = ItemModel(title="Test Item", owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"))
+    item = await ItemDataManager(session=create_test_connection).create_item(new_item)
+
+    item_list.append(item)
+
+    return item_list
+
+
+@pytest_asyncio.fixture
+async def create_reading(create_test_connection, create_item):
+    reading_list = []
+
+    new_reading = ReadingModel(item_id=create_item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"))
+    await ReadingDataManager(session=create_test_connection).create_reading(new_reading)
+
+    reading_list.append(new_reading)
+
+    return reading_list
+
+
 @pytest.mark.asyncio
-async def test_get_reading():
+async def test_get_reading(create_reading):
     async with AsyncClient(app=app, base_url="http://test") as client:
         param = {
-            'itemId': 1
+            'itemId': create_reading[0].item_id,
         }
         response = await client.get("/reading", params=param)
 

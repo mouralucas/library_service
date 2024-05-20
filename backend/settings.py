@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # Database and test settings
     database_url: str  # Expected string in env 'postgresql+asyncpg://username:password@host_name:port/db_name'
-    test_database_url: str
+    test_database_url: str = 'sqlite+aiosqlite:///library_test.db'
     echo_sql: bool = False
     echo_test_sql: bool = True
     test: bool = False
