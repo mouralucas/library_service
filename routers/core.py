@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import db_session
-from schemas.request.core import CreateLanguageRequest
-from schemas.response.core import CreateLanguageResponse, GetLanguageResponse
-from services.core import LanguageService
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse
+from services.core import LanguageService, CountryService
 
 router = APIRouter(prefix='/core')
 
@@ -24,3 +24,19 @@ async def get_language(session: AsyncSession = Depends(db_session)) -> GetLangua
     response = await LanguageService(session=session).get_languages()
 
     return response
+
+
+@router.post("/country", status_code=status.HTTP_201_CREATED)
+async def create_country(country: CreateCountryRequest,
+                         session: AsyncSession = Depends(db_session)) -> CreateCountryResponse:
+    response = await CountryService(session=session).create_country(country)
+
+    return response
+
+
+@router.get("/country")
+async def get_country(session: AsyncSession = Depends(db_session)) -> GetCountryResponse:
+    response = await CountryService(session=session).get_countries()
+
+    return response
+

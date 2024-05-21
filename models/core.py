@@ -18,3 +18,12 @@ class LanguageModel(SQLModel):
     id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str]
     code: Mapped[str]
+
+
+class CountryModel(SQLModel):
+    __tablename__ = "country"
+
+    id: Mapped[str] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    continent: Mapped[str]
+    description: Mapped[str] = mapped_column('description', nullable=True)

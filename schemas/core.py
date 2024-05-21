@@ -14,3 +14,12 @@ class StatusSchema(BaseModel):
 
     id: str
     name: str
+
+
+class CountrySchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    name: str
+    continent: str
+    description: str | None
