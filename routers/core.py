@@ -4,7 +4,7 @@ from starlette import status
 
 from backend.database import db_session
 from schemas.request.core import CreateLanguageRequest
-from schemas.response.core import CreateLanguageResponse
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse
 from services.core import LanguageService
 
 router = APIRouter(prefix='/core')
@@ -20,5 +20,7 @@ async def create_language(language: CreateLanguageRequest,
 
 
 @router.get("/language")
-async def get_language():
-    pass
+async def get_language(session: AsyncSession = Depends(db_session)) -> GetLanguageResponse:
+    response = await LanguageService(session=session).get_languages()
+
+    return response
