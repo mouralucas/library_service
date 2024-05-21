@@ -14,11 +14,11 @@ from httpx import AsyncClient
 
 
 @pytest_asyncio.fixture
-async def create_item(create_test_connection):
+async def create_item(create_test_session):
     item_list = []
 
     new_item = ItemModel(title="Test Item", owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"))
-    item = await ItemDataManager(session=create_test_connection).create_item(new_item)
+    item = await ItemDataManager(session=create_test_session).create_item(new_item)
 
     item_list.append(item)
 
@@ -26,11 +26,11 @@ async def create_item(create_test_connection):
 
 
 @pytest_asyncio.fixture
-async def create_reading(create_test_connection, create_item):
+async def create_reading(create_test_session, create_item):
     reading_list = []
 
     new_reading = ReadingModel(item_id=create_item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"))
-    await ReadingDataManager(session=create_test_connection).create_reading(new_reading)
+    await ReadingDataManager(session=create_test_session).create_reading(new_reading)
 
     reading_list.append(new_reading)
 

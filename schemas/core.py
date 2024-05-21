@@ -6,6 +6,7 @@ class LanguageSchema(BaseModel):
 
     id: str
     name: str
+    code: str
 
 
 class StatusSchema(BaseModel):
