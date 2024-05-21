@@ -1,7 +1,26 @@
 version: '3'
 
 services:
-  web:
+  backend:
     build: .
     ports:
       - "8035:8035"
+    depends_on:
+      - "postgres"
+
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: dev-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dev_db
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data:cached
+
+volumes:
+  db-data:

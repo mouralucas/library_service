@@ -11,6 +11,7 @@ starlette==0.36.3
 psycopg2-binary==2.9.9
 asyncpg==0.29.0 # com o async é preciso do psycopg?
 alembic==1.13.1
+aiosqlite==0.20.0
 
 # tests
 pytest==7.3.1
