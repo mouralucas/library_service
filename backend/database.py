@@ -7,9 +7,9 @@ from backend.settings import settings
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}):
+    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}, expire_on_commit: bool = True):
         self._engine = create_async_engine(host, **engine_kwargs)
-        self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine, expire_on_commit=False)
+        self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine, expire_on_commit=expire_on_commit)
 
     async def close(self):
         if self._engine is None:
@@ -52,7 +52,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
-test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql})
+test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql}, expire_on_commit=False)
 
 
 async def db_session():
