@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from backend.settings import settings
-from routers import reading, item, core
+from routers import reading, item, author, core
 
 app = FastAPI(
     title=settings.project_name,
@@ -32,3 +32,4 @@ async def validate_request_middleware(request, call_next):
 app.include_router(item.router)
 app.include_router(reading.router)
 app.include_router(core.router)
+app.include_router(author.router)

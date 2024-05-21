@@ -29,7 +29,7 @@ class AuthorSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    nm_full: str
+    name: str = Field(..., serialization_alias="authorName")
 
 
 class ItemSchema(BaseModel):
