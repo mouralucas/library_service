@@ -44,7 +44,7 @@ class AuthorModel(SQLModel):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column('name')
-    fist_name: Mapped[str] = mapped_column('fist_name', nullable=True)
+    first_name: Mapped[str] = mapped_column('first_name', nullable=True)
     last_name: Mapped[str] = mapped_column('last_name', nullable=True)
     birth_date: Mapped[datetime.date] = mapped_column('birth_date', nullable=True)
     description: Mapped[str] = mapped_column('description', nullable=True)

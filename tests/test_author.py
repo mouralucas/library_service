@@ -34,6 +34,13 @@ async def create_authors(create_test_session,
 
 
 @pytest.mark.asyncio
+async def test_create_author_fail(client):
+    response = await client.post("/author")
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio
 async def test_create_author(client):
     author_name = 'Test da Silva'
     payload = {
