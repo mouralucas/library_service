@@ -43,7 +43,10 @@ class CollectionSchema(BaseModel):
 class PublisherSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
+    name: str = Field(..., serialization_alias="publisherName", description="The name of the publisher")
+    description: str | None = Field(None, serialization_alias="description", description="The description of the publisher")
+    country: CountrySchema | None = Field(None, serialization_alias="country", description="The country")
+    parent_id: str | None = Field(None, serialization_alias="parentId", description="The parent of the publisher")
 
 
 class AuthorSchema(BaseModel):

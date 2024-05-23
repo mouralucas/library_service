@@ -3,9 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import db_session
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest
-from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, CreateCollectionResponse, GetCollectionResponse
-from services.core import LanguageService, CountryService, SerieService, CollectionService
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, CreateCollectionResponse, GetCollectionResponse, CreatePublisherResponse, \
+    GetPublisherResponse
+from services.core import LanguageService, CountryService, SerieService, CollectionService, PublisherService
 
 router = APIRouter(prefix='')
 
@@ -67,5 +68,20 @@ async def create_collection(collection: CreateCollectionRequest,
 @router.get("/collection")
 async def get_collection(session: AsyncSession = Depends(db_session)) -> GetCollectionResponse:
     response = await CollectionService(session=session).get_collections()
+
+    return response
+
+
+@router.post('/publisher', status_code=status.HTTP_201_CREATED)
+async def create_publisher(publisher: CreatePublisherRequest,
+                           session: AsyncSession = Depends(db_session)) -> CreatePublisherResponse:
+    response = await PublisherService(session).create_publisher(publisher)
+
+    return response
+
+
+@router.get('/publisher')
+async def get_publisher(session: AsyncSession = Depends(db_session)) -> GetPublisherResponse:
+    response = await PublisherService(session).get_publishers()
 
     return response

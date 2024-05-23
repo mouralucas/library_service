@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from schemas.base import SuccessResponseBase
-from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema
+from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema
 
 
 class CreateLanguageResponse(SuccessResponseBase):
@@ -38,3 +38,12 @@ class CreateCollectionResponse(SuccessResponseBase):
 class GetCollectionResponse(SuccessResponseBase):
     quantity: int = Field(..., description='The quantity of collections available')
     collections: list[CollectionSchema] = Field(..., serialization_alias='collections', description='The collections available')
+
+
+class CreatePublisherResponse(SuccessResponseBase):
+    publisher: PublisherSchema = Field(..., description='The publisher created')
+
+
+class GetPublisherResponse(SuccessResponseBase):
+    quantity: int = Field(..., description='The quantity of publishers available')
+    publishers: list[PublisherSchema] = Field(..., description='The publishers available')

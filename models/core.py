@@ -56,9 +56,9 @@ class PublisherModel(SQLModel):
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     name: Mapped[str] = mapped_column('name')
-    description: Mapped[str] = mapped_column('description')
-    county_id: Mapped[str] = mapped_column('country_id')
-    parent_id: Mapped[int] = mapped_column('parent_id')
+    description: Mapped[str] = mapped_column('description', nullable=True)
+    country_id: Mapped[str] = mapped_column('country_id', nullable=True)
+    parent_id: Mapped[int] = mapped_column('parent_id', nullable=True)
 
 
 class AuthorModel(SQLModel):

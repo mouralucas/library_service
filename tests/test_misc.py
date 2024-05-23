@@ -138,3 +138,21 @@ async def test_get_collection(client, create_collections):
     assert type(data['collections']) is list
     assert len(data['collections']) == collections_list_len
     assert data['collections'][0]['collectionName'] == collections[0].name
+
+
+@pytest.mark.asyncio
+async def test_create_publisher(client):
+    publisher_name = 'Test Publisher'
+    description = 'Test description'
+
+    payload = {
+        'publisherName': publisher_name,
+        'description': description
+    }
+    response = await client.post('/publisher', json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+    assert 'publisher' in data
+    assert data['publisher']['publisherName'] == publisher_name
+    assert data['publisher']['description'] == description

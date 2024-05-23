@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.base import BaseDataManager
-from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel
+from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel, PublisherModel
 
 
 class LanguageManager(BaseDataManager):
@@ -74,3 +74,21 @@ class CollectionManager(BaseDataManager):
         new_collection = await self.add_one(collection)
 
         return new_collection
+
+
+class PublisherManager(BaseDataManager):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    async def create_publisher(self, publisher: PublisherModel) -> SQLModel:
+        """
+        :Name: create_publisher
+        :Created by: Lucas Penha de Moura - 23/05/2024
+            Create a new publisher
+
+        :Params:
+            publisher: an instance of PublisherModel
+        """
+        new_publisher = await self.add_one(publisher)
+
+        return new_publisher

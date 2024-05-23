@@ -2,11 +2,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager
-from models import LanguageModel, CountryModel, SerieModel, CollectionModel
-from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest
-from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, GetCollectionResponse, CreateCollectionResponse
+from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager
+from models import LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel
+from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, GetCollectionResponse, CreateCollectionResponse, CreatePublisherResponse, \
+    GetPublisherResponse
 from services.base import BaseService
 
 
@@ -111,6 +112,32 @@ class CollectionService(BaseService):
             status_code=status.HTTP_200_OK,
             quantity=len(collections) if collections else 0,
             collections=[CollectionSchema.model_validate(collection) for collection in collections] if collections else []
+        )
+
+        return response
+
+
+class PublisherService(BaseService):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    async def create_publisher(self, publisher: CreatePublisherRequest) -> CreatePublisherResponse:
+        new_publisher = await PublisherManager(session=self.session).create_publisher(PublisherModel(**publisher.dict()))
+
+        response = CreatePublisherResponse(
+            status_code=status.HTTP_201_CREATED,
+            publisher=PublisherSchema.model_validate(new_publisher)
+        )
+
+        return response
+
+    async def get_publishers(self) -> GetPublisherResponse:
+        publishers = await PublisherManager(session=self.session).get_all(select(PublisherModel))
+
+        response = GetPublisherResponse(
+            status_code=status.HTTP_200_OK,
+            quantity=len(publishers) if publishers else 0,
+            pubishers=[PublisherSchema.model_validate(publisher) for publisher in publishers] if publishers else []
         )
 
         return response
