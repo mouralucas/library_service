@@ -12,3 +12,15 @@ class CreateCountryRequest(BaseModel):
     name: str = Field(..., alias='name', description="Name of the country")
     continent: str = Field(..., alias='continent', description="Continent of the country", max_length=2)
     description: str = Field(None, alias='description', description="Description of the country")
+
+
+class CreateSerieRequest(BaseModel):
+    name: str = Field(..., alias='serieName', description="Name of the serie")
+    original_name: str = Field(None, alias='originalSerieName', description="Original name of the serie")
+    description: str = Field(None, alias='serieDescription', description="Description of the serie")
+    country_id: str = Field(None, alias='countryId', description="Id of the country")
+
+
+class CreateCollectionRequest(BaseModel):
+    name: str = Field(..., alias='collectionName', description="Name of the collection")
+    description: str = Field(None, alias='description', description="Description of the collection")

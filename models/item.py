@@ -4,57 +4,12 @@ import datetime
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import LanguageModel, StatusModel, CountryModel
+from models.core import (LanguageModel, StatusModel, CountryModel, AuthorModel,
+                         SerieModel, CollectionModel, PublisherModel)
 from models.base import SQLModel
 
 
 # TODO: remove all selectin after tests
-# TODO: Non item model goes to "core"
-
-class SerieModel(SQLModel):
-    __tablename__ = "serie"
-
-    id: Mapped[int] = mapped_column('id', primary_key=True)
-    name: Mapped[str] = mapped_column('name')
-    nm_original: Mapped[str] = mapped_column('nm_original')
-    description: Mapped[str] = mapped_column('description')
-    county_id: Mapped[str] = mapped_column('country_id')
-
-
-class CollectionModel(SQLModel):
-    __tablename__ = "collection"
-
-    id: Mapped[int] = mapped_column('id', primary_key=True)
-    name: Mapped[str] = mapped_column('name')
-    description: Mapped[str] = mapped_column('description')
-
-
-class PublisherModel(SQLModel):
-    __tablename__ = "publisher"
-
-    id: Mapped[int] = mapped_column('id', primary_key=True)
-    name: Mapped[str] = mapped_column('name')
-    description: Mapped[str] = mapped_column('description')
-    county_id: Mapped[str] = mapped_column('country_id')
-    parent_id: Mapped[int] = mapped_column('parent_id')
-
-
-class AuthorModel(SQLModel):
-    __tablename__ = "author"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column('name')
-    first_name: Mapped[str] = mapped_column('first_name', nullable=True)
-    last_name: Mapped[str] = mapped_column('last_name', nullable=True)
-    birth_date: Mapped[datetime.date] = mapped_column('birth_date', nullable=True)
-    description: Mapped[str] = mapped_column('description', nullable=True)
-    country_id: Mapped[str] = mapped_column(ForeignKey('country.id'), nullable=True)
-    country: Mapped['CountryModel'] = relationship(foreign_keys=[country_id], lazy='selectin')
-    language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
-    language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
-    is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
-
-
 class ItemModel(SQLModel):
     __tablename__ = "item"
 

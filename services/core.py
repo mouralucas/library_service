@@ -2,11 +2,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from managers.core import LanguageManager, CountryManager
-from models import LanguageModel, CountryModel
-from schemas.core import LanguageSchema, CountrySchema
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest
-from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse
+from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager
+from models import LanguageModel, CountryModel, SerieModel, CollectionModel
+from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, GetCollectionResponse, CreateCollectionResponse
 from services.base import BaseService
 
 
@@ -31,6 +31,7 @@ class LanguageService(BaseService):
 
         response = GetLanguageResponse(
             status_code=status.HTTP_200_OK,
+            quantity=len(languages) if languages else 0,
             languages=[LanguageSchema.model_validate(language) for language in languages] if languages else []
         )
 
@@ -56,7 +57,60 @@ class CountryService(BaseService):
 
         response = GetCountryResponse(
             status_code=status.HTTP_200_OK,
+            quantity=len(countries) if countries else 0,
             countries=[CountrySchema.model_validate(country) for country in countries] if countries else []
+        )
+
+        return response
+
+
+class SerieService(BaseService):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    async def create_serie(self, serie: CreateSerieRequest) -> CreateSerieResponse:
+        new_serie = await SerieManager(session=self.session).create_serie(SerieModel(**serie.dict()))
+
+        response = CreateSerieResponse(
+            status_code=status.HTTP_201_CREATED,
+            serie=SerieSchema.model_validate(new_serie)
+        )
+
+        return response
+
+    async def get_series(self) -> GetSeriesResponse:
+        series = await SerieManager(session=self.session).get_all(select(SerieModel))
+
+        response = GetSeriesResponse(
+            status_code=status.HTTP_200_OK,
+            quantity=len(series) if series else 0,
+            series=[SerieSchema.model_validate(serie) for serie in series] if series else []
+        )
+
+        return response
+
+
+class CollectionService(BaseService):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    async def create_collection(self, collection: CreateCollectionRequest) -> CreateCollectionResponse:
+        new_collection = await CollectionManager(session=self.session).create_collection(CollectionModel(**collection.dict()))
+
+        response = CreateCollectionResponse(
+            status_code=status.HTTP_201_CREATED,
+            collection=CollectionSchema.model_validate(new_collection)
+        )
+
+        return response
+
+    async def get_collections(self) -> GetCollectionResponse:
+        collections = await SerieManager(session=self.session).get_all(select(CollectionModel))
+
+        response = GetCollectionResponse(
+            status_code=status.HTTP_200_OK,
+            quantity=len(collections) if collections else 0,
+            collections=[CollectionSchema.model_validate(collection) for collection in collections] if collections else []
         )
 
         return response

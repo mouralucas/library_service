@@ -3,11 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import db_session
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest
-from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse
-from services.core import LanguageService, CountryService
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest
+from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, CreateCollectionResponse, GetCollectionResponse
+from services.core import LanguageService, CountryService, SerieService, CollectionService
 
-router = APIRouter(prefix='/core')
+router = APIRouter(prefix='')
 
 
 @router.post("/language", status_code=status.HTTP_201_CREATED)
@@ -40,3 +40,32 @@ async def get_country(session: AsyncSession = Depends(db_session)) -> GetCountry
 
     return response
 
+
+@router.post('/serie', status_code=status.HTTP_201_CREATED)
+async def create_serie(serie: CreateSerieRequest,
+                       session: AsyncSession = Depends(db_session)) -> CreateSerieResponse:
+    response = await SerieService(session=session).create_serie(serie)
+
+    return response
+
+
+@router.get("/serie")
+async def get_serie(session: AsyncSession = Depends(db_session)) -> GetSeriesResponse:
+    response = await SerieService(session=session).get_series()
+
+    return response
+
+
+@router.post("/collection", status_code=status.HTTP_201_CREATED)
+async def create_collection(collection: CreateCollectionRequest,
+                            session: AsyncSession = Depends(db_session)) -> CreateCollectionResponse:
+    response = await CollectionService(session=session).create_collection(collection)
+
+    return response
+
+
+@router.get("/collection")
+async def get_collection(session: AsyncSession = Depends(db_session)) -> GetCollectionResponse:
+    response = await CollectionService(session=session).get_collections()
+
+    return response

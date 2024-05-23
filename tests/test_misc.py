@@ -4,42 +4,7 @@ from fastapi import status
 
 from managers.core import LanguageManager, CountryManager
 from models import LanguageModel, CountryModel
-
-
-@pytest_asyncio.fixture
-async def create_languages(create_test_session):
-    language_list = []
-
-    language = LanguageModel(id='PT', name='Portuguese', code='PT')
-    language_1 = await LanguageManager(session=create_test_session).create_language(language)
-
-    language = LanguageModel(id='EN', name='English', code='EN')
-    language_2 = await LanguageManager(session=create_test_session).create_language(language)
-
-    language_list.append(language_1)
-    language_list.append(language_2)
-
-    return language_list
-
-
-@pytest_asyncio.fixture
-async def create_countries(create_test_session):
-    countries_list = []
-
-    country = CountryModel(id='BR', name='Brasil', continent='SA')
-    country_1 = await CountryManager(session=create_test_session).create_country(country)
-
-    country = CountryModel(id='DE', name='Alemanha', continent='EU')
-    country_2 = await CountryManager(session=create_test_session).create_country(country)
-
-    country = CountryModel(id='AU', name='Austrália', continent='OC')
-    country_3 = await CountryManager(session=create_test_session).create_country(country)
-
-    countries_list.append(country_1)
-    countries_list.append(country_2)
-    countries_list.append(country_3)
-
-    return countries_list
+from tests.mocks.core import create_collections, create_series, create_countries, create_languages
 
 
 @pytest.mark.asyncio
@@ -52,7 +17,7 @@ async def test_create_language(client):
         'code': language_id
     }
 
-    response = await client.post("/core/language", json=payload)
+    response = await client.post("/language", json=payload)
 
     data = response.json()
     assert response.status_code == status.HTTP_201_CREATED
@@ -66,7 +31,7 @@ async def test_create_language(client):
 async def test_get_language(client, create_languages):
     language_len = len(create_languages)
 
-    response = await client.get("/core/language")
+    response = await client.get("/language")
 
     data = response.json()
     assert response.status_code == status.HTTP_200_OK
@@ -87,7 +52,7 @@ async def test_create_country(client):
         'continent': continent
     }
 
-    response = await client.post("/core/country", json=payload)
+    response = await client.post("/country", json=payload)
 
     data = response.json()
     assert response.status_code == status.HTTP_201_CREATED
@@ -101,10 +66,75 @@ async def test_create_country(client):
 async def test_get_country(client, create_countries):
     country_len = len(create_countries)
 
-    response = await client.get("/core/country")
+    response = await client.get("/country")
 
     data = response.json()
     assert response.status_code == status.HTTP_200_OK
     assert 'countries' in data
     assert type(data['countries']) is list
     assert len(data['countries']) == country_len
+
+
+@pytest.mark.asyncio
+async def test_create_serie(client):
+    serie_name = 'Serie Test'
+
+    payload = {
+        'serieName': serie_name
+    }
+    response = await client.post('/serie', json=payload)
+
+    data = response.json()
+    assert response.status_code == status.HTTP_201_CREATED
+    assert 'serie' in data
+    assert data['serie']['serieName'] == serie_name
+
+
+@pytest.mark.asyncio
+async def test_get_serie(client, create_series):
+    series = create_series
+    series_list_len = len(series)
+
+    response = await client.get('/serie')
+
+    data = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert 'series' in data
+    assert type(data['series']) is list
+    assert len(data['series']) == series_list_len
+    assert data['series'][0]['serieName'] == series[0].name
+
+
+@pytest.mark.asyncio
+async def test_create_collection(client):
+    collection_name = 'Test Collection'
+    collections_description = 'Test description'
+
+    payload = {
+        'collectionName': collection_name,
+        'description': collections_description
+    }
+    response = await client.post('/collection', json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    data = response.json()
+    assert response.status_code == status.HTTP_201_CREATED
+    assert 'collection' in data
+    assert data['collection']['collectionName'] == collection_name
+    assert data['collection']['description'] == collections_description
+
+
+@pytest.mark.asyncio
+async def test_get_collection(client, create_collections):
+    collections = create_collections
+    collections_list_len = len(collections)
+
+    response = await client.get('/collection')
+
+    data = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert 'collections' in data
+    assert type(data['collections']) is list
+    assert len(data['collections']) == collections_list_len
+    assert data['collections'][0]['collectionName'] == collections[0].name

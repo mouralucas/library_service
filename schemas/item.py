@@ -1,35 +1,8 @@
 import datetime
-from dataclasses import dataclass
 
-from fastapi import Query
 from pydantic import BaseModel, Field, ConfigDict
 
-from schemas.core import LanguageSchema, StatusSchema
-
-
-class SerieSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    name: str
-
-
-class CollectionSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    name: str
-
-
-class PublisherSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    name: str
-
-
-class AuthorSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    name: str = Field(..., serialization_alias="authorName")
+from schemas.core import LanguageSchema, StatusSchema, AuthorSchema, SerieSchema, CollectionSchema, PublisherSchema
 
 
 class ItemSchema(BaseModel):
