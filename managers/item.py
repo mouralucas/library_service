@@ -8,7 +8,7 @@ from models.item import ItemModel
 from schemas.request.item import CreateItemRequest
 
 
-class ItemDataManager(BaseDataManager):
+class ItemManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session=session)
 

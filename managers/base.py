@@ -69,7 +69,7 @@ class BaseDataManager:
 
         return result
 
-    async def get_only_one(self, select_stmt: Executable) -> BaseModel | None:
+    async def get_only_one(self, select_stmt: Executable) -> SQLModel | None:
         """
         :Name: get_only_one
         :Created by: Lucas Penha de Moura - 09/02/2024

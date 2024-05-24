@@ -18,8 +18,8 @@ class ReadingModel(SQLModel):
 
     owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
     active: Mapped[bool] = mapped_column('active', default=True)
-    item_id: Mapped[int] = mapped_column('item_id')
-    item: Mapped[ItemModel] = relationship('ItemModel', foreign_keys=[item_id], lazy='joined', primaryjoin='ReadingModel.item_id == ItemModel.id')
+    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
+    item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
     start_date: Mapped[datetime.date]
     finish_date: Mapped[datetime.date] = mapped_column('finish_date', nullable=True)
     number: Mapped[int] = mapped_column('number', default=1)

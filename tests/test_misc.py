@@ -4,7 +4,7 @@ from fastapi import status
 
 from managers.core import LanguageManager, CountryManager
 from models import LanguageModel, CountryModel
-from tests.mocks.core import create_collections, create_series, create_countries, create_languages
+from tests.mocks.core import create_collections, create_series, create_countries, create_languages, create_publisher
 
 
 @pytest.mark.asyncio
@@ -156,3 +156,20 @@ async def test_create_publisher(client):
     assert 'publisher' in data
     assert data['publisher']['publisherName'] == publisher_name
     assert data['publisher']['description'] == description
+
+
+@pytest.mark.asyncio
+async def test_get_publisher(client, create_publisher):
+    publishers = create_publisher
+    publishers_list_len = len(publishers)
+
+    response = await client.get('/publisher')
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'publishers' in data
+    assert type(data['publishers']) is list
+    assert len(data['publishers']) == publishers_list_len
+    assert data['publishers'][0]['publisherName'] == publishers[0].name
+    assert data['publishers'][0]['description'] == publishers[0].description

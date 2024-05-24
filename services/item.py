@@ -2,7 +2,7 @@ from typing import Any
 
 from starlette import status
 
-from managers.item import ItemDataManager
+from managers.item import ItemManager
 from models import SQLModel, ItemModel
 from schemas.item import ItemSchema
 from schemas.request.item import GetItemRequest, CreateItemRequest
@@ -17,7 +17,7 @@ class ItemService(BaseService):
         super().__init__(session)
 
     async def create_item(self, item: CreateItemRequest) -> CreateItemResponse:
-        new_item = await ItemDataManager(session=self.session).create_item(ItemModel(**item.dict()))
+        new_item = await ItemManager(session=self.session).create_item(ItemModel(**item.dict()))
 
         response = CreateItemResponse(
             status_code=status.HTTP_201_CREATED,
@@ -27,14 +27,12 @@ class ItemService(BaseService):
         return response
 
     async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
-        items: list[SQLModel] = await ItemDataManager(self.session).get_items()
-
-        a = [ItemSchema.model_validate(item) for item in items]
+        items: list[SQLModel] = await ItemManager(self.session).get_items()
 
         response = GetItemResponse(
             quantity=len(items) if items else 0,
             status_code=status.HTTP_200_OK,
-            items=a,
+            items=[ItemSchema.model_validate(item) for item in items] if items else [],
         )
 
         return response

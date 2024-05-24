@@ -54,9 +54,9 @@ class ItemModel(SQLModel):
     width: Mapped[float] = mapped_column('width', nullable=True)
     thickness: Mapped[float] = mapped_column('thickness', nullable=True)
 
-    summary: Mapped[str]
-    observation: Mapped[str]
+    summary: Mapped[str] = mapped_column('summary', nullable=True)
+    observation: Mapped[str] = mapped_column('observation', nullable=True)
 
     origin: Mapped[str] = mapped_column('origin', default='SYSTEM')
 
-    cover: Mapped[str] = mapped_column('cover')
+    cover: Mapped[str] = mapped_column('cover', nullable=True)

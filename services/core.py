@@ -137,7 +137,7 @@ class PublisherService(BaseService):
         response = GetPublisherResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(publishers) if publishers else 0,
-            pubishers=[PublisherSchema.model_validate(publisher) for publisher in publishers] if publishers else []
+            publishers=[PublisherSchema.model_validate(publisher) for publisher in publishers] if publishers else []
         )
 
         return response

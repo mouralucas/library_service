@@ -11,9 +11,9 @@ class StatusModel(SQLModel):
 
     id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str]
-    description: Mapped[str]
-    order: Mapped[int]
-    type: Mapped[str]
+    description: Mapped[str] = mapped_column('description', nullable=True)
+    order: Mapped[int] = mapped_column('order', nullable=True)
+    type: Mapped[str] = mapped_column('type', nullable=True)
 
 
 class LanguageModel(SQLModel):

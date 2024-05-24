@@ -1,36 +1,7 @@
 import pytest
-import pytest_asyncio
 from fastapi import status
-from httpx import AsyncClient
 
-from managers.author import AuthorManager
-from models import AuthorModel
-from tests.test_misc import create_countries, create_languages
-
-
-@pytest_asyncio.fixture
-async def create_authors(create_test_session,
-                         create_countries,
-                         create_languages):
-    authors_list = []
-    list_countries = create_countries
-    list_languages = create_languages
-
-    author = AuthorModel(name="Autor da Silva",
-                         language_id=list_languages[0].id,
-                         country_id=list_countries[0].id,
-                         )
-    author_1 = await AuthorManager(session=create_test_session).create_author(author)
-
-    author = AuthorModel(name="Autor de Souza",
-                         language_id=list_languages[1].id,
-                         country_id=list_countries[1].id)
-    author_2 = await AuthorManager(session=create_test_session).create_author(author)
-
-    authors_list.append(author_1)
-    authors_list.append(author_2)
-
-    return authors_list
+from tests.mocks.core import create_authors, create_countries
 
 
 @pytest.mark.asyncio

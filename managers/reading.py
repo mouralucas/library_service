@@ -19,10 +19,10 @@ class ReadingDataManager(BaseDataManager):
 
         return new_reading
 
-    async def get_reading_by_id(self, reading_id) -> BaseModel:
+    async def get_reading_by_id(self, reading_id) -> SQLModel:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
 
-        reading: BaseModel = await self.get_only_one(stmt)
+        reading: SQLModel = await self.get_only_one(stmt)
 
         return reading
 

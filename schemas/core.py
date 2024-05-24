@@ -52,5 +52,5 @@ class PublisherSchema(BaseModel):
 class AuthorSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int = Field(..., alias="authorId", description="Unique id of the author")
+    id: int = Field(..., serialization_alias="authorId", description="Unique id of the author")
     name: str = Field(..., serialization_alias="authorName", description="The name of the author")

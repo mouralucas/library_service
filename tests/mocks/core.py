@@ -1,7 +1,21 @@
 import pytest_asyncio
 
-from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager
-from models import LanguageModel, CountryModel, SerieModel, CollectionModel
+from managers.author import AuthorManager
+from managers.base import BaseDataManager
+from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager
+from models import LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel, AuthorModel, StatusModel
+
+
+@pytest_asyncio.fixture
+async def create_status(create_test_session):
+    status_list = []
+
+    status = StatusModel(id='reading', name='Lendo')
+    status_1 = await BaseDataManager(session=create_test_session).add_one(status)
+
+    status_list.append(status_1)
+
+    return status_list
 
 
 @pytest_asyncio.fixture
@@ -70,3 +84,40 @@ async def create_collections(create_test_session) -> list:
     collections_list.append(collection_2)
 
     return collections_list
+
+
+@pytest_asyncio.fixture
+async def create_publisher(create_test_session) -> list:
+    publishers_list = []
+
+    publisher = PublisherModel(name='Test publisher', description='Test publisher description')
+    publisher_1 = await PublisherManager(session=create_test_session).create_publisher(publisher)
+
+    publishers_list.append(publisher_1)
+
+    return publishers_list
+
+
+@pytest_asyncio.fixture
+async def create_authors(create_test_session,
+                         create_countries,
+                         create_languages):
+    authors_list = []
+    list_countries = create_countries
+    list_languages = create_languages
+
+    author = AuthorModel(name="Autor da Silva",
+                         language_id=list_languages[0].id,
+                         country_id=list_countries[0].id,
+                         )
+    author_1 = await AuthorManager(session=create_test_session).create_author(author)
+
+    author = AuthorModel(name="Autor de Souza",
+                         language_id=list_languages[1].id,
+                         country_id=list_countries[1].id)
+    author_2 = await AuthorManager(session=create_test_session).create_author(author)
+
+    authors_list.append(author_1)
+    authors_list.append(author_2)
+
+    return authors_list

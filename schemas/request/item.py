@@ -28,7 +28,7 @@ class CreateItemRequest(BaseModel):
     collection_id: int = Field(None, alias='collectionId', description='The id of the collection')
     publisher_id: int = Field(None, alias='publisherId', description='The publisher of the item')
     format: str = Field(None, alias='formatId', description='The id of the format')
-    language_id: int = Field(None, alias='languageId', description='The id of the language')
+    language_id: str = Field(None, alias='languageId', description='The id of the language')
     cover_price: float = Field(None, alias='coverPrice', description='The price of the item')
     paid_price: float = Field(None, alias='paidPrice', description='The price of the item')
     dimensions: str = Field(None, alias='dimensions', description='The dimensions of the item')

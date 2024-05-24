@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from managers.item import ItemDataManager
+from managers.item import ItemManager
 from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
@@ -60,7 +60,7 @@ class ReadingService(BaseService):
         if params.get_progress:
             stmt = stmt.options(joinedload(ReadingModel.progress))
 
-        item = await ItemDataManager(self.session).get_item_by_id(item_id=params.item_id)
+        item = await ItemManager(self.session).get_item_by_id(item_id=params.item_id)
         if not item:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item não encontrado')
 
@@ -84,7 +84,7 @@ class ReadingService(BaseService):
         response = GetActiveReadingsResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(readings) if readings else 0,
-            readings=[ReadingSchema.model_validate(reading).transform() for reading in readings]
+            readings=[ReadingSchema.model_validate(reading).transform() for reading in readings] if readings else []
         )
 
         return response
