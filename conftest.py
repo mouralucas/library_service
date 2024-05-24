@@ -9,6 +9,7 @@ from backend.database import test_sessionmanager
 from main import app
 from models.base import Base
 
+# The mocks imports cannot be removed, they let all fixtures be available globally
 from tests.mocks.core import *
 from tests.mocks.item import *
 from tests.mocks.reading import *
@@ -44,19 +45,3 @@ def override_db_session(create_test_session):
 async def client():
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
-
-#### Create all necessary data in database ####
-# @pytest_asyncio.fixture
-# async def create_languages(create_test_session):
-#     language_list = []
-#
-#     language = LanguageModel(id='EN', name='English', code='EN')
-#     language_1 = await LanguageManager(session=create_test_session).create_language(language)
-#
-#     language = LanguageModel(id='PT', name='Portuguese', code='PT')
-#     language_2 = await LanguageManager(session=create_test_session).create_language(language)
-#
-#     language_list.append(language_1)
-#     language_list.append(language_2)
-#
-#     return language_list
