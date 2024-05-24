@@ -1,11 +1,6 @@
 import pytest
 from fastapi import status
 
-from tests.mocks.core import *
-from tests.mocks.item import create_item
-from tests.mocks.reading import create_reading
-
-
 @pytest.mark.asyncio
 async def test_get_reading(client, create_reading):
     param = {

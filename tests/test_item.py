@@ -1,8 +1,6 @@
 import pytest
 from fastapi import status
 
-from tests.mocks.core import *
-from tests.mocks.item import create_item
 
 
 @pytest.mark.asyncio

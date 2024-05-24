@@ -22,10 +22,10 @@ async def create_status(create_test_session):
 async def create_languages(create_test_session):
     language_list = []
 
-    language = LanguageModel(id='PT', name='Portuguese', code='PT')
+    language = LanguageModel(id='EN', name='English', code='EN')
     language_1 = await LanguageManager(session=create_test_session).create_language(language)
 
-    language = LanguageModel(id='EN', name='English', code='EN')
+    language = LanguageModel(id='PT', name='Portuguese', code='PT')
     language_2 = await LanguageManager(session=create_test_session).create_language(language)
 
     language_list.append(language_1)
@@ -100,8 +100,8 @@ async def create_publisher(create_test_session) -> list:
 
 @pytest_asyncio.fixture
 async def create_authors(create_test_session,
-                         create_countries,
-                         create_languages):
+                         create_languages,
+                         create_countries) -> list:
     authors_list = []
     list_countries = create_countries
     list_languages = create_languages

@@ -5,7 +5,6 @@ import pytest_asyncio
 
 from managers.reading import ReadingDataManager
 from models import ReadingModel
-from tests.mocks.item import create_item
 
 
 @pytest_asyncio.fixture

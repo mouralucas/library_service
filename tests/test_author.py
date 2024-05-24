@@ -1,8 +1,6 @@
 import pytest
 from fastapi import status
 
-from tests.mocks.core import create_authors, create_countries
-
 
 @pytest.mark.asyncio
 async def test_create_author_fail(client):

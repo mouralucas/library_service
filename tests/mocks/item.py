@@ -4,7 +4,6 @@ import pytest_asyncio
 
 from managers.item import ItemManager
 from models import ItemModel
-from tests.mocks.core import create_languages
 
 
 @pytest_asyncio.fixture

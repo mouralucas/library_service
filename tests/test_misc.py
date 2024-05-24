@@ -1,10 +1,5 @@
 import pytest
-import pytest_asyncio
 from fastapi import status
-
-from managers.core import LanguageManager, CountryManager
-from models import LanguageModel, CountryModel
-from tests.mocks.core import create_collections, create_series, create_countries, create_languages, create_publisher
 
 
 @pytest.mark.asyncio
