@@ -54,3 +54,7 @@ class AuthorSchema(BaseModel):
 
     id: int = Field(..., serialization_alias="authorId", description="Unique id of the author")
     name: str = Field(..., serialization_alias="authorName", description="The name of the author")
+    country_id: str | None = Field(None, serialization_alias="countryId", description="The country id of the author")
+    country: CountrySchema | None = Field(None, serialization_alias="country", description="The country of the author")
+    language_id: str | None = Field(None, serialization_alias="languageId", description="The language id of the author")
+    language: LanguageSchema | None = Field(None, serialization_alias="language", description="The language of the author")
