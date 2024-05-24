@@ -16,7 +16,7 @@ class LanguageService(BaseService):
         super().__init__(session)
 
     async def create_language(self, language: CreateLanguageRequest) -> CreateLanguageResponse:
-        new_language = await LanguageManager(session=self.session).create_language(LanguageModel(**language.dict()))
+        new_language = await LanguageManager(session=self.session).create_language(LanguageModel(**language.model_dump()))
 
         response = CreateLanguageResponse(
             status_code=status.HTTP_201_CREATED,
@@ -44,7 +44,7 @@ class CountryService(BaseService):
         super().__init__(session)
 
     async def create_country(self, country: CreateCountryRequest) -> CreateCountryResponse:
-        new_country = await CountryManager(session=self.session).create_country(CountryModel(**country.dict()))
+        new_country = await CountryManager(session=self.session).create_country(CountryModel(**country.model_dump()))
 
         response = CreateCountryResponse(
             status_code=status.HTTP_201_CREATED,
@@ -70,7 +70,7 @@ class SerieService(BaseService):
         super().__init__(session)
 
     async def create_serie(self, serie: CreateSerieRequest) -> CreateSerieResponse:
-        new_serie = await SerieManager(session=self.session).create_serie(SerieModel(**serie.dict()))
+        new_serie = await SerieManager(session=self.session).create_serie(SerieModel(**serie.model_dump()))
 
         response = CreateSerieResponse(
             status_code=status.HTTP_201_CREATED,
@@ -96,7 +96,7 @@ class CollectionService(BaseService):
         super().__init__(session)
 
     async def create_collection(self, collection: CreateCollectionRequest) -> CreateCollectionResponse:
-        new_collection = await CollectionManager(session=self.session).create_collection(CollectionModel(**collection.dict()))
+        new_collection = await CollectionManager(session=self.session).create_collection(CollectionModel(**collection.model_dump()))
 
         response = CreateCollectionResponse(
             status_code=status.HTTP_201_CREATED,
@@ -122,7 +122,7 @@ class PublisherService(BaseService):
         super().__init__(session)
 
     async def create_publisher(self, publisher: CreatePublisherRequest) -> CreatePublisherResponse:
-        new_publisher = await PublisherManager(session=self.session).create_publisher(PublisherModel(**publisher.dict()))
+        new_publisher = await PublisherManager(session=self.session).create_publisher(PublisherModel(**publisher.model_dump()))
 
         response = CreatePublisherResponse(
             status_code=status.HTTP_201_CREATED,

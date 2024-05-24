@@ -14,7 +14,7 @@ class AuthorService(BaseService):
         super().__init__(session=session)
 
     async def create_author(self, author: CreateAuthorRequest) -> CreateAuthorResponse:
-        new_author = await AuthorManager(session=self.session).create_author(AuthorModel(**author.dict()))
+        new_author = await AuthorManager(session=self.session).create_author(AuthorModel(**author.model_dump()))
 
         response = CreateAuthorResponse(
             status_code=status.HTTP_201_CREATED,
