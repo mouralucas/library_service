@@ -32,9 +32,9 @@ class BaseDataManager:
         :Created by: Lucas Penha de Moura - 28/04/2024
             Update one item from a model
 
-            Params:
-                sql_statement : An Executable SQLAlchemy statement - Must be update
-                raise_exception : If true, raise an exception if no data is found, if false, return None
+        :Params:
+            sql_statement: An Executable SQLAlchemy statement - Must be update
+            model: A SQLAlchemy model
         """
         if not sql_statement.is_update:
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED)
@@ -48,7 +48,6 @@ class BaseDataManager:
 
         return model
 
-    # TODO: maybe add kwargs to simplify params
     async def get_first(self, sql_statement: Executable,
                         raise_exception: bool = False) -> BaseModel | None:
         """
@@ -56,10 +55,10 @@ class BaseDataManager:
         :Created by: Lucas Penha de Moura - 19/02/2024
             Similar to get_only_one, but if none is found can return None or raise an exception, if more than one is found return first element
 
-            Params:
-                select_stmt : An Executable SQLAlchemy statement, usually "select"
-                schema : The Pydantic model class to convert the result
-                raise_exception : If true, raise an exception if no data is found, if false, return None
+        :Params:
+            select_stmt : An Executable SQLAlchemy statement, usually "select"
+            schema : The Pydantic model class to convert the result
+            raise_exception : If true, raise an exception if no data is found, if false, return None
         """
         result = await self.session.execute(sql_statement)
         result = result.scalar()
@@ -76,10 +75,10 @@ class BaseDataManager:
 
             Get one register, and one only, if none or more than one is found raise an exception
 
-            Params:
-                select_stmt : An Executable SQLAlchemy statement, usually "select"
-                schema : The Pydantic model class to convert the result
-                return_db_model : If true, return the result from database, without converto to Pydantic class
+        :Params:
+            select_stmt : An Executable SQLAlchemy statement, usually "select"
+            schema : The Pydantic model class to convert the result
+            return_db_model : If true, return the result from database, without converto to Pydantic class
         """
         try:
             result = await self.session.execute(select_stmt)
@@ -100,10 +99,10 @@ class BaseDataManager:
 
             Get one register, and one only, if none or more than one is found raise an exception
 
-            Params:
-                select_stmt : An Executable SQLAlchemy statement, usually "select"
-                unique_result: If true, apply unique to the query, used when query contains joins ***(investigate reason)***
-                raise_exception : If true, raise an exception if no data is found, if false, return None
+        :Params:
+            select_stmt : An Executable SQLAlchemy statement, usually "select"
+            unique_result: If true, apply unique to the query, used when query contains joins ***(investigate reason)***
+            raise_exception : If true, raise an exception if no data is found, if false, return None
         """
         result = await self.session.scalars(select_stmt)
         if unique_result:
