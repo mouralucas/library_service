@@ -44,6 +44,9 @@ async def test_get_item(client, create_item):
     items = create_item
     items_list_len = len(items)
 
+    title = items[0].title
+    pages = items[0].pages
+
     response = await client.get('/item')
 
     assert response.status_code == status.HTTP_200_OK
@@ -51,3 +54,5 @@ async def test_get_item(client, create_item):
     assert 'items' in data
     assert type(data['items']) is list
     assert len(data['items']) == items_list_len
+    assert data['items'][0]['title'] == title
+    assert data['items'][0]['pages'] == pages

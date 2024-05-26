@@ -1,6 +1,7 @@
 import pytest
 from fastapi import status
 
+
 @pytest.mark.asyncio
 async def test_get_reading(client, create_reading):
     param = {
@@ -70,3 +71,31 @@ async def test_get_active_readings(client):
 
     response_json = response.json()
     print(response_json)
+
+
+@pytest.mark.asyncio
+async def test_create_progress(client, create_reading):
+    readings = create_reading
+
+    reading_id = readings[0].id
+    current_page = 37
+
+    item = readings[0].item
+    total_pages = item.pages
+    percentage = int(current_page / total_pages * 100)
+
+    payload = {
+        'readingId': str(reading_id),
+        'page': current_page
+    }
+    response = await client.post("/reading/progress", json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+
+    assert data['success'] is True
+    assert 'progress' in data
+    assert 'page' in data['progress']
+    assert 'percentage' in data['progress']
+    assert data['progress']['page'] == current_page
+    assert data['progress']['percentage'] == percentage

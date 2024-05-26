@@ -19,12 +19,12 @@ class GetActiveReadingsResponse(SuccessResponseBase):
     readings: list[ReadingSchema]
 
 
-class CreateProgressionResponse(SuccessResponseBase):
+class CreateProgressResponse(SuccessResponseBase):
     progress: ProgressSchema = Field(..., description="The reading progress information")
 
 
-class CreateProgressResponse(SuccessResponseBase):
-    currentReadingProgress: ProgressSchema = Field(..., description="The current reading progress for an item")
+# class CreateProgressResponse(SuccessResponseBase):
+#     currentReadingProgress: ProgressSchema = Field(..., description="The current reading progress for an item")
 
 
 class GetProgressResponse(SuccessResponseBase):

@@ -30,6 +30,7 @@ async def create_item(create_test_session, create_languages,
         collection_id=collections[0].id,
         owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
         last_status_id=status[0].id,
+        pages=370,
     )
     item_1 = await ItemManager(session=create_test_session).create_item(item)
 

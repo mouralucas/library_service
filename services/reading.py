@@ -119,7 +119,7 @@ class ReadingService(BaseService):
         response = CreateProgressResponse(
             success=True,
             status_code=status.HTTP_201_CREATED,
-            currentReadingProgress=new_entry
+            progress=new_entry
         )
 
         return response

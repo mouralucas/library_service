@@ -36,5 +36,5 @@ class ReadingSchema(BaseModel):
 
     def transform(self):
         self.item_title = self.item.title
-        # Add transformation needed
+        # Add transformation as needed
         return self
