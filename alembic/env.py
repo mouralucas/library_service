@@ -29,7 +29,6 @@ target_metadata = models.base.Base.metadata
 def get_url():
     # TODO, if it works use settings dict
     return settings.database_url
-    # return 'postgresql+asyncpg://lucas:ezt710sh@67.205.180.83:5432/library_qa'
 
 
 def run_migrations_offline() -> None:
