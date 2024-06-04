@@ -103,11 +103,16 @@ async def test_create_progress(client, create_reading):
 
 @pytest.mark.asyncio
 async def test_get_progress(client, create_progress):
-    response = await client.get("/reading/progress")
+    progress = create_progress
+
+    payload = {
+        'readingId': progress[0].reading_id,
+    }
+    response = await client.get("/reading/progress", params=payload)
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    assert 'progress' in data
-    assert type(data['progress']) is list
+    assert 'readingProgress' in data
+    assert type(data['readingProgress']) is list
     # assert 'page' in data['progress']
     # assert 'percentage' in data['progress']

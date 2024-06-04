@@ -17,10 +17,10 @@ class ItemManager(BaseDataManager):
 
         return new_item
 
-    async def get_item_by_id(self, item_id: int) -> BaseModel | None:
+    async def get_item_by_id(self, item_id: int) -> SQLModel | None:
         stmt = select(ItemModel).where(ItemModel.id == item_id)
 
-        item: BaseModel = await self.get_only_one(stmt)
+        item: SQLModel = await self.get_only_one(stmt)
 
         return item
 
