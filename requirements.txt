@@ -5,6 +5,8 @@ uvicorn==0.22.0
 sqlalchemy[asyncio]==2.0.15
 asyncpg==0.29.0
 starlette==0.36.3
+httpx==0.24.1
+git+https://github.com/mouralucas/rolf_common.git@main#egg=rolf_common
 
 
 #Database
@@ -16,5 +18,3 @@ aiosqlite==0.20.0
 # tests
 pytest==7.3.1
 pytest-asyncio==0.21.0
-httpx==0.24.1
-pydantic~=2.6.1

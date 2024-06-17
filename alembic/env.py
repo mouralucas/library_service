@@ -6,7 +6,7 @@ from asyncpg import Connection
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-import models.base
+import rolf_common.models
 from backend.settings import settings
 
 ''
@@ -19,7 +19,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = models.base.Base.metadata
+target_metadata = rolf_common.models.Base.metadata
 
 
 # other values from the config, defined by the needs of env.py,

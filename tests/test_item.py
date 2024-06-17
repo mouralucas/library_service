@@ -2,7 +2,6 @@ import pytest
 from fastapi import status
 
 
-
 @pytest.mark.asyncio
 async def test_create_item_success(client, create_languages, create_series, create_status,
                                    create_publisher, create_collections, create_authors):
@@ -30,7 +29,9 @@ async def test_create_item_success(client, create_languages, create_series, crea
         'collectionId': collections[0].id,
         'lastStatusId': list_status[0].id,
     }
-    response = await client.post('/item', json=payload)
+
+    headers = {"Authorization": "Bearer MYREALLYLONGTOKENIGOT"}
+    response = await client.post('/item', json=payload, headers=headers)
 
     assert response.status_code == status.HTTP_201_CREATED
 

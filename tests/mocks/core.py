@@ -1,7 +1,7 @@
 import pytest_asyncio
 
 from managers.author import AuthorManager
-from managers.base import BaseDataManager
+from rolf_common.managers import BaseDataManager
 from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager
 from models import LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel, AuthorModel, StatusModel
 

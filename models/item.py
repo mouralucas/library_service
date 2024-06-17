@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models.core import (LanguageModel, StatusModel, CountryModel, AuthorModel,
                          SerieModel, CollectionModel, PublisherModel)
-from models.base import SQLModel
+from rolf_common.models import SQLModel
 
 
 # TODO: remove all selectin after tests

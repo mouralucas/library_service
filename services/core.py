@@ -8,7 +8,7 @@ from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionS
 from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest
 from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, GetCollectionResponse, CreateCollectionResponse, CreatePublisherResponse, \
     GetPublisherResponse
-from services.base import BaseService
+from rolf_common.services import BaseService
 
 
 class LanguageService(BaseService):

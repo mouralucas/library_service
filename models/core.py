@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import ForeignKey
 
-from models.base import SQLModel
+from rolf_common.models import SQLModel
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 

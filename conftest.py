@@ -7,7 +7,7 @@ from httpx import AsyncClient
 from backend.database import db_session
 from backend.database import test_sessionmanager
 from main import app
-from models.base import Base
+from rolf_common.models import Base
 
 # The mocks imports cannot be removed, they let all fixtures be available globally
 from tests.mocks.core import *

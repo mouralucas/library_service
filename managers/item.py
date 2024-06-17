@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from managers.base import BaseDataManager
+from rolf_common.managers import BaseDataManager
 from models import SQLModel
 from models.item import ItemModel
 from schemas.request.item import CreateItemRequest

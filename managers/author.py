@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from managers.base import BaseDataManager
+from rolf_common.managers import BaseDataManager
 from models import SQLModel, AuthorModel
 
 

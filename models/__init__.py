@@ -1,4 +1,4 @@
-from models.base import Base
+from rolf_common.models import Base
 
 from models.core import *
 from models.item import *

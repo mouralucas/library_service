@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
-from models.base import SQLModel
+from rolf_common.models import SQLModel
 from models.core import StatusModel
 from models.item import ItemModel
 

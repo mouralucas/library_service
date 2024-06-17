@@ -5,8 +5,8 @@ from pydantic import BaseModel
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from managers.base import BaseDataManager
-from models.base import SQLModel
+from rolf_common.managers import BaseDataManager
+from rolf_common.models import SQLModel
 from models.reading import ReadingModel, ReadingProgressModel
 
 
