@@ -9,6 +9,9 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 import rolf_common.models
 from backend.settings import settings
 
+from models.core import *
+from models.item import *
+from models.reading import *
 ''
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

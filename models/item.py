@@ -15,8 +15,8 @@ class ItemModel(SQLModel):
 
     id: Mapped[int] = mapped_column('id', primary_key=True)
     owner_id: Mapped[uuid.UUID]
-    isbn_formatted: Mapped[int] = mapped_column('isbn_formatted', nullable=True)
-    isbn10_formatted: Mapped[int] = mapped_column('isbn10_formatted', nullable=True)
+    isbn: Mapped[str] = mapped_column('isbn', nullable=True)
+    isbn10: Mapped[str] = mapped_column('isbn10', nullable=True)
 
     title: Mapped[str]
     title_original: Mapped[str] = mapped_column('title_original', nullable=True)
@@ -44,8 +44,7 @@ class ItemModel(SQLModel):
     last_status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
     last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='selectin')
     last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
-    # status at
-    # log status
+
     cover_price: Mapped[float] = mapped_column('cover_price', default=0)
     paid_price: Mapped[float] = mapped_column('paid_price', default=0)
 

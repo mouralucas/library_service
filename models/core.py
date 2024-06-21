@@ -21,7 +21,7 @@ class LanguageModel(SQLModel):
 
     id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str]
-    code: Mapped[str]
+    code: Mapped[str] = mapped_column(nullable=True)
 
 
 class CountryModel(SQLModel):

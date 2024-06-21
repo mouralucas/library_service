@@ -1,8 +1,8 @@
-"""Initial commit
+"""Initial migrate
 
-Revision ID: 5167690a748a
+Revision ID: ab213cc9285a
 Revises: 
-Create Date: 2024-05-22 19:54:17.933841
+Create Date: 2024-06-21 11:39:26.319080
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '5167690a748a'
+revision: str = 'ab213cc9285a'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,8 +23,8 @@ def upgrade() -> None:
     op.create_table('collection',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -35,7 +35,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('continent', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -45,7 +45,7 @@ def upgrade() -> None:
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('code', sa.String(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -54,10 +54,10 @@ def upgrade() -> None:
     op.create_table('publisher',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('country_id', sa.String(), nullable=False),
-    sa.Column('parent_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('country_id', sa.String(), nullable=True),
+    sa.Column('parent_id', sa.Integer(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -66,10 +66,10 @@ def upgrade() -> None:
     op.create_table('serie',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('nm_original', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('country_id', sa.String(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('nm_original', sa.String(), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('country_id', sa.String(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -78,10 +78,10 @@ def upgrade() -> None:
     op.create_table('status',
     sa.Column('id', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=False),
-    sa.Column('order', sa.Integer(), nullable=False),
-    sa.Column('type', sa.String(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('order', sa.Integer(), nullable=True),
+    sa.Column('type', sa.String(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -90,34 +90,19 @@ def upgrade() -> None:
     op.create_table('author',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('fist_name', sa.String(), nullable=True),
+    sa.Column('first_name', sa.String(), nullable=True),
     sa.Column('last_name', sa.String(), nullable=True),
     sa.Column('birth_date', sa.Date(), nullable=True),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('country_id', sa.String(), nullable=True),
     sa.Column('language_id', sa.String(), nullable=True),
     sa.Column('is_translator', sa.Boolean(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['country_id'], ['country.id'], ),
     sa.ForeignKeyConstraint(['language_id'], ['language.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('reading',
-    sa.Column('owner_id', sa.Uuid(), nullable=False),
-    sa.Column('active', sa.Boolean(), nullable=False),
-    sa.Column('item_id', sa.Integer(), nullable=False),
-    sa.Column('start_date', sa.Date(), nullable=False),
-    sa.Column('finish_date', sa.Date(), nullable=True),
-    sa.Column('number', sa.Integer(), nullable=False),
-    sa.Column('status_id', sa.String(), nullable=False),
-    sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('edited_at', sa.DateTime(), nullable=True),
-    sa.Column('deleted_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['status_id'], ['status.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item',
@@ -149,11 +134,11 @@ def upgrade() -> None:
     sa.Column('height', sa.Float(), nullable=True),
     sa.Column('width', sa.Float(), nullable=True),
     sa.Column('thickness', sa.Float(), nullable=True),
-    sa.Column('summary', sa.String(), nullable=False),
-    sa.Column('observation', sa.String(), nullable=False),
+    sa.Column('summary', sa.String(), nullable=True),
+    sa.Column('observation', sa.String(), nullable=True),
     sa.Column('origin', sa.String(), nullable=False),
-    sa.Column('cover', sa.String(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('cover', sa.String(), nullable=True),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -165,6 +150,22 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['serie_id'], ['serie.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('reading',
+    sa.Column('owner_id', sa.Uuid(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
+    sa.Column('item_id', sa.Integer(), nullable=False),
+    sa.Column('start_date', sa.Date(), nullable=False),
+    sa.Column('finish_date', sa.Date(), nullable=True),
+    sa.Column('number', sa.Integer(), nullable=False),
+    sa.Column('status_id', sa.String(), nullable=False),
+    sa.Column('id', sa.Uuid(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('edited_at', sa.DateTime(), nullable=True),
+    sa.Column('deleted_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['item_id'], ['item.id'], ),
+    sa.ForeignKeyConstraint(['status_id'], ['status.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('reading_progress',
     sa.Column('reading_id', sa.Uuid(), nullable=False),
     sa.Column('date', sa.Date(), nullable=False),
@@ -173,7 +174,7 @@ def upgrade() -> None:
     sa.Column('rate', sa.Integer(), nullable=True),
     sa.Column('comment', sa.String(), nullable=True),
     sa.Column('id', sa.Uuid(), nullable=False),
-    sa.Column('status', sa.Boolean(), nullable=False),
+    sa.Column('active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('edited_at', sa.DateTime(), nullable=True),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
@@ -186,8 +187,8 @@ def upgrade() -> None:
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('reading_progress')
-    op.drop_table('item')
     op.drop_table('reading')
+    op.drop_table('item')
     op.drop_table('author')
     op.drop_table('status')
     op.drop_table('serie')

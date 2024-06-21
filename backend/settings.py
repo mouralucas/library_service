@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # Database and test settings
-    database_url: str = 'postgresql+asyncpg://dev-user:password@localhost:5432/dev_db'
+    database_url: str = 'postgresql+asyncpg://dev-user:password@localhost:5432/library_dev_db'
     test_database_url: str = 'sqlite+aiosqlite:///library_test.sqlite3'
     echo_sql: bool = False
     echo_test_sql: bool = True

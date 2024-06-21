@@ -2,19 +2,21 @@ version: '3'
 
 services:
   backend:
+    image: 'library_service_image'
     build: .
     ports:
       - "8035:8035"
     depends_on:
-      - "postgres"
+      - "pg_library_service"
 
-  postgres:
+  pg_library_service:
+    container_name: 'pg_library_service'
     image: postgres:15-alpine
     restart: always
     environment:
       POSTGRES_USER: dev-user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: dev_db
+      POSTGRES_DB: library_dev_db
     ports:
       - 5432:5432
     expose:
