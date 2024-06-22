@@ -75,3 +75,5 @@ class AuthorModel(SQLModel):
     language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
+
+    items: Mapped["ItemModel"] = relationship(secondary='item_author', back_populates='authors', lazy='selectin')

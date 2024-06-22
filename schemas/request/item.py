@@ -16,8 +16,8 @@ class CreateItemRequest(BaseModel):
     subtitle: str = Field(None, alias='subtitle', description='The subtitle of the item')
     title_original: str = Field(None, alias='originalTitle', description='The original title of the item')
     subtitle_original: str = Field(None, alias='originalSubtitle', description='The original subtitle of the item')
-    isbn_formatted: str = Field(None, alias='isbn', description='The ISBN of the item')  # TODO: change name in database
-    isbn10_formatted: str = Field(None, alias='isbn10', description='The ISBN 10 of the item')
+    isbn: str = Field(None, alias='isbn', description='The ISBN of the item')  # TODO: change name in database
+    isbn10: str = Field(None, alias='isbn10', description='The ISBN 10 of the item')
     type: str = Field(None, alias='itemType', description='The type of the item')  # maybe Id?
     pages: int = Field(0, alias='pages', description='The number of pages of the item')
     volume: int = Field(0, alias='volume', description='The volume of the item')

@@ -59,3 +59,15 @@ class ItemModel(SQLModel):
     origin: Mapped[str] = mapped_column('origin', default='SYSTEM')
 
     cover: Mapped[str] = mapped_column('cover', nullable=True)
+
+    # Relations
+    authors: Mapped[list['AuthorModel']] = relationship(secondary='item_author', back_populates='items', lazy='selectin')
+
+
+class ItemAuthorModel(SQLModel):
+    __tablename__ = "item_author"
+
+    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'), primary_key=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey('author.id'), primary_key=True)
+    is_main: Mapped[bool] = mapped_column('is_main', default=True)
+    is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
