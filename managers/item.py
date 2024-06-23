@@ -3,9 +3,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from rolf_common.managers import BaseDataManager
-from models import SQLModel
-from models.item import ItemModel
+from models import SQLModel, StatusModel
+from models.item import ItemModel, ItemStatusModel
 from schemas.request.item import CreateItemRequest
+from datetime import datetime
 
 
 class ItemManager(BaseDataManager):
@@ -30,3 +31,11 @@ class ItemManager(BaseDataManager):
         items: list[SQLModel] = await self.get_all(stmt, unique_result=True)
 
         return items
+
+    async def get_item_status_history(self, item_id: int) -> list[SQLModel] | None:
+        stmt = select(ItemStatusModel).where(ItemStatusModel.item_id == item_id).order_by(ItemStatusModel.date.desc())
+
+        item_status = await self.get_all(stmt)
+
+        return item_status
+

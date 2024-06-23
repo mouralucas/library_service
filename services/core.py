@@ -141,3 +141,11 @@ class PublisherService(BaseService):
         )
 
         return response
+
+
+class StatusService(BaseService):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    def get_status(self, status_type: str):
+        pass

@@ -1,6 +1,7 @@
 import contextlib
 from typing import Any, AsyncIterator
 
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncSession, create_async_engine, async_sessionmaker
 
 from backend.settings import settings
@@ -10,6 +11,13 @@ class DatabaseSessionManager:
     def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}, expire_on_commit: bool = True):
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine, expire_on_commit=expire_on_commit)
+
+        # Enable foreign key support for SQLite
+        # @event.listens_for(self._engine.sync_engine, "connect")
+        # def set_sqlite_pragma(dbapi_connection, connection_record):
+        #     cursor = dbapi_connection.cursor()
+        #     cursor.execute("PRAGMA foreign_keys=ON")
+        #     cursor.close()
 
     async def close(self):
         if self._engine is None:

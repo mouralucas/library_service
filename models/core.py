@@ -15,6 +15,8 @@ class StatusModel(SQLModel):
     order: Mapped[int] = mapped_column('order', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
 
+    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', back_populates='status', lazy='selectin')
+
 
 class LanguageModel(SQLModel):
     __tablename__ = "language"

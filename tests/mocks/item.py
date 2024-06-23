@@ -8,13 +8,13 @@ from models import ItemModel
 
 @pytest_asyncio.fixture
 async def create_item(create_test_session, create_languages,
-                      create_series, create_publisher, create_collections, create_authors, create_status):
+                      create_series, create_publisher, create_collections, create_authors, create_item_status):
     language = create_languages
     series = create_series
     publisher = create_publisher
     collections = create_collections
     authors = create_authors
-    status = create_status
+    status = create_item_status
 
     item_list = []
 

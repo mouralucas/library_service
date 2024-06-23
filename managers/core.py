@@ -1,7 +1,8 @@
+from rolf_common.managers import BaseDataManager
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from rolf_common.managers import BaseDataManager
-from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel, PublisherModel
+from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel, PublisherModel, StatusModel
 
 
 class LanguageManager(BaseDataManager):
@@ -92,3 +93,15 @@ class PublisherManager(BaseDataManager):
         new_publisher = await self.add_one(publisher)
 
         return new_publisher
+
+
+class StatusManager(BaseDataManager):
+    def __init__(self, session: AsyncSession):
+        super().__init__(session)
+
+    async def get_status(self, status_type: str) -> SQLModel:
+        stmt = select(StatusModel).where(StatusModel.type == status_type)
+
+        status: SQLModel = await self.get_only_one(stmt)
+
+        return status

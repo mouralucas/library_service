@@ -62,6 +62,7 @@ class ItemModel(SQLModel):
 
     # Relations
     authors: Mapped[list['AuthorModel']] = relationship(secondary='item_author', back_populates='items', lazy='selectin')
+    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', back_populates='items', lazy='selectin')
 
 
 class ItemAuthorModel(SQLModel):
@@ -71,3 +72,15 @@ class ItemAuthorModel(SQLModel):
     author_id: Mapped[int] = mapped_column(ForeignKey('author.id'), primary_key=True)
     is_main: Mapped[bool] = mapped_column('is_main', default=True)
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
+
+
+class ItemStatusModel(SQLModel):
+    __tablename__ = 'item_status'
+
+    status_id: Mapped[str] = mapped_column(ForeignKey('status.id'), primary_key=True)
+    status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id], lazy='selectin')
+
+    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'), primary_key=True)
+    item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
+
+    date: Mapped[datetime.date] = mapped_column('date')

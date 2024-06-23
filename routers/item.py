@@ -19,9 +19,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_item(item: CreateItemRequest,
-                      session: AsyncSession = Depends(db_session),
-                      user_id: uuid.UUID = Security(get_user)):
-    print(user_id)
+                      session: AsyncSession = Depends(db_session)):
+                      # user_id: uuid.UUID = Security(get_user)):
     response = await ItemService(session=session).create_item(item)
 
     return response
