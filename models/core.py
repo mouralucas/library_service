@@ -15,7 +15,7 @@ class StatusModel(SQLModel):
     order: Mapped[int] = mapped_column('order', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
 
-    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', back_populates='status', lazy='selectin')
+    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', lazy='selectin', viewonly=True)
 
 
 class LanguageModel(SQLModel):
@@ -78,4 +78,4 @@ class AuthorModel(SQLModel):
     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
 
-    items: Mapped["ItemModel"] = relationship(secondary='item_author', back_populates='authors', lazy='selectin')
+    items: Mapped["ItemModel"] = relationship('ItemModel', secondary='item_author', viewonly=True, lazy='selectin')

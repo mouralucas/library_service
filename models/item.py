@@ -1,12 +1,12 @@
-import uuid
 import datetime
+import uuid
 
+from rolf_common.models import SQLModel
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.core import (LanguageModel, StatusModel, CountryModel, AuthorModel,
+from models.core import (LanguageModel, StatusModel, AuthorModel,
                          SerieModel, CollectionModel, PublisherModel)
-from rolf_common.models import SQLModel
 
 
 # TODO: remove all selectin after tests
@@ -61,15 +61,19 @@ class ItemModel(SQLModel):
     cover: Mapped[str] = mapped_column('cover', nullable=True)
 
     # Relations
-    authors: Mapped[list['AuthorModel']] = relationship(secondary='item_author', back_populates='items', lazy='selectin')
-    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', back_populates='items', lazy='selectin')
+    authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='selectin', viewonly=True)
+    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='selectin', viewonly=True)
 
 
 class ItemAuthorModel(SQLModel):
     __tablename__ = "item_author"
 
     item_id: Mapped[int] = mapped_column(ForeignKey('item.id'), primary_key=True)
+    item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
+
     author_id: Mapped[int] = mapped_column(ForeignKey('author.id'), primary_key=True)
+    author: Mapped['AuthorModel'] = relationship(foreign_keys=[author_id], lazy='selectin')
+
     is_main: Mapped[bool] = mapped_column('is_main', default=True)
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
 

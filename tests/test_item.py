@@ -29,6 +29,7 @@ async def test_create_item_success(client, create_languages, create_series, crea
         'serieId': series[0].id,
         'collectionId': collections[0].id,
         'lastStatusId': list_status[0].id,
+        'lastStatusDate': '2024-06-01'
     }
 
     headers = {"Authorization": "Bearer MYREALLYLONGTOKENIGOT"}

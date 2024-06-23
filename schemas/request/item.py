@@ -9,7 +9,7 @@ class CreateItemRequest(BaseModel):
     id: int = Field(None, alias="itemId", description="Id of the item")
     owner_id: uuid.UUID = Field(uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"), alias="ownerId", description="Id of the owner")
     last_status_id: str = Field(None, alias="lastStatusId", description="Id of the last status of the item")
-    last_status_date: datetime.date = Field(None, alias="lastStatusDate", description="Date of the last status of the item")
+    last_status_date: datetime.date = Field(..., alias="lastStatusDate", description="Date of the last status of the item")
     main_author_id: int = Field(None, alias='mainAuthorId', description='The id of the main author of the item')
     other_authors_id: list[int] = Field(None, alias='otherAuthorsId', description='The ids of other authors of the item')
     title: str = Field(..., alias='title', description='The name of the item')

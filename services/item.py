@@ -1,18 +1,12 @@
-from typing import Any
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from managers.core import StatusManager
 from managers.item import ItemManager
-from models import SQLModel, ItemModel, ItemStatusModel
+from models import SQLModel, ItemModel, ItemStatusModel, ItemAuthorModel
 from schemas.item import ItemSchema
 from schemas.request.item import GetItemRequest, CreateItemRequest
 from schemas.response.item import GetItemResponse, CreateItemResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from services.base import BaseService
-
-from datetime import datetime
 
 
 class ItemService(BaseService):
@@ -23,6 +17,7 @@ class ItemService(BaseService):
         new_item = await ItemManager(session=self.session).create_item(ItemModel(**item.model_dump(exclude={'other_authors_id'})))
 
         await self.__update_status(new_item)
+        await self.__add_author(item_id=new_item.id, main_author_id=item.main_author_id, other_authors_id=item.other_authors_id)
 
         response = CreateItemResponse(
             status_code=status.HTTP_201_CREATED,
@@ -43,6 +38,14 @@ class ItemService(BaseService):
         return response
 
     async def __update_status(self, item: SQLModel, is_update: bool = False):
+        """
+        :Name: __update_status
+        :Created by: Lucas Penha de Moura - 22/06/2024
+            Update the status history for a item
+
+        :Params:
+            serie: the ItemModel object
+        """
         status_history = await ItemManager(session=self.session).get_item_status_history(item.id)
 
         status_history = status_history[0] if status_history else None
@@ -56,3 +59,35 @@ class ItemService(BaseService):
             await ItemManager(session=self.session).add_one(new_status)
 
         return
+
+    async def __add_author(self, item_id, main_author_id: int, other_authors_id: list[int] = None):
+        """
+        :Name: __add_author
+        :Created by: Lucas Penha de Moura - 23/06/2024
+            Create the relation for item and authors.
+
+        :Params:
+            item_id: the id of the item
+            main_author_id: the id of the main author
+            other_authors_id: the ids of the other authors
+        """
+        main_author = ItemAuthorModel(
+            item_id=item_id,
+            author_id=main_author_id,
+        )
+        await ItemManager(session=self.session).add_one(main_author)
+
+        other_authors = []
+        for author_id in other_authors_id if other_authors_id else []:
+            author = ItemAuthorModel(
+                item_id=item_id,
+                author_id=author_id,
+                is_main=False
+            )
+            other_authors.append(author)
+
+        if other_authors:
+            await ItemManager(self.session).add_all(other_authors)
+
+        return
+
