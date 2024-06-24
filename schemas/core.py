@@ -12,8 +12,8 @@ class LanguageSchema(BaseModel):
 class StatusSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
-    name: str
+    id: str = Field(..., serialization_alias='statusId', description='The id of the status')
+    name: str = Field(..., serialization_alias='statusName', description='The name of the status')
 
 
 class CountrySchema(BaseModel):
@@ -43,6 +43,7 @@ class CollectionSchema(BaseModel):
 class PublisherSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int = Field(..., serialization_alias="publisherId", description="Unique identifier of the publisher")
     name: str = Field(..., serialization_alias="publisherName", description="The name of the publisher")
     description: str | None = Field(None, serialization_alias="description", description="The description of the publisher")
     country: CountrySchema | None = Field(None, serialization_alias="country", description="The country")
