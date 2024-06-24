@@ -24,7 +24,7 @@ class CreateItemRequest(BaseModel):
     edition: int = Field(1, alias='edition', description='The edition of the item')
     publication_date: datetime.date = Field(None, alias='publicationDate', description='The date of the publish')
     original_publication_date: datetime.date = Field(None, alias='originalPublicationDate', description='The date of the publish')
-    serie_id: int = Field(None, alias='serieId', description='The id of the serie')
+    serie_id: int = Field(0, alias='serieId', description='The id of the serie')
     collection_id: int = Field(0, alias='collectionId', description='The id of the collection')
     publisher_id: int = Field(None, alias='publisherId', description='The publisher of the item')
     format: str = Field(None, alias='itemFormatId', description='The id of the format')

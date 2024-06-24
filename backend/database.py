@@ -8,16 +8,18 @@ from backend.settings import settings
 
 
 class DatabaseSessionManager:
-    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}, expire_on_commit: bool = True):
+    def __init__(self, host: str, engine_kwargs: dict[str, Any] = {}, expire_on_commit: bool = True, test_db=False):
         self._engine = create_async_engine(host, **engine_kwargs)
         self._sessionmaker = async_sessionmaker(autocommit=False, bind=self._engine, expire_on_commit=expire_on_commit)
 
-        # Enable foreign key support for SQLite
-        # @event.listens_for(self._engine.sync_engine, "connect")
-        # def set_sqlite_pragma(dbapi_connection, connection_record):
-        #     cursor = dbapi_connection.cursor()
-        #     cursor.execute("PRAGMA foreign_keys=ON")
-        #     cursor.close()
+
+        if test_db:
+            # Enable foreign key support for SQLite only for tests
+            @event.listens_for(self._engine.sync_engine, "connect")
+            def set_sqlite_pragma(dbapi_connection, connection_record):
+                cursor = dbapi_connection.cursor()
+                cursor.execute("PRAGMA foreign_keys=ON")
+                cursor.close()
 
     async def close(self):
         if self._engine is None:
@@ -60,7 +62,7 @@ class DatabaseSessionManager:
 
 
 sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
-test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql}, expire_on_commit=False)
+test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql}, expire_on_commit=False, test_db=True)
 
 
 async def db_session():

@@ -122,8 +122,59 @@ async def test_create_item_success(client, create_languages, create_series, crea
 
 
 @pytest.mark.asyncio
-async def test_create_item_failure(client, create_languages, create_series, create_item_status, ):
-    pass
+async def test_create_item_without_non_required(client, create_languages, create_item_status, create_authors, create_series, create_collections):
+    item_title = "Test item"
+    item_subtitle = "Test subtitle"
+    item_original_title = "Test item original title"
+    item_original_subtitle = "Test item original subtitle"
+    pages = 756
+    last_status_date = '2024-06-01'
+    cover_price = 110.15
+    paid_price = 57.90
+
+    languages = create_languages
+    authors = create_authors
+    list_item_status = create_item_status
+
+    payload = {
+        'mainAuthorId': authors[0].id,
+        'title': item_title,
+        'subtitle': item_subtitle,
+        'originalTitle': item_original_title,
+        'originalSubtitle': item_original_subtitle,
+        'languageId': languages[0].id,
+        'lastStatusId': list_item_status[0].id,
+        'lastStatusDate': last_status_date,
+    }
+
+    headers = {"Authorization": "Bearer MYREALLYLONGTOKENIGOT"}
+    response = await client.post('/item', json=payload, headers=headers)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+
+    # Default publisher validation
+    assert 'publisherId' in data['item']
+    assert data['item']['publisher'] is None
+
+    # Default serie validation
+    assert 'serieId' in data['item']
+    assert data['item']['serieId'] == 0
+
+    # Default collection validation
+    assert 'collectionId' in data['item']
+    assert data['item']['collectionId'] == 0
+
+    # Default pages validation
+    assert 'pages' in data['item']
+    assert data['item']['pages'] == 0
+
+    # Default price validation
+    assert 'coverPrice' in data['item']
+    assert data['item']['coverPrice'] == 0.0
+
+    assert 'paidPrice' in data['item']
+    assert data['item']['paidPrice'] == 0.0
 
 
 @pytest.mark.asyncio

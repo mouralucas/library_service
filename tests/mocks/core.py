@@ -66,6 +66,9 @@ async def create_countries(create_test_session):
 async def create_series(create_test_session):
     series_list = []
 
+    serie = SerieModel(id=0, name='Default', description='Default serie')
+    serie_0 = await SerieManager(session=create_test_session).create_serie(serie)
+
     serie = SerieModel(name='Test serie', description='Test serie description')
     serie_1 = await SerieManager(session=create_test_session).create_serie(serie)
 
@@ -74,6 +77,7 @@ async def create_series(create_test_session):
 
     series_list.append(serie_1)
     series_list.append(serie_2)
+    series_list.append(serie_0)
 
     return series_list
 
@@ -81,6 +85,9 @@ async def create_series(create_test_session):
 @pytest_asyncio.fixture
 async def create_collections(create_test_session) -> list:
     collections_list = []
+
+    collection = CollectionModel(id=0, name='Default', description='Default collection')
+    collection_0 = await CollectionManager(session=create_test_session).create_collection(collection)
 
     collection = CollectionModel(name='Test collection', description='Test collection description')
     collection_1 = await CollectionManager(session=create_test_session).create_collection(collection)
@@ -90,6 +97,7 @@ async def create_collections(create_test_session) -> list:
 
     collections_list.append(collection_1)
     collections_list.append(collection_2)
+    collections_list.append(collection_0)
 
     return collections_list
 

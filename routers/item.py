@@ -17,7 +17,7 @@ router = APIRouter(prefix="/item")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@router.post('', status_code=status.HTTP_201_CREATED)
+@router.post('', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
 async def create_item(item: CreateItemRequest,
                       session: AsyncSession = Depends(db_session)):
                       # user_id: uuid.UUID = Security(get_user)):
