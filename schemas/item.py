@@ -27,7 +27,7 @@ class ItemSchema(BaseModel):
     serie: SerieSchema | None = Field(None, serialization_alias='serie', description='The series object of the item')
     collection_id: int = Field(..., serialization_alias='collectionId', description='The id of the collection')
     collection: CollectionSchema | None = Field(None, description='The collection object of the item')
-    publisher_id: int = Field(None, serialization_alias='publisherId', description='The id of the publisher')
+    publisher_id: int | None = Field(None, serialization_alias='publisherId', description='The id of the publisher')
     publisher: PublisherSchema | None = Field(None, description='The publisher of the item')
     format: str | None = Field(None, serialization_alias='itemFormat', description='The format of the item')
     language: LanguageSchema | None = Field(None, description='The language of the item')

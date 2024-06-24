@@ -4,9 +4,9 @@ from pydantic import BaseModel, Field, ConfigDict
 class LanguageSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
-    name: str
-    code: str
+    id: str = Field(..., serialization_alias='languageId', description='Unique language identifier')
+    name: str = Field(..., serialization_alias='languageName', description='Name of language')
+    code: str | None = Field(None, serialization_alias='languageCode', description='Code of language')
 
 
 class StatusSchema(BaseModel):
@@ -47,7 +47,7 @@ class PublisherSchema(BaseModel):
     name: str = Field(..., serialization_alias="publisherName", description="The name of the publisher")
     description: str | None = Field(None, serialization_alias="description", description="The description of the publisher")
     country: CountrySchema | None = Field(None, serialization_alias="country", description="The country")
-    parent_id: str | None = Field(None, serialization_alias="parentId", description="The parent of the publisher")
+    parent_id: int | None = Field(None, serialization_alias="parentId", description="The parent of the publisher")
 
 
 class AuthorSchema(BaseModel):
