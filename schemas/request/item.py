@@ -41,6 +41,8 @@ class CreateItemRequest(BaseModel):
     cover: str = Field('library/item/cover/no_cover.png', alias='cover', description='Cover of the item')
 
 
-@dataclass
-class GetItemRequest:
-    itemId: int = Query(None, title='Id do item', description="Identificação única do item na base de dados")
+# @dataclass
+class GetItemRequest(BaseModel):
+    # item_id: int = Query(None, alias='itemId', title='Item id', description="Unique identifier of the item")
+    # title: str = Query(None, title='Item title', description="Item title")
+    id: int = Field(Query(default=20, ge=1, le=500), alias='itemId')

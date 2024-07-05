@@ -27,7 +27,7 @@ class ItemService(BaseService):
         return response
 
     async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
-        items: list[SQLModel] = await ItemManager(self.session).get_items()
+        items: list[SQLModel] = await ItemManager(self.session).get_items(params)
 
         response = GetItemResponse(
             quantity=len(items) if items else 0,

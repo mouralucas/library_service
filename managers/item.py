@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from rolf_common.managers import BaseDataManager
 from models import SQLModel, StatusModel
 from models.item import ItemModel, ItemStatusModel
-from schemas.request.item import CreateItemRequest
+from schemas.request.item import CreateItemRequest, GetItemRequest
 from datetime import datetime
 
 
@@ -25,8 +25,15 @@ class ItemManager(BaseDataManager):
 
         return item
 
-    async def get_items(self) -> list[SQLModel] | None:
-        stmt = select(ItemModel).order_by(ItemModel.id)
+    async def get_items(self, params: GetItemRequest) -> list[SQLModel] | None:
+        stmt = select(ItemModel)
+
+        # param = p
+
+        for key, value in params.model_dump().items():
+            stmt = stmt.where(getattr(ItemModel, key) == value)
+
+        stmt = stmt.order_by(ItemModel.id)
 
         items: list[SQLModel] = await self.get_all(stmt, unique_result=True)
 

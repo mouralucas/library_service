@@ -26,7 +26,7 @@ async def create_item(item: CreateItemRequest,
     return response
 
 
-@router.get('', summary='Get all items', description='Get items based on passed filters', )
+@router.get('', summary='Get items', description='Get items based on passed filters', )
 async def get_items(params: GetItemRequest = Depends(),
                     session: AsyncSession = Depends(db_session)):
     response = await ItemService(session=session).get_items(params)
