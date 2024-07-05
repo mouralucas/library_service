@@ -28,10 +28,9 @@ class ItemManager(BaseDataManager):
     async def get_items(self, params: GetItemRequest) -> list[SQLModel] | None:
         stmt = select(ItemModel)
 
-        # param = p
-
         for key, value in params.model_dump().items():
-            stmt = stmt.where(getattr(ItemModel, key) == value)
+            if value:
+                stmt = stmt.where(getattr(ItemModel, key) == value)
 
         stmt = stmt.order_by(ItemModel.id)
 

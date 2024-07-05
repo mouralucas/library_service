@@ -43,6 +43,6 @@ class CreateItemRequest(BaseModel):
 
 # @dataclass
 class GetItemRequest(BaseModel):
-    # item_id: int = Query(None, alias='itemId', title='Item id', description="Unique identifier of the item")
-    # title: str = Query(None, title='Item title', description="Item title")
-    id: int = Field(Query(default=20, ge=1, le=500), alias='itemId')
+    id: int | None = Field(Query(None, ge=1), alias='itemId')
+    title: str | None = Field(Query(None, min_length=3), alias='title')
+    main_author_id: int | None = Field(Query(None), alias='mainAuthorId')

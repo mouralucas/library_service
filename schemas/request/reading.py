@@ -15,10 +15,10 @@ class CreateReadingRequest(BaseModel):
     is_dropped: bool = Field(False, alias='isDropped', description="Indicate if the user has dropped the item")
 
 
-@dataclass
-class GetReadingRequest:
-    item_id: int = Query(..., alias='itemId', description="The id of the item", summary="The id of the item")
-    get_progress: bool = Query(False, alias='getProgress', description="If true return all progress associated with each reading")
+# @dataclass
+class GetReadingRequest(BaseModel):
+    item_id: int = Field(Query(..., alias='itemId', description="The id of the item", summary="The id of the item"))
+    get_progress: bool = Field(Query(False, alias='getProgress', description="If true return all progress associated with each reading"))
 
 
 class CreateProgressRequest(BaseModel):

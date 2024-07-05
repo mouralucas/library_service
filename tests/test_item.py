@@ -178,7 +178,7 @@ async def test_create_item_without_non_required(client, create_languages, create
 
 
 @pytest.mark.asyncio
-async def test_get_item(client, create_item):
+async def test_get_all_items(client, create_item):
     items = create_item
     items_list_len = len(items)
 
@@ -194,3 +194,73 @@ async def test_get_item(client, create_item):
     assert len(data['items']) == items_list_len
     assert data['items'][0]['title'] == title
     assert data['items'][0]['pages'] == pages
+
+
+@pytest.mark.asyncio
+async def test_get_item_with_filter(client, create_item):
+    items = create_item
+
+    # Test if title exists
+    param = {
+        'title': items[0].title,
+    }
+    response = await client.get('/item', params=param)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'items' in data
+    assert 'quantity' in data
+    assert data['quantity'] == 1
+
+    assert data['items'][0]['title'] == items[0].title
+    assert data['items'][0]['pages'] == items[0].pages
+
+    # test if title does not exist
+    param = {
+        'title': "title not exists",
+    }
+    response = await client.get('/item', params=param)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'items' in data
+    assert 'quantity' in data
+    assert data['quantity'] == 0
+
+    # Test with id fiter
+    param = {
+        'itemId': items[0].id,
+    }
+    response = await client.get('/item', params=param)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'items' in data
+    assert 'quantity' in data
+    assert data['quantity'] == 1
+
+    assert data['items'][0]['itemId'] == items[0].id
+
+    # Test with id that not exists
+    param = {
+        'itemId': 1000,
+    }
+    response = await client.get('/item', params=param)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'items' in data
+    assert 'quantity' in data
+    assert data['quantity'] == 0
+
+    # Test with id off the range
+    param = {
+        'itemId': 0,
+    }
+    response = await client.get('/item', params=param)
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

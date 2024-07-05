@@ -17,9 +17,9 @@ async def test_create_language(client):
     data = response.json()
     assert response.status_code == status.HTTP_201_CREATED
     assert 'language' in data
-    assert data['language']['id'] == language_id
-    assert data['language']['name'] == name
-    assert data['language']['code'] == language_id
+    assert data['language']['languageId'] == language_id
+    assert data['language']['languageName'] == name
+    assert data['language']['languageCode'] == language_id
 
 
 @pytest.mark.asyncio
@@ -97,7 +97,12 @@ async def test_get_serie(client, create_series):
     assert 'series' in data
     assert type(data['series']) is list
     assert len(data['series']) == series_list_len
+
+    # Test Default serie
     assert data['series'][0]['serieName'] == series[0].name
+
+    # Test other created serie
+    assert data['series'][1]['serieName'] == series[1].name
 
 
 @pytest.mark.asyncio
@@ -132,7 +137,12 @@ async def test_get_collection(client, create_collections):
     assert 'collections' in data
     assert type(data['collections']) is list
     assert len(data['collections']) == collections_list_len
+
+    # Test default collection
     assert data['collections'][0]['collectionName'] == collections[0].name
+
+    # Test other created collection
+    assert data['collections'][1]['collectionName'] == collections[1].name
 
 
 @pytest.mark.asyncio

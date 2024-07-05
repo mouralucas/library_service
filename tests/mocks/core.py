@@ -27,6 +27,22 @@ async def create_item_status(create_test_session):
 
 
 @pytest_asyncio.fixture
+async def create_reading_status(create_test_session):
+    reading_status_list = []
+
+    status = StatusModel(id='reading', name='Lendo', type='READING.STATUS')
+    status_1 = await BaseDataManager(session=create_test_session).add_one(status)
+
+    status = StatusModel(id='read', name='Lido', type='READING.STATUS')
+    status_2 = await BaseDataManager(session=create_test_session).add_one(status)
+
+    reading_status_list.append(status_1)
+    reading_status_list.append(status_2)
+
+    return reading_status_list
+
+
+@pytest_asyncio.fixture
 async def create_languages(create_test_session):
     language_list = []
 
@@ -75,9 +91,9 @@ async def create_series(create_test_session):
     serie = SerieModel(name='Test serie 2', description='Test serie 2 description')
     serie_2 = await SerieManager(session=create_test_session).create_serie(serie)
 
+    series_list.append(serie_0)
     series_list.append(serie_1)
     series_list.append(serie_2)
-    series_list.append(serie_0)
 
     return series_list
 
@@ -95,9 +111,9 @@ async def create_collections(create_test_session) -> list:
     collection = CollectionModel(name='Test collection 2', description='Test collection 2 description')
     collection_2 = await CollectionManager(session=create_test_session).create_collection(collection)
 
+    collections_list.append(collection_0)
     collections_list.append(collection_1)
     collections_list.append(collection_2)
-    collections_list.append(collection_0)
 
     return collections_list
 

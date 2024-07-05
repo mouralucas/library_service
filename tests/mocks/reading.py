@@ -8,7 +8,7 @@ from models import ReadingModel, ReadingProgressModel
 
 
 @pytest_asyncio.fixture
-async def create_reading(create_test_session, create_item):
+async def create_reading(create_test_session, create_item, create_reading_status):
     item = create_item
     reading_list = []
 

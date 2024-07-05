@@ -18,7 +18,7 @@ class ItemModel(SQLModel):
     isbn: Mapped[str] = mapped_column('isbn', nullable=True)
     isbn10: Mapped[str] = mapped_column('isbn10', nullable=True)
 
-    title: Mapped[str]
+    title: Mapped[str] = mapped_column(index=True)
     title_original: Mapped[str] = mapped_column('title_original', nullable=True)
     subtitle: Mapped[str] = mapped_column('subtitle', nullable=True)
     subtitle_original: Mapped[str] = mapped_column('subtitle_original', nullable=True)

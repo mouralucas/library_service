@@ -25,7 +25,7 @@ async def test_get_reading(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_reading(client, create_item):
+async def test_create_reading(client, create_item, create_reading_status):
     items = create_item
     start_date = '2024-01-01'
     params = {
@@ -36,41 +36,49 @@ async def test_create_reading(client, create_item):
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    response_json = response.json()
+    data = response.json()
 
-    assert response_json['success'] is True
-    assert 'reading' in response_json
+    assert data['success'] is True
+    assert 'reading' in data
 
-    assert 'readingId' in response_json['reading']
-    assert response_json['reading']['readingId'] is not None
+    assert 'readingId' in data['reading']
+    assert data['reading']['readingId'] is not None
     # assert type(response_json['reading']['readingId']) is uuid.UUID
 
-    assert 'itemId' in response_json['reading']
-    assert response_json['reading']['itemId'] is not None
-    assert response_json['reading']['itemId'] == items[0].id
+    assert 'itemId' in data['reading']
+    assert data['reading']['itemId'] is not None
+    assert data['reading']['itemId'] == items[0].id
 
-    assert 'itemTitle' in response_json['reading']
-    assert response_json['reading']['itemTitle'] is not None
+    assert 'itemTitle' in data['reading']
+    assert data['reading']['itemTitle'] is not None
 
-    assert 'startDate' in response_json['reading']
-    assert response_json['reading']['startDate'] is not None
-    assert response_json['reading']['startDate'] == start_date
+    assert 'startDate' in data['reading']
+    assert data['reading']['startDate'] is not None
+    assert data['reading']['startDate'] == start_date
 
-    assert 'readingNumber' in response_json['reading']
-    assert response_json['reading']['readingNumber'] is not None
-    assert response_json['reading']['readingNumber'] == 1
+    assert 'readingNumber' in data['reading']
+    assert data['reading']['readingNumber'] is not None
+    assert data['reading']['readingNumber'] == 1
 
-    assert 'progress' in response_json['reading']
-    assert not response_json['reading']['progress']
-    assert type(response_json['reading']['progress']) is list
+    assert 'progress' in data['reading']
+    assert not data['reading']['progress']
+    assert type(data['reading']['progress']) is list
 
 
 @pytest.mark.asyncio
-async def test_get_active_readings(client):
+async def test_get_active_readings(client, create_reading):
     response = await client.get("/reading/active")
 
-    response_json = response.json()
-    print(response_json)
+    total_readings = len(create_reading)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'quantity' in data
+    assert data['quantity'] == total_readings
+
+    assert 'readings' in data
+    assert type(data['readings']) is list
 
 
 @pytest.mark.asyncio
