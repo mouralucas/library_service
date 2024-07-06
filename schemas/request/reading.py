@@ -39,6 +39,5 @@ class CreateProgressRequest(BaseModel):
         return data
 
 
-@dataclass
-class GetProgressRequest:
-    reading_id: uuid.UUID = Query(..., alias='readingId', description="The id of the reading")
+class GetProgressRequest(BaseModel):
+    reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))

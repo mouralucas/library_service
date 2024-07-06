@@ -7,6 +7,7 @@ from httpx import Request, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from schemas.response.item import GetItemResponse, CreateItemResponse
 from services.item import ItemService
 from backend.database import db_session
 from schemas.request.item import GetItemRequest, CreateItemRequest
@@ -19,7 +20,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
 async def create_item(item: CreateItemRequest,
-                      session: AsyncSession = Depends(db_session)):
+                      session: AsyncSession = Depends(db_session)) -> CreateItemResponse:
                       # user_id: uuid.UUID = Security(get_user)):
     response = await ItemService(session=session).create_item(item)
 
@@ -28,7 +29,7 @@ async def create_item(item: CreateItemRequest,
 
 @router.get('', summary='Get items', description='Get items based on passed filters', )
 async def get_items(params: GetItemRequest = Depends(),
-                    session: AsyncSession = Depends(db_session)):
+                    session: AsyncSession = Depends(db_session)) -> GetItemResponse:
     response = await ItemService(session=session).get_items(params)
 
     return response
