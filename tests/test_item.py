@@ -154,8 +154,7 @@ async def test_create_item_without_non_required(client, create_languages, create
     data = response.json()
 
     # Default publisher validation
-    assert 'publisherId' in data['item']
-    assert data['item']['publisher'] is None
+    assert 'publisherId' not in data['item']
 
     # Default serie validation
     assert 'serieId' in data['item']
