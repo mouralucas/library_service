@@ -19,6 +19,8 @@ class ItemService(BaseService):
         await self.__update_status(new_item)
         await self.__add_author(item_id=new_item.id, main_author_id=item.main_author_id, other_authors_id=item.other_authors_id)
 
+        await self.session.refresh(new_item)
+
         response = CreateItemResponse(
             status_code=status.HTTP_201_CREATED,
             item=ItemSchema.model_validate(new_item)
