@@ -41,6 +41,20 @@ class CreateItemRequest(BaseModel):
     cover: str = Field('library/item/cover/no_cover.png', alias='cover', description='Cover of the item')
 
 
+class UpdateItemRequest(CreateItemRequest):
+    # Is basically the same as "Create Item", but without default and required = true
+    # and id is required
+    id: int = Field(..., alias="itemId", description="Id of the item")
+    title: str | None = Field(None, alias='title', description='The name of the item')
+    last_status_date: datetime.date | None = Field(None, alias="lastStatusDate", description="Date of the last status of the item")
+    pages: int | None = Field(None, alias='pages', description='The number of pages of the item')
+    volume: int | None = Field(None, alias='volume', description='The volume of the item')
+    edition: int | None = Field(None, alias='edition', description='The edition of the item')
+    serie_id: int | None = Field(None, alias='serieId', description='The id of the serie')
+    collection_id: int | None = Field(None, alias='collectionId', description='The id of the collection')
+    cover: str = Field(None, alias='cover', description='Cover of the item')
+
+
 # @dataclass
 class GetItemRequest(BaseModel):
     id: int | None = Field(Query(None, ge=1), alias='itemId')

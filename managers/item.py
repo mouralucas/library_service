@@ -1,12 +1,13 @@
-from pydantic import BaseModel
+from typing import Any
+
+from sqlalchemy import select, update
+from rolf_common.managers import BaseDataManager
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from rolf_common.managers import BaseDataManager
-from models import SQLModel, StatusModel
+from models import SQLModel
 from models.item import ItemModel, ItemStatusModel
-from schemas.request.item import CreateItemRequest, GetItemRequest
-from datetime import datetime
+from schemas.request.item import GetItemRequest
 
 
 class ItemManager(BaseDataManager):
@@ -17,6 +18,17 @@ class ItemManager(BaseDataManager):
         new_item = await self.add_one(item)
 
         return new_item
+
+    async def update_item(self, item: SQLModel, fields: dict[str, Any]) -> SQLModel:
+        stmt = (
+            update(ItemModel)
+            .where(ItemModel.id == item.id)
+            .values(**fields)
+        )
+
+        updated_item = await ItemManager(session=self.session).update_one(sql_statement=stmt, model=item)
+
+        return updated_item
 
     async def get_item_by_id(self, item_id: int) -> SQLModel | None:
         stmt = select(ItemModel).where(ItemModel.id == item_id)

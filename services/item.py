@@ -1,10 +1,11 @@
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from managers.item import ItemManager
 from models import SQLModel, ItemModel, ItemStatusModel, ItemAuthorModel
 from schemas.item import ItemSchema
-from schemas.request.item import GetItemRequest, CreateItemRequest
+from schemas.request.item import GetItemRequest, CreateItemRequest, UpdateItemRequest
 from schemas.response.item import GetItemResponse, CreateItemResponse
 from services.base import BaseService
 
@@ -24,6 +25,22 @@ class ItemService(BaseService):
         response = CreateItemResponse(
             status_code=status.HTTP_201_CREATED,
             item=ItemSchema.model_validate(new_item)
+        )
+
+        return response
+
+    async def update_item(self, item: UpdateItemRequest) -> CreateItemResponse:
+        current_item = await ItemManager(self.session).get_item_by_id(item_id=item.id)
+
+        clean_item_fields = {}
+        for key, value in item.model_dump().items():
+            if value:
+                clean_item_fields[key] = value
+
+        updated_item = await ItemManager(session=self.session).update_item(current_item, fields=clean_item_fields)
+
+        response = CreateItemResponse(
+            item=ItemSchema.model_validate(updated_item)
         )
 
         return response

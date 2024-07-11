@@ -1,6 +1,6 @@
 import pytest
 from fastapi import status
-
+import copy
 
 @pytest.mark.asyncio
 async def test_create_item_success(client, create_languages, create_series, create_item_status,
@@ -174,6 +174,39 @@ async def test_create_item_without_non_required(client, create_languages, create
 
     assert 'paidPrice' in data['item']
     assert data['item']['paidPrice'] == 0.0
+
+
+@pytest.mark.asyncio
+async def test_update_item(client, create_item):
+    items = create_item
+
+    old_item = copy.deepcopy(items[0])
+    new_title = 'Updated title'
+    new_pages = 100
+
+    payload = {
+        'itemId': old_item.id,
+        'title': new_title,
+        'pages': new_pages
+    }
+    response = await client.patch('/item', json=payload)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'item' in data
+
+    assert 'itemId' in data['item']
+    assert data['item']['itemId'] == old_item.id
+
+    assert 'title' in data['item']
+    assert data['item']['title'] == new_title
+    assert data['item']['title'] != old_item.title
+
+    assert 'pages' in data['item']
+    assert data['item']['pages'] == new_pages
+    assert data['item']['pages'] != old_item.pages
+
 
 
 @pytest.mark.asyncio

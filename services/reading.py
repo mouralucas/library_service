@@ -1,6 +1,7 @@
 import datetime
 
 from fastapi import status, HTTPException
+from rolf_common.models import SQLModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -21,9 +22,6 @@ class ReadingService(BaseService):
         self.item_pages = None
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
-        """ TODO:
-                1: Check if the item already have a reading
-        """
         param = {
             'item_id': reading.item_id
         }
@@ -37,6 +35,9 @@ class ReadingService(BaseService):
         # The new reading cannot start before the last one finishes
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
+
+        if reading.finish_date:
+            pass
 
         # Change to ReadingModel(**reading)?
         new_reading = ReadingModel(
@@ -107,6 +108,7 @@ class ReadingService(BaseService):
             progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(last_progress, progress.page, progress.percentage), {'page': progress.page})
             new_entry = progress_updated
         else:
+            # TODO: add model dump
             new_progress_entry = ReadingProgressModel(
                 reading_id=reading.id,
                 date=datetime.datetime.now().date(),
@@ -136,7 +138,7 @@ class ReadingService(BaseService):
 
         return response
 
-    def __set_values(self, progress_entry: ReadingProgressModel, page, percentage):
+    def __set_values(self, progress_entry: ReadingProgressModel, page: int, percentage: int) -> SQLModel:
         if page is not None:
             perc = ((page / self.item_pages) * 100) if self.item_pages else 0
 

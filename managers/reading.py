@@ -19,7 +19,7 @@ class ReadingDataManager(BaseDataManager):
 
         return new_reading
 
-    async def get_reading_by_id(self, reading_id) -> SQLModel:
+    async def get_reading_by_id(self, reading_id) -> SQLModel | None:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
 
         reading: SQLModel = await self.get_only_one(stmt)
@@ -38,13 +38,13 @@ class ReadingDataManager(BaseDataManager):
 
         return readings
 
-    async def create_progress(self, progress: ReadingProgressModel) -> SQLModel:
+    async def create_progress(self, progress: SQLModel) -> SQLModel:
         new_progress = await self.add_one(progress)
 
         return new_progress
 
-    async def update_progress(self, progress: ReadingProgressModel, fields: dict[str, Any]) -> SQLModel:
-        fields['edited_at'] = datetime.datetime.utcnow()
+    async def update_progress(self, progress: SQLModel, fields: dict[str, Any]) -> SQLModel:
+        # fields['edited_at'] = datetime.datetime.utcnow()
         stmt = (
             update(ReadingProgressModel)
             .where(ReadingProgressModel.id == progress.id)
