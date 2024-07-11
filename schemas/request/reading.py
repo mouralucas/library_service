@@ -4,18 +4,24 @@ from dataclasses import dataclass
 from typing import Optional, Any
 
 from fastapi import Query
-from pydantic import BaseModel, Field, field_validator, ValidationInfo, model_validator
+from pydantic import BaseModel, Field, field_validator, ValidationInfo, model_validator, root_validator, ValidationError
 
 
 class CreateReadingRequest(BaseModel):
     owner_id: uuid.UUID = Field(uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"), alias="ownerId", description='The owner of the reading')
     item_id: int = Field(..., alias='itemId', description="The id of the item")
-    start_date: datetime.date = Field(..., alias='startDate', description="The date that the user start reading the item")
+    start_date: datetime.date = Field(None, alias='startDate', description="The date that the user start reading the item")
     finish_date: datetime.date = Field(None, alias='finishDate', description="The date that the user finish reading the item")
     is_dropped: bool = Field(False, alias='isDropped', description="Indicate if the user has dropped the item")
 
+    @model_validator(mode='before')
+    def check_reading_finished(cls, data: dict) -> dict:
+        if not data.get('startDate') and not data.get('finishDate'):
+            raise ValueError('start or finish date must be specified')
 
-# @dataclass
+        return data
+
+
 class GetReadingRequest(BaseModel):
     item_id: int = Field(Query(..., alias='itemId', description="The id of the item", summary="The id of the item"))
     get_progress: bool = Field(Query(False, alias='getProgress', description="If true return all progress associated with each reading"))
@@ -31,10 +37,10 @@ class CreateProgressRequest(BaseModel):
     @model_validator(mode='before')
     def check_mutual_exclusion(cls, data: dict) -> dict:
         if data.get('page') and data.get('percentage'):
-            raise ValueError('only page or percentage must be passed')
+            raise ValueError('only page or percentage must be specified')
 
         if not data.get('page') and not data.get('percentage'):
-            raise ValueError('page or percentage must be passed')
+            raise ValueError('page or percentage must be specified')
 
         return data
 

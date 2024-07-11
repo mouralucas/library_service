@@ -36,9 +36,6 @@ class ReadingService(BaseService):
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
-        if reading.finish_date:
-            pass
-
         # Change to ReadingModel(**reading)?
         new_reading = ReadingModel(
             owner_id=reading.owner_id,
@@ -46,8 +43,9 @@ class ReadingService(BaseService):
             number=len(previous_readings) + 1 if previous_readings else 1,
             start_date=reading.start_date,
             finish_date=reading.finish_date,
-            status_id='reading'  # maybe a param? If a param, update status column in Item model?
         )
+
+        new_reading.status_id = 'read' if reading.finish_date else 'reading'
 
         new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
         response = CreateReadingResponse(

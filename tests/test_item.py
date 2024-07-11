@@ -2,6 +2,7 @@ import pytest
 from fastapi import status
 import copy
 
+
 @pytest.mark.asyncio
 async def test_create_item_success(client, create_languages, create_series, create_item_status,
                                    create_publisher, create_collections, create_authors):
@@ -206,7 +207,6 @@ async def test_update_item(client, create_item):
     assert 'pages' in data['item']
     assert data['item']['pages'] == new_pages
     assert data['item']['pages'] != old_item.pages
-
 
 
 @pytest.mark.asyncio
