@@ -45,6 +45,8 @@ class ItemService(BaseService):
         if clean_item_fields.get('main_author_id') or clean_item_fields.get('other_authors_id'):
             pass
 
+        await self.session.refresh(updated_item)
+
         # TODO: add validation if author(s) or status were changed, if so add correspondent method
 
         response = CreateItemResponse(
