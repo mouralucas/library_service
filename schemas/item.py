@@ -10,7 +10,7 @@ class ItemSchema(BaseModel):
 
     id: int = Field(..., serialization_alias='itemId', description='The id of the item')
     main_author_id: int = Field(..., serialization_alias='mainAuthorId', description='The id of the main author')
-    main_author: AuthorSchema = Field(..., serialization_alias='mainAuthor', description='The author of the item')
+    main_author: AuthorSchema | None = Field(None, serialization_alias='mainAuthor', description='The author of the item')
     title: str = Field(..., description="The title of the item")
     subtitle: str | None = Field(None, description='The subtitle of the item, if exists')
     original_title: str = Field(None, serialization_alias='originalTitle', description="The original title of the item")

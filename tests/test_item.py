@@ -184,11 +184,15 @@ async def test_update_item(client, create_item):
     old_item = copy.deepcopy(items[0])
     new_title = 'Updated title'
     new_pages = 100
+    new_status_id = 'bought'
+    new_last_status_date = '2024-07-12'
 
     payload = {
         'itemId': old_item.id,
         'title': new_title,
-        'pages': new_pages
+        'pages': new_pages,
+        'lastStatusId': new_status_id,
+        'lastStatusDate': new_last_status_date,
     }
     response = await client.patch('/item', json=payload)
 

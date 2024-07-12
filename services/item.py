@@ -39,6 +39,14 @@ class ItemService(BaseService):
 
         updated_item = await ItemManager(session=self.session).update_item(current_item, fields=clean_item_fields)
 
+        if clean_item_fields.get('last_status_id'):
+            await self.__update_status(updated_item)
+
+        if clean_item_fields.get('main_author_id') or clean_item_fields.get('other_authors_id'):
+            pass
+
+        # TODO: add validation if author(s) or status were changed, if so add correspondent method
+
         response = CreateItemResponse(
             item=ItemSchema.model_validate(updated_item)
         )
@@ -69,7 +77,7 @@ class ItemService(BaseService):
 
         status_history = status_history[0] if status_history else None
 
-        if not status_history or status_history.status_id != item.last_status_id:
+        if not status_history or (status_history.status_id != item.last_status_id):
             new_status = ItemStatusModel(
                 item_id=item.id,
                 status_id=item.last_status_id,

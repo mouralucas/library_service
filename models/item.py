@@ -27,22 +27,22 @@ class ItemModel(SQLModel):
     original_publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     edition: Mapped[int] = mapped_column('edition', default=1)
     serie_id: Mapped[int] = mapped_column(ForeignKey('serie.id'), nullable=True)
-    serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='selectin')
+    serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='noload')
     language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
-    language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
+    language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='noload')
     # # cover
     volume: Mapped[int] = mapped_column('volume', default=1)
     publisher_id: Mapped[int] = mapped_column(ForeignKey('publisher.id'), nullable=True)
-    publisher: Mapped['PublisherModel'] = relationship(foreign_keys=[publisher_id], lazy='selectin')
+    publisher: Mapped['PublisherModel'] = relationship(foreign_keys=[publisher_id], lazy='noload')
     # authors
     main_author_id: Mapped[int] = mapped_column(ForeignKey('author.id'))
-    main_author: Mapped['AuthorModel'] = relationship(foreign_keys=[main_author_id], lazy='selectin')
+    main_author: Mapped['AuthorModel'] = relationship(foreign_keys=[main_author_id], lazy='noload')
     collection_id: Mapped[int] = mapped_column(ForeignKey('collection.id'))
-    collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='selectin')
+    collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='noload')
     format: Mapped[str] = mapped_column('format', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
     last_status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
-    last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='selectin')
+    last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='noload')
     last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
 
     cover_price: Mapped[float] = mapped_column('cover_price', default=0)
@@ -61,8 +61,8 @@ class ItemModel(SQLModel):
     cover: Mapped[str] = mapped_column('cover', nullable=True)
 
     # Relations
-    authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='selectin', viewonly=True)
-    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='selectin', viewonly=True)
+    authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='noload', viewonly=True)
+    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='noload', viewonly=True)
 
 
 class ItemAuthorModel(SQLModel):

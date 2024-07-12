@@ -15,7 +15,7 @@ class StatusModel(SQLModel):
     order: Mapped[int] = mapped_column('order', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
 
-    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', lazy='selectin', viewonly=True)
+    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', lazy='noload', viewonly=True)
 
 
 class LanguageModel(SQLModel):
@@ -73,9 +73,9 @@ class AuthorModel(SQLModel):
     birth_date: Mapped[datetime.date] = mapped_column('birth_date', nullable=True)
     description: Mapped[str] = mapped_column('description', nullable=True)
     country_id: Mapped[str] = mapped_column(ForeignKey('country.id'), nullable=True)
-    country: Mapped['CountryModel'] = relationship(foreign_keys=[country_id], lazy='selectin')
+    country: Mapped['CountryModel'] = relationship(foreign_keys=[country_id], lazy='noload')
     language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
-    language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='selectin')
+    language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='noload')
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
 
-    items: Mapped["ItemModel"] = relationship('ItemModel', secondary='item_author', viewonly=True, lazy='selectin')
+    items: Mapped["ItemModel"] = relationship('ItemModel', secondary='item_author', viewonly=True, lazy='noload')
