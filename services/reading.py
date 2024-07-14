@@ -4,7 +4,7 @@ from fastapi import status, HTTPException
 from rolf_common.models import SQLModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 from managers.item import ItemManager
 from managers.reading import ReadingDataManager
@@ -55,13 +55,19 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
-        stmt = select(ReadingModel).where(ReadingModel.item_id == params.item_id)
+    
+        stmt = (
+            select(ReadingModel)
+            .where(ReadingModel.item_id == params.item_id)
+        )
+
         if params.get_progress:
-            stmt = stmt.options(joinedload(ReadingModel.progress))
+            progress_alias = aliased(ReadingProgressModel)
+            stmt = stmt.options(joinedload(ReadingModel.progress.of_type(progress_alias))).order_by(progress_alias.date.desc())
 
         item = await ItemManager(self.session).get_item_by_id(item_id=params.item_id)
         if not item:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item não encontrado')
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item not found')
 
         readings = await ReadingDataManager(self.session).get_all(stmt, unique_result=True)
 
@@ -93,12 +99,15 @@ class ReadingService(BaseService):
         #   One entry must not save a page and/or percentage less than the last entry
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         if not reading:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Leitura não encontrada')
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
         self.item_pages = reading.item.pages
 
-        # if (last_progress and item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
+        if (self.item_pages and progress.page) and (progress.page > self.item_pages):
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='Current page cannot be greater than the total pages of the item')
+        #
+        # if (last_progress and self.item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
         #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
         # Only one entry per day is allowed

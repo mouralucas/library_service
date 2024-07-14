@@ -30,7 +30,7 @@ class GetReadingRequest(BaseModel):
 class CreateProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(..., alias='readingId', description='The id of the the reading')
     page: int = Field(None, alias='page', description='The current page in reading')
-    percentage: int = Field(None, alias='percentage', description='The current page in reading')
+    percentage: int = Field(None, alias='percentage', description='The current page in reading', min_value=0, max_value=100)
     rate: int = Field(None, alias='rate', description='The rate of the reading so far')
     comment: str = Field(None, alias='comment', description='The comments for the reading so far')
 

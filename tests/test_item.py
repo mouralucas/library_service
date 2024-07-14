@@ -65,6 +65,7 @@ async def test_create_item_success(client, create_languages, create_series, crea
     assert 'mainAuthorId' in data['item']
     assert data['item']['mainAuthorId'] == authors[0].id
 
+    # TODO: removed selectin from models, so analyse the need to return this data
     assert 'mainAuthor' in data['item']
     assert 'authorId' in data['item']['mainAuthor']
     assert data['item']['mainAuthor']['authorId'] == authors[0].id

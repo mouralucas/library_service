@@ -110,6 +110,27 @@ async def test_create_progress(client, create_reading):
 
 
 @pytest.mark.asyncio
+async def test_create_progress_fail(client, create_reading):
+    readings = create_reading
+
+    reading_id = readings[0].id
+    item = readings[0].item
+
+    # Set page greater than the item
+    current_page = item.pages + 5
+    payload = {
+        'readingId': str(reading_id),
+        'page': current_page
+    }
+    response = await client.post("/reading/progress", json=payload)
+
+    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+
+
+
+
+
+@pytest.mark.asyncio
 async def test_get_progress(client, create_progress):
     progress = create_progress
 
