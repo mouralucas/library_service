@@ -1,9 +1,11 @@
 from typing import Any
 
+from fastapi import HTTPException
 from sqlalchemy import select, update
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from models import SQLModel
 from models.item import ItemModel, ItemStatusModel
@@ -30,10 +32,13 @@ class ItemManager(BaseDataManager):
 
         return updated_item
 
-    async def get_item_by_id(self, item_id: int) -> SQLModel | None:
+    async def get_item_by_id(self, item_id: int, raise_exception: bool = False) -> SQLModel | None:
         stmt = select(ItemModel).where(ItemModel.id == item_id)
 
         item: SQLModel = await self.get_only_one(stmt)
+
+        if not item and raise_exception:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item not found')
 
         return item
 

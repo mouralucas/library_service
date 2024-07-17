@@ -55,21 +55,23 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
+        stmt = select(ReadingModel)
 
-        stmt = (
-            select(ReadingModel)
-            .where(ReadingModel.item_id == params.item_id)
-        )
+        if params.reading_id:
+            stmt = stmt.where(ReadingModel.id == params.reading_id)
+
+        if params.item_id:
+            stmt = stmt.where(ReadingModel.item_id == params.item_id)
 
         if params.get_progress:
             progress_alias = aliased(ReadingProgressModel)
             stmt = stmt.options(joinedload(ReadingModel.progress.of_type(progress_alias))).order_by(progress_alias.date.desc())
 
-        item = await ItemManager(self.session).get_item_by_id(item_id=params.item_id)
-        if not item:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item not found')
+        stmt = stmt.order_by(ReadingModel.start_date)
 
-        readings = await ReadingDataManager(self.session).get_all(stmt, unique_result=True)
+        readings = await ReadingDataManager(self.session).get_all(stmt, unique_result=True, raise_exception=True)
+
+        item = readings[0].item
 
         response = GetReadingResponse(
             success=True,

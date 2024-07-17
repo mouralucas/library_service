@@ -44,25 +44,74 @@ async def test_create_reading(client, create_item, create_reading_status):
 
 
 @pytest.mark.asyncio
-async def test_get_reading(client, create_reading):
+async def test_get_reading_by_item_id(client, create_more_than_one_reading):
+    readings = create_more_than_one_reading
+
+    reading_id = readings[0].id
+    item_id = readings[0].item_id
+
     param = {
-        'itemId': create_reading[0].item_id,
-        # 'itemId': 4,
+        'itemId': item_id,
     }
     response = await client.get("/reading", params=param)
 
-    response_json = response.json()
-
     assert response.status_code == status.HTTP_200_OK
-    assert response_json['success'] is True
+    data = response.json()
 
-    assert 'item_title' in response_json
-    assert 'quantity' in response_json
-    assert 'readings' in response_json
+    assert 'item_title' in data
+    assert 'quantity' in data
+    assert 'readings' in data
 
     # Check types from response
-    assert type(response_json['quantity']) is int
-    assert type(response_json['readings']) is list
+    assert type(data['quantity']) is int
+    assert type(data['readings']) is list
+
+    assert data['quantity'] > 1
+    assert len(data['readings']) > 0
+
+    assert 'readingId' in data['readings'][0]
+    assert data['readings'][0]['readingId'] == str(reading_id)
+
+    assert 'itemId' in data['readings'][0]
+    assert data['readings'][0]['itemId'] == item_id
+
+
+@pytest.mark.asyncio
+async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
+    """
+        Exacly the same as test_get_reading_by_item_id, but in this case reading_id is used to get a reading. It must return only one instance
+    :param client:
+    :param create_reading:
+    :return:
+    """
+    readings = create_more_than_one_reading
+
+    reading_id = readings[0].id
+    item_id = readings[0].item_id
+
+    param = {
+        'readingId': reading_id,
+    }
+    response = await client.get("/reading", params=param)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'item_title' in data
+    assert 'quantity' in data
+    assert 'readings' in data
+
+    # Check types from response
+    assert type(data['quantity']) is int
+    assert type(data['readings']) is list
+
+    assert data['quantity'] == 1
+    assert len(data['readings']) > 0
+    assert 'readingId' in data['readings'][0]
+    assert data['readings'][0]['readingId'] == str(reading_id)
+
+    assert 'itemId' in data['readings'][0]
+    assert data['readings'][0]['itemId'] == item_id
 
 
 @pytest.mark.asyncio

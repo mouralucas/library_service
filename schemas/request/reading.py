@@ -23,9 +23,19 @@ class CreateReadingRequest(BaseModel):
 
 
 class GetReadingRequest(BaseModel):
-    item_id: int = Field(Query(..., alias='itemId', description="The id of the item", summary="The id of the item"))
-    reading_id: uuid.UUID | None = Field(Query(None), alias='readingId', description="The id of the reading")
-    get_progress: bool = Field(Query(False, alias='getProgress', description="If true return all progress associated with each reading"))
+    item_id: int | None = Field(Query(None, description="The id of the item", summary="The id of the item"), alias='itemId')
+    reading_id: uuid.UUID | None = Field(Query(None, description="The id of the reading"), alias='readingId')
+    get_progress: bool = Field(Query(False, description="If true return all progress associated with each reading"), alias='getProgress')
+
+    @model_validator(mode='before')
+    def check_reading_finished(cls, data: dict) -> dict:
+        if data.get('page') and data.get('percentage'):
+            raise ValueError('only item_id or reading_id must be specified')
+
+        if not data.get('itemId') and not data.get('readingId'):
+            raise ValueError('One of item_id or reading_id must be specified')
+
+        return data
 
 
 class CreateProgressRequest(BaseModel):

@@ -23,6 +23,29 @@ async def create_reading(create_test_session, create_item, create_reading_status
 
 
 @pytest_asyncio.fixture
+async def create_more_than_one_reading(create_test_session, create_item, create_reading_status):
+    item = create_item
+    reading_list = []
+
+    reading = ReadingModel(item_id=item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
+                           start_date=datetime.date(2020, 1, 1),
+                           finish_date=datetime.date(2020, 1, 20),
+                           active=False,
+                           status_id='read')
+    reading_1 = await ReadingDataManager(session=create_test_session).create_reading(reading)
+
+    reading = ReadingModel(item_id=item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
+                           start_date=datetime.date(2021, 1, 1),
+                           status_id='reading')
+    reading_2 = await ReadingDataManager(session=create_test_session).create_reading(reading)
+
+    reading_list.append(reading_1)
+    reading_list.append(reading_2)
+
+    return reading_list
+
+
+@pytest_asyncio.fixture
 async def create_progress(create_test_session, create_reading):
     readings = create_reading
 
