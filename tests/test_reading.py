@@ -218,9 +218,18 @@ async def test_create_progress_complete_reading(client, create_reading):
 
     assert response.status_code == status.HTTP_201_CREATED
 
-    # TODO: after create a get_reading by reading id, add the request and check with the request not the referenced object
-    assert current_reading.active is False
-    assert current_reading.status_id == 'read'
+    payload = {
+        'readingId': str(reading_id),
+    }
+    response = await client.get('/reading', params=payload)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    updated_reading = data['readings'][0]
+
+    assert updated_reading['active'] is False
+    assert updated_reading['statusId'] == 'read'
 
 
 @pytest.mark.asyncio

@@ -32,6 +32,7 @@ class ReadingSchema(BaseModel):
     finish_date: datetime.date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
     active: bool = Field(..., serialization_alias='active', description='If false reading could be finished or dropped, if true is reading now, check status')
+    status_id: str = Field(..., serialization_alias='statusId', description="The id of the status")
     progress: list[ProgressSchema] | None = Field(None, serialization_alias='progress', description="The current progress of the reading")
 
     def transform(self):
