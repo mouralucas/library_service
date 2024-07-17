@@ -19,6 +19,15 @@ class ReadingDataManager(BaseDataManager):
 
         return new_reading
 
+    async def update_reading(self, reading: SQLModel, fields: dict[str, Any]) -> SQLModel:
+        stmt = (update(ReadingModel)
+                .where(ReadingModel.id == reading.id)
+                .values(**fields))
+
+        reading = await self.update_one(sql_statement=stmt, model=reading)
+
+        return reading
+
     async def get_reading_by_id(self, reading_id) -> SQLModel | None:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
 

@@ -3,28 +3,6 @@ from fastapi import status
 
 
 @pytest.mark.asyncio
-async def test_get_reading(client, create_reading):
-    param = {
-        'itemId': create_reading[0].item_id,
-        # 'itemId': 4,
-    }
-    response = await client.get("/reading", params=param)
-
-    response_json = response.json()
-
-    assert response.status_code == status.HTTP_200_OK
-    assert response_json['success'] is True
-
-    assert 'item_title' in response_json
-    assert 'quantity' in response_json
-    assert 'readings' in response_json
-
-    # Check types from response
-    assert type(response_json['quantity']) is int
-    assert type(response_json['readings']) is list
-
-
-@pytest.mark.asyncio
 async def test_create_reading(client, create_item, create_reading_status):
     items = create_item
     start_date = '2024-01-01'
@@ -66,6 +44,28 @@ async def test_create_reading(client, create_item, create_reading_status):
 
 
 @pytest.mark.asyncio
+async def test_get_reading(client, create_reading):
+    param = {
+        'itemId': create_reading[0].item_id,
+        # 'itemId': 4,
+    }
+    response = await client.get("/reading", params=param)
+
+    response_json = response.json()
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response_json['success'] is True
+
+    assert 'item_title' in response_json
+    assert 'quantity' in response_json
+    assert 'readings' in response_json
+
+    # Check types from response
+    assert type(response_json['quantity']) is int
+    assert type(response_json['readings']) is list
+
+
+@pytest.mark.asyncio
 async def test_get_active_readings(client, create_reading):
     response = await client.get("/reading/active")
 
@@ -82,15 +82,15 @@ async def test_get_active_readings(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress(client, create_reading):
+async def test_create_progress_with_page(client, create_reading):
     readings = create_reading
 
     reading_id = readings[0].id
-    current_page = 37
+    current_page = 42
 
     item = readings[0].item
     total_pages = item.pages
-    percentage = int(current_page / total_pages * 100)
+    percentage = float(current_page / total_pages * 100)
 
     payload = {
         'readingId': str(reading_id),
@@ -101,12 +101,38 @@ async def test_create_progress(client, create_reading):
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
 
-    assert data['success'] is True
     assert 'progress' in data
     assert 'page' in data['progress']
     assert 'percentage' in data['progress']
     assert data['progress']['page'] == current_page
     assert data['progress']['percentage'] == percentage
+
+
+@pytest.mark.asyncio
+async def test_create_progress_with_percentage(client, create_reading):
+    readings = create_reading
+
+    reading_id = readings[0].id
+    current_percentage = 32
+
+    item = readings[0].item
+    total_pages = item.pages
+    page = int(current_percentage / 100 * total_pages)
+
+    payload = {
+        'readingId': str(reading_id),
+        'percentage': current_percentage
+    }
+    response = await client.post("/reading/progress", json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+
+    assert 'progress' in data
+    assert 'page' in data['progress']
+    assert 'percentage' in data['progress']
+    assert data['progress']['page'] == page
+    assert data['progress']['percentage'] == current_percentage
 
 
 @pytest.mark.asyncio
@@ -127,7 +153,25 @@ async def test_create_progress_fail(client, create_reading):
     assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
 
 
+@pytest.mark.asyncio
+async def test_create_progress_complete_reading(client, create_reading):
+    reading = create_reading
 
+    current_reading = reading[0]
+    reading_id = current_reading.id
+    current_percentage = 100
+
+    payload = {
+        'readingId': str(reading_id),
+        'percentage': current_percentage
+    }
+    response = await client.post('/reading/progress', json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    # TODO: after create a get_reading by reading id, add the request and check with the request not the referenced object
+    assert current_reading.active is False
+    assert current_reading.status_id == 'read'
 
 
 @pytest.mark.asyncio

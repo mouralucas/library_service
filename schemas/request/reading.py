@@ -24,13 +24,15 @@ class CreateReadingRequest(BaseModel):
 
 class GetReadingRequest(BaseModel):
     item_id: int = Field(Query(..., alias='itemId', description="The id of the item", summary="The id of the item"))
+    reading_id: uuid.UUID | None = Field(Query(None), alias='readingId', description="The id of the reading")
     get_progress: bool = Field(Query(False, alias='getProgress', description="If true return all progress associated with each reading"))
 
 
 class CreateProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(..., alias='readingId', description='The id of the the reading')
-    page: int = Field(None, alias='page', description='The current page in reading')
-    percentage: int = Field(None, alias='percentage', description='The current page in reading', min_value=0, max_value=100)
+    page: int = Field(0, alias='page', description='The current page in reading')
+    percentage: int = Field(0, alias='percentage', description='The current page in reading', min_value=0, max_value=100)
+    date: datetime.date = Field(datetime.date.today(), alias='date', description='The date that progress was taken')
     rate: int = Field(None, alias='rate', description='The rate of the reading so far')
     comment: str = Field(None, alias='comment', description='The comments for the reading so far')
 
@@ -47,3 +49,4 @@ class CreateProgressRequest(BaseModel):
 
 class GetProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))
+    item_id: uuid.UUID | None = Field(Query(None, alias='itemId', description="The id of the item"))

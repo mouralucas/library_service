@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from fastapi import status, HTTPException
 from rolf_common.models import SQLModel
@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, aliased
 from managers.item import ItemManager
 from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
-from schemas.reading import ReadingSchema
+from schemas.reading import ReadingSchema, ProgressSchema
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
 from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.base import BaseService
@@ -55,7 +55,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
-    
+
         stmt = (
             select(ReadingModel)
             .where(ReadingModel.item_id == params.item_id)
@@ -111,24 +111,23 @@ class ReadingService(BaseService):
         #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
         # Only one entry per day is allowed
-        if last_progress and last_progress.date == datetime.datetime.now().date():
+        if last_progress and last_progress.date == datetime.now().date():
             progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(last_progress, progress.page, progress.percentage), {'page': progress.page})
             new_entry = progress_updated
         else:
-            # TODO: add model dump
-            new_progress_entry = ReadingProgressModel(
-                reading_id=reading.id,
-                date=datetime.datetime.now().date(),
-                rate=progress.rate,
-                comment=progress.comment
-            )
-
+            new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(new_progress_entry, progress.page, progress.percentage))
+
+        # TODO: add validation if total pages is equal item pages or percentage is 100% than set reading as read
+        if ((self.item_pages and progress.page and self.item_pages == progress.page)
+                or (progress.percentage and progress.percentage == 100)
+                or (new_entry.percentage == 100)):
+            await ReadingDataManager(session=self.session).update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
 
         response = CreateProgressResponse(
             success=True,
             status_code=status.HTTP_201_CREATED,
-            progress=new_entry
+            progress=ProgressSchema.model_validate(new_entry)
         )
 
         return response
@@ -146,13 +145,13 @@ class ReadingService(BaseService):
         return response
 
     def __set_values(self, progress_entry: ReadingProgressModel, page: int, percentage: int) -> SQLModel:
-        if page is not None:
+        if page is not None and page != 0:
             perc = ((page / self.item_pages) * 100) if self.item_pages else 0
 
             progress_entry.page = page
             progress_entry.percentage = perc
 
-        if percentage is not None:
+        if percentage is not None and percentage != 0:
             page = (percentage / 100) * self.item_pages if self.item_pages else 0
             progress_entry.page = int(page)
             progress_entry.percentage = percentage

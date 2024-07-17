@@ -57,6 +57,7 @@ async def get_reading_progress(
         params: GetProgressRequest = Depends(),
         session: AsyncSession = Depends(db_session)
 ) -> GetProgressResponse:
+    # TODO: make accept item_id as param, than returns the progress for the last reading if more than one
     response = await ReadingService(session=session).get_progress(params=params)
 
     return response
