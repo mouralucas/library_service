@@ -14,7 +14,6 @@ app = FastAPI(
 @app.middleware(middleware_type="http")
 async def validate_request_middleware(request, call_next):
     async def check_token():
-        # TODO: check login here? Maybe create this check in gateway service
         _authorization = request.headers.get('authorization')
         _path = request.url.path
         _required_auth_endpoints = ['/reading', '/reading/progress']

@@ -30,7 +30,6 @@ target_metadata = rolf_common.models.Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 def get_url():
-    # TODO, if it works use settings dict
     return settings.database_url
 
 

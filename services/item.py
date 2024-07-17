@@ -47,7 +47,7 @@ class ItemService(BaseService):
 
         await self.session.refresh(updated_item)
 
-        # TODO: add validation if author(s) or status were changed, if so add correspondent method
+        # TODO: add validation if author(s) were changed, if so add correspondent method
 
         response = CreateItemResponse(
             item=ItemSchema.model_validate(updated_item)

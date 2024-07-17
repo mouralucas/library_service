@@ -120,7 +120,6 @@ class ReadingService(BaseService):
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(new_progress_entry, progress.page, progress.percentage))
 
-        # TODO: add validation if total pages is equal item pages or percentage is 100% than set reading as read
         if ((self.item_pages and progress.page and self.item_pages == progress.page)
                 or (progress.percentage and progress.percentage == 100)
                 or (new_entry.percentage == 100)):

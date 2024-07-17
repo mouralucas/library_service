@@ -9,7 +9,6 @@ from models.core import (LanguageModel, StatusModel, AuthorModel,
                          SerieModel, CollectionModel, PublisherModel)
 
 
-# TODO: remove all selectin after tests
 class ItemModel(SQLModel):
     __tablename__ = "item"
 
