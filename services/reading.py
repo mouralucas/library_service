@@ -98,13 +98,16 @@ class ReadingService(BaseService):
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
         # TODO: Rules:
-        #   One entry must not save a page and/or percentage less than the last entry
+        #   One entry must not save a page less than the last entry
         reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
         self.item_pages = reading.item.pages
+
+        if last_progress and last_progress.page and progress.page and progress.page >= last_progress.page:
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page could not be less than the last registered page')
 
         if (self.item_pages and progress.page) and (progress.page > self.item_pages):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='Current page cannot be greater than the total pages of the item')
@@ -137,8 +140,6 @@ class ReadingService(BaseService):
         progress = await ReadingDataManager(self.session).get_progress(reading_id=params.reading_id)
 
         response = GetProgressResponse(
-            success=True,
-            status_code=status.HTTP_200_OK,
             quantity=len(progress) if progress else 0,
             readingProgress=progress if progress else []
         )

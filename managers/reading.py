@@ -24,7 +24,7 @@ class ReadingDataManager(BaseDataManager):
                 .where(ReadingModel.id == reading.id)
                 .values(**fields))
 
-        reading = await self.update_one(sql_statement=stmt, model=reading)
+        reading = await self.update_one(sql_statement=stmt, sql_model=reading)
 
         return reading
 
@@ -60,7 +60,7 @@ class ReadingDataManager(BaseDataManager):
             .values(**fields)
         )
 
-        progress = await self.update_one(sql_statement=stmt, model=progress)
+        progress = await self.update_one(sql_statement=stmt, sql_model=progress)
 
         return progress
 

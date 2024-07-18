@@ -26,7 +26,7 @@ class AuthorService(BaseService):
     async def get_author(self) -> GetAuthorResponse:
         stmt = select(AuthorModel)
 
-        authors = await AuthorManager(session=self.session).get_all(select_stmt=stmt)
+        authors = await AuthorManager(session=self.session).get_all(select_statement=stmt)
 
         response = GetAuthorResponse(
             status_code=status.HTTP_200_OK,

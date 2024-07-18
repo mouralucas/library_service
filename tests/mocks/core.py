@@ -125,7 +125,11 @@ async def create_publisher(create_test_session) -> list:
     publisher = PublisherModel(name='Test publisher', description='Test publisher description')
     publisher_1 = await PublisherManager(session=create_test_session).create_publisher(publisher)
 
+    publisher = PublisherModel(name='Other publisher', description='This is other publisher')
+    publisher_2 = await PublisherManager(session=create_test_session).create_publisher(publisher)
+
     publishers_list.append(publisher_1)
+    publishers_list.append(publisher_2)
 
     return publishers_list
 

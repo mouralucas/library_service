@@ -28,7 +28,7 @@ class LanguageService(BaseService):
     async def get_languages(self) -> GetLanguageResponse:
         stmt = select(LanguageModel)
 
-        languages = await LanguageManager(session=self.session).get_all(select_stmt=stmt)
+        languages = await LanguageManager(session=self.session).get_all(select_statement=stmt)
 
         response = GetLanguageResponse(
             status_code=status.HTTP_200_OK,
@@ -54,7 +54,7 @@ class CountryService(BaseService):
         return response
 
     async def get_countries(self) -> GetCountryResponse:
-        countries = await CountryManager(session=self.session).get_all(select_stmt=select(CountryModel))
+        countries = await CountryManager(session=self.session).get_all(select_statement=select(CountryModel))
 
         response = GetCountryResponse(
             status_code=status.HTTP_200_OK,

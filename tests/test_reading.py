@@ -115,10 +115,10 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_get_active_readings(client, create_reading):
+async def test_get_active_readings(client, create_active_active_readings):
     response = await client.get("/reading/active")
 
-    total_readings = len(create_reading)
+    total_readings = len(create_active_active_readings)
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -131,13 +131,13 @@ async def test_get_active_readings(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_with_page(client, create_reading):
-    readings = create_reading
+async def test_create_progress_with_page(client, create_one_reading):
+    reading = create_one_reading
 
-    reading_id = readings[0].id
+    reading_id = reading.id
     current_page = 42
 
-    item = readings[0].item
+    item = reading.item
     total_pages = item.pages
     percentage = float(current_page / total_pages * 100)
 
@@ -158,13 +158,13 @@ async def test_create_progress_with_page(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_with_percentage(client, create_reading):
-    readings = create_reading
+async def test_create_progress_with_percentage(client, create_one_reading):
+    reading = create_one_reading
 
-    reading_id = readings[0].id
+    reading_id = reading.id
     current_percentage = 32
 
-    item = readings[0].item
+    item = reading.item
     total_pages = item.pages
     page = int(current_percentage / 100 * total_pages)
 
@@ -185,11 +185,29 @@ async def test_create_progress_with_percentage(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_fail(client, create_reading):
-    readings = create_reading
+async def test_create_progress_page_gt_last_progress(client, create_one_reading):
+    reading = create_one_reading
 
-    reading_id = readings[0].id
-    item = readings[0].item
+    reading_id = reading.id
+    item = reading.item
+    item_pages = item.pages
+    current_page = item_pages + 10
+
+    payload = {
+        'readingId': str(reading_id),
+        'page': current_page
+    }
+    response = await client.post('/reading/progress', json=payload)
+
+    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+
+
+@pytest.mark.asyncio
+async def test_create_progress_fail(client, create_one_reading):
+    reading = create_one_reading
+
+    reading_id = reading.id
+    item = reading.item
 
     # Set page greater than the item
     current_page = item.pages + 5
@@ -203,10 +221,10 @@ async def test_create_progress_fail(client, create_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_complete_reading(client, create_reading):
-    reading = create_reading
+async def test_create_progress_complete_reading(client, create_one_reading):
+    reading = create_one_reading
 
-    current_reading = reading[0]
+    current_reading = reading
     reading_id = current_reading.id
     current_percentage = 100
 
