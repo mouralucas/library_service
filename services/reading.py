@@ -106,7 +106,8 @@ class ReadingService(BaseService):
 
         self.item_pages = reading.item.pages
 
-        if last_progress and last_progress.page and progress.page and progress.page >= last_progress.page:
+        if ((last_progress and last_progress.page and progress.page and progress.page <= last_progress.page) or
+                (last_progress and last_progress.percentage and progress.percentage and progress.percentage <= last_progress.percentage)):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page could not be less than the last registered page')
 
         if (self.item_pages and progress.page) and (progress.page > self.item_pages):

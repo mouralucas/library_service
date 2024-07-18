@@ -185,17 +185,28 @@ async def test_create_progress_with_percentage(client, create_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_page_gt_last_progress(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_gt_last_progress(client, create_progress):
+    progress = create_progress
 
-    reading_id = reading.id
-    item = reading.item
-    item_pages = item.pages
-    current_page = item_pages + 10
+    reading_id = progress[0].reading_id
+    last_progress_page = progress[-1].page
+    last_progress_percentage = progress[-1].percentage
+    current_progress_page = last_progress_page - 5
+    current_progress_percentage = last_progress_percentage - 3
 
+    # test with page
     payload = {
         'readingId': str(reading_id),
-        'page': current_page
+        'page': current_progress_page
+    }
+    response = await client.post('/reading/progress', json=payload)
+
+    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+
+    # test with percentage
+    payload = {
+        'readingId': str(reading_id),
+        'percentage': current_progress_percentage
     }
     response = await client.post('/reading/progress', json=payload)
 
