@@ -230,6 +230,16 @@ async def test_create_progress_fail(client, create_one_reading):
 
     assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
 
+    # Test with more than 100%
+    payload = {
+        'readingId': str(reading_id),
+        'percentage': 105
+    }
+    response = await client.post("/reading/progress", json=payload)
+
+    # In this case is 422 because the validation is made directly in the pydantic model, not in service
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
 
 @pytest.mark.asyncio
 async def test_create_progress_complete_reading(client, create_one_reading):
