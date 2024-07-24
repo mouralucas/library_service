@@ -1,12 +1,11 @@
-import datetime
 from typing import Any
-
-from pydantic import BaseModel
-from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
+from sqlalchemy import select, update
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+
 from models.reading import ReadingModel, ReadingProgressModel
 
 
@@ -28,14 +27,17 @@ class ReadingDataManager(BaseDataManager):
 
         return reading
 
-    async def get_reading_by_id(self, reading_id) -> SQLModel | None:
+    async def get_reading_by_id(self, reading_id, get_item: bool = False) -> SQLModel | None:
         stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
+
+        if get_item:
+            stmt = stmt.options(joinedload(ReadingModel.item))
 
         reading: SQLModel = await self.get_only_one(stmt)
 
         return reading
 
-    async def get_readings(self, params: dict):
+    async def get_readings(self, params: dict) -> list[SQLModel] | None:
         stmt = select(ReadingModel)
 
         for key, value in params.items():
@@ -53,7 +55,6 @@ class ReadingDataManager(BaseDataManager):
         return new_progress
 
     async def update_progress(self, progress: SQLModel, fields: dict[str, Any]) -> SQLModel:
-        # fields['edited_at'] = datetime.datetime.utcnow()
         stmt = (
             update(ReadingProgressModel)
             .where(ReadingProgressModel.id == progress.id)
@@ -65,7 +66,9 @@ class ReadingDataManager(BaseDataManager):
         return progress
 
     async def get_progress(self, reading_id):
-        stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
+        stmt = (select(ReadingProgressModel)
+                .where(ReadingProgressModel.reading_id == reading_id)
+                .order_by(ReadingProgressModel.date.desc()))
 
         progress_list = await self.get_all(stmt)
 

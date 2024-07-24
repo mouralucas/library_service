@@ -36,14 +36,8 @@ class ReadingService(BaseService):
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
-        # Change to ReadingModel(**reading)?
-        new_reading = ReadingModel(
-            owner_id=reading.owner_id,
-            item_id=reading.item_id,
-            number=len(previous_readings) + 1 if previous_readings else 1,
-            start_date=reading.start_date,
-            finish_date=reading.finish_date,
-        )
+        new_reading = ReadingModel(**reading.model_dump(exclude={'is_dropped'}))
+        new_reading.number = len(previous_readings) + 1 if previous_readings else 1
 
         new_reading.status_id = 'read' if reading.finish_date else 'reading'
 
@@ -55,6 +49,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
+        # TODO: put stmt logic in manager in existing get_readings
         stmt = select(ReadingModel)
 
         if params.reading_id:
@@ -106,15 +101,14 @@ class ReadingService(BaseService):
 
         self.item_pages = reading.item.pages
 
+        # Current page/percentage can not be greater than last progress entry
         if ((last_progress and last_progress.page and progress.page and progress.page <= last_progress.page) or
                 (last_progress and last_progress.percentage and progress.percentage and progress.percentage <= last_progress.percentage)):
-            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page could not be less than the last registered page')
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page/percentage could not be less than the last registered page')
 
+        # Current page could not be greater then item pages
         if (self.item_pages and progress.page) and (progress.page > self.item_pages):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='Current page cannot be greater than the total pages of the item')
-        #
-        # if (last_progress and self.item_pages) and (last_progress.page > progress.page or last_progress.percentage > progress.percentage):
-        #     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Um registo não pode ter paginas/percentagem menor que o registro anterior')
 
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
@@ -131,7 +125,6 @@ class ReadingService(BaseService):
 
         response = CreateProgressResponse(
             success=True,
-            status_code=status.HTTP_201_CREATED,
             progress=ProgressSchema.model_validate(new_entry)
         )
 
