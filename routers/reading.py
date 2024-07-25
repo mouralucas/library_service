@@ -47,6 +47,7 @@ async def create_reading_progress(
         progress: CreateProgressRequest,
         session: AsyncSession = Depends(db_session)
 ) -> CreateProgressResponse:
+    # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
     response = await ReadingService(session=session).create_progress(progress=progress)
 
     return response
