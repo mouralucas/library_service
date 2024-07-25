@@ -44,6 +44,11 @@ async def test_create_reading(client, create_item, create_reading_status):
 
 
 @pytest.mark.asyncio
+async def test_create_finished_reading(client, create_item, create_reading_status):
+    pass
+
+
+@pytest.mark.asyncio
 async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     readings = create_more_than_one_reading
 
@@ -185,7 +190,7 @@ async def test_create_progress_with_percentage(client, create_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_gt_last_progress(client, create_progress):
+async def test_create_progress_lt_last_progress(client, create_progress):
     progress = create_progress
 
     reading_id = progress[0].reading_id

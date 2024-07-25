@@ -40,6 +40,7 @@ class ReadingService(BaseService):
         new_reading.number = len(previous_readings) + 1 if previous_readings else 1
 
         new_reading.status_id = 'read' if reading.finish_date else 'reading'
+        new_reading.active = False if reading.finish_date else True
 
         new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
         response = CreateReadingResponse(
@@ -116,8 +117,10 @@ class ReadingService(BaseService):
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
+            new_progress_entry.item_id = reading.item_id
             new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(new_progress_entry, progress.page, progress.percentage))
 
+        # Update reading as read if pages == item.pages or percentage is 100%
         if ((self.item_pages and progress.page and self.item_pages == progress.page)
                 or (progress.percentage and progress.percentage == 100)
                 or (new_entry.percentage == 100)):
@@ -151,5 +154,6 @@ class ReadingService(BaseService):
             page = (percentage / 100) * self.item_pages if self.item_pages else 0
             progress_entry.page = int(page)
             progress_entry.percentage = percentage
+
 
         return progress_entry

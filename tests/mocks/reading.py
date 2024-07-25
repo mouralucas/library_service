@@ -81,13 +81,13 @@ async def create_progress(create_test_session, create_one_reading):
 
     progress_list = []
 
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 1), page=37, percentage=10)
+    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 1), page=37, percentage=10, item_id=readings.item_id)
     progress_1 = await ReadingDataManager(session=create_test_session).create_progress(progress)
 
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 2), page=74, percentage=20)
+    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 2), page=74, percentage=20, item_id=readings.item_id)
     progress_2 = await ReadingDataManager(session=create_test_session).create_progress(progress)
 
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 3), page=111, percentage=30)
+    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 3), page=111, percentage=30, item_id=readings.item_id)
     progress_3 = await ReadingDataManager(session=create_test_session).create_progress(progress)
 
     progress_list.append(progress_1)

@@ -33,6 +33,7 @@ class ReadingProgressModel(SQLModel):
 
     reading_id: Mapped[uuid.UUID] = mapped_column("reading_id", ForeignKey("reading.id"))
     reading: Mapped["ReadingModel"] = relationship(back_populates='progress')
+    # TODO: after update the table, change table in database to not null
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
     item: Mapped["ItemModel"] = relationship(foreign_keys=[item_id], lazy='noload')
     date: Mapped[datetime.date] = mapped_column('date')
