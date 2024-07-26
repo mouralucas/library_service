@@ -248,6 +248,7 @@ async def test_create_progress_fail(client, create_one_reading):
 
 @pytest.mark.asyncio
 async def test_create_progress_complete_reading(client, create_one_reading):
+    # TODO: Improve this test, check error of session closed when current page = item pages
     reading = create_one_reading
 
     current_reading = reading
