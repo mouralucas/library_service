@@ -247,8 +247,39 @@ async def test_create_progress_fail(client, create_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_complete_reading(client, create_one_reading):
-    # TODO: Improve this test, check error of session closed when current page = item pages
+async def test_create_progress_complete_reading_pages(client, create_one_reading):
+    reading = create_one_reading
+
+    current_reading = reading
+    reading_id = current_reading.id
+    item = reading.item
+    item_pages = item.pages
+    current_page = item_pages
+
+    payload = {
+        'readingId': str(reading_id),
+        'page': current_page
+    }
+    response = await client.post('/reading/progress', json=payload)
+
+    assert response.status_code == status.HTTP_201_CREATED
+
+    payload = {
+        'readingId': str(reading_id),
+    }
+    response = await client.get('/reading', params=payload)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    updated_reading = data['readings'][0]
+
+    assert updated_reading['active'] is False
+    assert updated_reading['statusId'] == 'read'
+
+
+@pytest.mark.asyncio
+async def test_create_progress_complete_reading_percentage(client, create_one_reading):
     reading = create_one_reading
 
     current_reading = reading
