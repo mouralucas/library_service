@@ -5,7 +5,7 @@ services:
     image: 'mouralucas/rolf-services:library'
     build: .
     ports:
-      - "8035:8035"
+      - "9001:9001"
     depends_on:
       - "pg_library_service"
 
@@ -18,7 +18,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: library_dev_db
     ports:
-      - 5432:5432
+      - "5432:5432"
     expose:
       - "5432"
     volumes:

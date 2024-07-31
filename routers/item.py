@@ -14,7 +14,7 @@ from schemas.request.item import GetItemRequest, CreateItemRequest, UpdateItemRe
 
 from rolf_common.services import get_user
 
-router = APIRouter(prefix="/item")
+router = APIRouter(prefix="/item", tags=['Items'])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
@@ -28,7 +28,8 @@ async def get_items(params: GetItemRequest = Depends(),
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
 async def create_item(item: CreateItemRequest,
-                      session: AsyncSession = Depends(db_session)) -> CreateItemResponse:
+                      session: AsyncSession = Depends(db_session),
+                      user_id: uuid.UUID = Security(get_user)) -> CreateItemResponse:
     # user_id: uuid.UUID = Security(get_user)):
     response = await ItemService(session=session).create_item(item)
 

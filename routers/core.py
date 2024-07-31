@@ -8,7 +8,7 @@ from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, C
     GetPublisherResponse
 from services.core import LanguageService, CountryService, SerieService, CollectionService, PublisherService
 
-router = APIRouter(prefix='')
+router = APIRouter(prefix='', tags=['Base'])
 
 
 @router.post("/language", status_code=status.HTTP_201_CREATED)

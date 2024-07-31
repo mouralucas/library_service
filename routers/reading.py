@@ -9,7 +9,7 @@ from services.reading import ReadingService
 # Test new db connection
 from backend.database import db_session
 
-router = APIRouter(prefix="/reading")
+router = APIRouter(prefix="/reading", tags=['Readings'])
 
 
 @router.post('', summary='Create a reading', description='Create a new reading for selected item',

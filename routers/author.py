@@ -7,7 +7,7 @@ from schemas.request.author import CreateAuthorRequest
 from schemas.response.author import GetAuthorResponse, CreateAuthorResponse
 from services.author import AuthorService
 
-router = APIRouter(prefix="/author")
+router = APIRouter(prefix="/author", tags=['Author'])
 
 
 @router.post('', status_code=status.HTTP_201_CREATED)
