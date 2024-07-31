@@ -2,7 +2,7 @@ version: '3'
 
 services:
   backend:
-    image: 'library_service_image'
+    image: 'mouralucas/rolf-services:library'
     build: .
     ports:
       - "8035:8035"

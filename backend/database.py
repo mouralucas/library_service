@@ -61,7 +61,7 @@ class DatabaseSessionManager:
             await session.close()
 
 
-sessionmanager = DatabaseSessionManager(settings.database_url, {"echo": settings.echo_sql})
+sessionmanager = DatabaseSessionManager(settings.library_database_url, {"echo": settings.echo_sql})
 test_sessionmanager = DatabaseSessionManager(settings.test_database_url, {"echo": settings.echo_test_sql}, expire_on_commit=False, test_db=True)
 
 
