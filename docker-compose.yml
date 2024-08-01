@@ -1,11 +1,11 @@
-version: '3'
-
 services:
   backend:
     image: 'mouralucas/rolf-services:library'
     build: .
     ports:
       - "9001:9001"
+    environment:
+      SERVER_IP: ${HOST}
     depends_on:
       - "pg_library_service"
 
