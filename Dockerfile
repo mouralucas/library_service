@@ -1,20 +1,13 @@
-#
 FROM python:3.10
 
-#
-WORKDIR /code
+WORKDIR /app
 
-#
-COPY ./requirements.txt /code/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
-#
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-#
-COPY .env /code/.env
+COPY .env /app/.env
 
-#
-COPY ./ /code/
+COPY ./ /app/
 
-#
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8035"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
