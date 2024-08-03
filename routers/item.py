@@ -27,20 +27,23 @@ async def get_items(
     return response
 
 
-@router.post('', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
+@router.post('', summary='Create item', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
 async def create_item(
         item: CreateItemRequest,
         session: AsyncSession = Depends(db_session),
-        user: uuid.UUID = Security(get_user)
+        user: RequiredUser = Security(get_user)
 ) -> CreateItemResponse:
-    response = await ItemService(session=session).create_item(item)
+    response = await ItemService(session=session, user=user).create_item(item)
 
     return response
 
 
 @router.patch('', description='Update item')
-async def update_item(item: UpdateItemRequest,
-                      session: AsyncSession = Depends(db_session)) -> CreateItemResponse:
-    response = await ItemService(session=session).update_item(item)
+async def update_item(
+        item: UpdateItemRequest,
+        session: AsyncSession = Depends(db_session),
+        user: RequiredUser = Security(get_user)
+) -> CreateItemResponse:
+    response = await ItemService(session=session, user=user).update_item(item)
 
     return response
