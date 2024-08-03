@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Depends
+import uuid
+
+from fastapi import APIRouter, Depends, Security
+from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
-from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
+from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, \
+    CreateReadingResponse, GetActiveReadingsResponse
 from services.reading import ReadingService
 
 # Test new db connection
@@ -16,7 +20,8 @@ router = APIRouter(prefix="/reading", tags=['Readings'])
              status_code=status.HTTP_201_CREATED)
 async def create_reading(
         reading: CreateReadingRequest,
-        session: AsyncSession = Depends(db_session)
+        session: AsyncSession = Depends(db_session),
+        user_id: uuid.UUID = Security(get_user)
 ) -> CreateReadingResponse:
     response = await ReadingService(session=session).create_reading(reading=reading)
 
@@ -53,7 +58,8 @@ async def create_reading_progress(
     return response
 
 
-@router.get('/progress', summary='Get progress', description='Get the progress for a reading', response_model_exclude_none=True)
+@router.get('/progress', summary='Get progress', description='Get the progress for a reading',
+            response_model_exclude_none=True)
 async def get_reading_progress(
         params: GetProgressRequest = Depends(),
         session: AsyncSession = Depends(db_session)

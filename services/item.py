@@ -1,4 +1,4 @@
-from sqlalchemy import update
+from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -11,14 +11,17 @@ from services.base import BaseService
 
 
 class ItemService(BaseService):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
+        self.user = user.model_dump()
 
     async def create_item(self, item: CreateItemRequest) -> CreateItemResponse:
-        new_item = await ItemManager(session=self.session).create_item(ItemModel(**item.model_dump(exclude={'other_authors_id'})))
+        new_item = await ItemManager(session=self.session).create_item(
+            ItemModel(**item.model_dump(exclude={'other_authors_id'})))
 
         await self.__update_status(new_item)
-        await self.__add_author(item_id=new_item.id, main_author_id=item.main_author_id, other_authors_id=item.other_authors_id)
+        await self.__add_author(item_id=new_item.id, main_author_id=item.main_author_id,
+                                other_authors_id=item.other_authors_id)
 
         await self.session.refresh(new_item)
 
@@ -119,4 +122,3 @@ class ItemService(BaseService):
             await ItemManager(self.session).add_all(other_authors)
 
         return
-
