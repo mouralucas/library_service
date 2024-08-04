@@ -1,8 +1,11 @@
 import asyncio
 
+import uuid
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
+from rolf_common.schemas.auth import RequiredUser
+from rolf_common.services import get_user
 
 from backend.database import db_session
 from backend.database import test_sessionmanager
@@ -39,6 +42,17 @@ def override_db_session(create_test_session):
     In session end it rolls back all database operations.
     """
     app.dependency_overrides[db_session] = lambda: create_test_session
+
+
+def get_mock_user():
+    return RequiredUser(
+        user_id=uuid.uuid4(),
+    )
+
+
+@pytest_asyncio.fixture(scope='function', autouse=True)
+def override_user_service():
+    app.dependency_overrides[get_user] = get_mock_user
 
 
 @pytest_asyncio.fixture(scope='function', autouse=True)
