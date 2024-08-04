@@ -49,6 +49,12 @@ class ReadingDataManager(BaseDataManager):
 
         return readings
 
+    async def get_item_active_reading(self, item_id: int) -> SQLModel | None:
+        stmt = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == 1)
+        reading: SQLModel = await self.get_only_one(stmt)
+
+        return reading
+
     async def create_progress(self, progress: SQLModel) -> SQLModel:
         new_progress = await self.add_one(progress)
 

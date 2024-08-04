@@ -15,7 +15,7 @@ sudo docker compose build
 sudo docker compose up
 ```
 
-This two commands will create the development database and run the project in port 8035.
+This two commands will create the development database and run the project in port 8001.
 
 First step is to create a new virtual environment. There are many ways to do that, 
 but the simpler ways is to execute the following command:

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from fastapi import status, HTTPException
 from rolf_common.models import SQLModel
+from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, aliased
@@ -17,9 +18,10 @@ from services.base import BaseService
 
 class ReadingService(BaseService):
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
         self.item_pages = None
+        self.user = user.model_dump()
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
         param = {
@@ -36,6 +38,7 @@ class ReadingService(BaseService):
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
+        reading.owner_id = self.user['user_id']
         new_reading = ReadingModel(**reading.model_dump(exclude={'is_dropped'}))
         new_reading.number = len(previous_readings) + 1 if previous_readings else 1
 
@@ -51,7 +54,7 @@ class ReadingService(BaseService):
 
     async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
         # TODO: put stmt logic in manager in existing get_readings
-        stmt = select(ReadingModel)
+        stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
 
         if params.reading_id:
             stmt = stmt.where(ReadingModel.id == params.reading_id)
@@ -80,6 +83,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
+        # TODO: stmt shoud be in manager
         stmt = select(ReadingModel).where(ReadingModel.active == True)
 
         readings = await ReadingDataManager(self.session).get_all(stmt)

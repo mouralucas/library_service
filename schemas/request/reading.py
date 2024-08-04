@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, field_validator, ValidationInfo, model_va
 
 
 class CreateReadingRequest(BaseModel):
-    owner_id: uuid.UUID = Field(uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"), alias="ownerId", description='The owner of the reading')
+    owner_id: uuid.UUID = Field(None, alias="ownerId", description='The owner of the reading')
     item_id: int = Field(..., alias='itemId', description="The id of the item")
     start_date: datetime.date = Field(None, alias='startDate', description="The date that the user start reading the item")
     finish_date: datetime.date = Field(None, alias='finishDate', description="The date that the user finish reading the item")

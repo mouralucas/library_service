@@ -1,6 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, Security
+from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -21,9 +22,9 @@ router = APIRouter(prefix="/reading", tags=['Readings'])
 async def create_reading(
         reading: CreateReadingRequest,
         session: AsyncSession = Depends(db_session),
-        user_id: uuid.UUID = Security(get_user)
+        user: RequiredUser = Security(get_user)
 ) -> CreateReadingResponse:
-    response = await ReadingService(session=session).create_reading(reading=reading)
+    response = await ReadingService(session=session, user=user).create_reading(reading=reading)
 
     return response
 
@@ -31,17 +32,21 @@ async def create_reading(
 @router.get('', summary='Get readings', description='Get all readings for a item', response_model_exclude_none=True)
 async def get_reading(
         params: GetReadingRequest = Depends(),
-        session: AsyncSession = Depends(db_session)
+        session: AsyncSession = Depends(db_session),
+        user: RequiredUser = Security(get_user)
 ) -> GetReadingResponse:
-    response = await ReadingService(session=session).get_reading(params=params)
+    response = await ReadingService(session=session, user=user).get_reading(params=params)
 
     return response
 
 
 @router.get('/active', summary='Get active readings', description='Get active readings for a item')
-async def get_active_reading(session: AsyncSession = Depends(db_session)) -> GetActiveReadingsResponse:
+async def get_active_reading(
+        session: AsyncSession = Depends(db_session),
+        user: RequiredUser = Security(get_user)
+) -> GetActiveReadingsResponse:
     # TODO: it need to add user param/filter
-    response = await ReadingService(session=session).get_active_readings()
+    response = await ReadingService(session=session, user=user).get_active_readings()
 
     return response
 
@@ -50,10 +55,11 @@ async def get_active_reading(session: AsyncSession = Depends(db_session)) -> Get
              status_code=status.HTTP_201_CREATED)
 async def create_reading_progress(
         progress: CreateProgressRequest,
-        session: AsyncSession = Depends(db_session)
+        session: AsyncSession = Depends(db_session),
+        user: RequiredUser = Security(get_user)
 ) -> CreateProgressResponse:
     # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
-    response = await ReadingService(session=session).create_progress(progress=progress)
+    response = await ReadingService(session=session, user=user).create_progress(progress=progress)
 
     return response
 
@@ -62,9 +68,10 @@ async def create_reading_progress(
             response_model_exclude_none=True)
 async def get_reading_progress(
         params: GetProgressRequest = Depends(),
-        session: AsyncSession = Depends(db_session)
+        session: AsyncSession = Depends(db_session),
+        user: RequiredUser = Security(get_user)
 ) -> GetProgressResponse:
     # TODO: make accept item_id as param, than returns the progress for the last reading if more than one
-    response = await ReadingService(session=session).get_progress(params=params)
+    response = await ReadingService(session=session, user=user).get_progress(params=params)
 
     return response
