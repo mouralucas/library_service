@@ -10,8 +10,9 @@ from models.reading import ReadingModel, ReadingProgressModel
 
 
 class ReadingDataManager(BaseDataManager):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, user: dict[str, Any] = None):
         super().__init__(session=session)
+        self.user = user
 
     async def create_reading(self, reading: ReadingModel) -> SQLModel:
         new_reading = await self.add_one(reading)
@@ -28,7 +29,8 @@ class ReadingDataManager(BaseDataManager):
         return reading
 
     async def get_reading_by_id(self, reading_id, get_item: bool = False) -> SQLModel | None:
-        stmt = select(ReadingModel).where(ReadingModel.id == reading_id)
+        stmt = select(ReadingModel).where(ReadingModel.id == reading_id,
+                                          ReadingModel.owner_id == self.user['user_id'])
 
         if get_item:
             stmt = stmt.options(joinedload(ReadingModel.item))
@@ -38,7 +40,9 @@ class ReadingDataManager(BaseDataManager):
         return reading
 
     async def get_readings(self, params: dict) -> list[SQLModel] | None:
-        stmt = select(ReadingModel)
+        # Only the owner can get the readings
+        # Maybe in future this can be a param, to get reading for someone the user want
+        stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
 
         for key, value in params.items():
             stmt = stmt.where(getattr(ReadingModel, key) == value)
@@ -55,6 +59,7 @@ class ReadingDataManager(BaseDataManager):
 
         return reading
 
+    # Progress Methods
     async def create_progress(self, progress: SQLModel) -> SQLModel:
         new_progress = await self.add_one(progress)
 

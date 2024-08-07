@@ -27,7 +27,7 @@ class ReadingService(BaseService):
         param = {
             'item_id': reading.item_id
         }
-        previous_readings = await ReadingDataManager(self.session).get_readings(params=param)
+        previous_readings = await ReadingDataManager(self.session, user=self.user).get_readings(params=param)
         last_reading = previous_readings[0] if previous_readings else None
 
         # Cannot start a new reading with another still active
@@ -38,9 +38,9 @@ class ReadingService(BaseService):
         if last_reading and last_reading.finish_date and last_reading.finish_date > reading.start_date:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Uma leitura não pode ser iniciada antes de finalizar a anterior')
 
-        reading.owner_id = self.user['user_id']
         new_reading = ReadingModel(**reading.model_dump(exclude={'is_dropped'}))
         new_reading.number = len(previous_readings) + 1 if previous_readings else 1
+        new_reading.owner_id = self.user['user_id']
 
         new_reading.status_id = 'read' if reading.finish_date else 'reading'
         new_reading.active = False if reading.finish_date else True
@@ -83,8 +83,9 @@ class ReadingService(BaseService):
         return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
-        # TODO: stmt shoud be in manager
-        stmt = select(ReadingModel).where(ReadingModel.active == True)
+        # TODO: stmt should be in manager
+        stmt = select(ReadingModel).where(ReadingModel.active == True,
+                                          ReadingModel.owner_id == self.user['user_id'])
 
         readings = await ReadingDataManager(self.session).get_all(stmt)
 
@@ -99,7 +100,7 @@ class ReadingService(BaseService):
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
         # TODO: Rules:
         #   One entry must not save a page less than the last entry
-        reading = await ReadingDataManager(self.session).get_reading_by_id(progress.reading_id)
+        reading = await ReadingDataManager(self.session, user=self.user).get_reading_by_id(progress.reading_id)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)

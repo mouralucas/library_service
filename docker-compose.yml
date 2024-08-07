@@ -4,6 +4,7 @@ services:
     build: .
     environment:
       - library_database_url=$library_database_url
+      - auth_service_base_url=$auth_service_base_url
     ports:
       - "8001:8000"
 
@@ -21,7 +22,7 @@ services:
     logging:
       driver: "json-file"
       options:
-        max-size: "100k"
+        max-size: "10m"
         max-file: "1"
 
   pg_library_service:
