@@ -42,7 +42,7 @@ class CreateProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(..., alias='readingId', description='The id of the the reading')
     page: int = Field(0, alias='page', description='The current page in reading')
     percentage: int = Field(0, alias='percentage', description='The current page in reading', gt=0, le=100)
-    date: datetime.date = Field(datetime.date.today(), alias='date', description='The date that progress was taken')
+    date: datetime.date = Field(default_factory=datetime.date.today, alias='date', description='The date that progress was taken')
     rate: int = Field(None, alias='rate', description='The rate of the reading so far')
     comment: str = Field(None, alias='comment', description='The comments for the reading so far')
 

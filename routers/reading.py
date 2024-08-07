@@ -56,8 +56,9 @@ async def get_active_reading(
 async def create_reading_progress(
         progress: CreateProgressRequest,
         session: AsyncSession = Depends(db_session),
-        user: RequiredUser = Security(get_user)
+        # user: RequiredUser = Security(get_user)
 ) -> CreateProgressResponse:
+    user = RequiredUser(user_id=uuid.uuid4())
     # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
     response = await ReadingService(session=session, user=user).create_progress(progress=progress)
 
