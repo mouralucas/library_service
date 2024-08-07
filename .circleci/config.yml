@@ -5,14 +5,27 @@ executors:
   python-executor:
     docker:
       - image: cimg/python:3.10
+
+
 orbs:
   python: circleci/python@2
+
+
 jobs:
   test-python:
     executor: python-executor
     steps:
       - checkout
-      - python/install-packages
+      - restore_cache:
+          keys:
+            - v1-python-packages-{{ checksum "requirements.txt" }}
+            - v1-python-packages-
+      - python/install-packages:
+          pkg-manager: pip
+      - save_cache:
+          paths:
+            - ~/.cache/pip
+          key: v1-python-packages-{{ checksum "requirements.txt" }}
       - run:
           name: Run library tests
           command: pytest --junitxml=junit.xml || ((($? == 5)) && echo 'Did not find any tests to run.')
@@ -26,6 +39,8 @@ jobs:
       - run:
           name: Deploy Library Service
           command: '#e.g. ./deploy.sh'
+
+
 workflows:
   build-and-test:
     jobs:
