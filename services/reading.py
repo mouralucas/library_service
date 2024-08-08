@@ -20,7 +20,6 @@ class ReadingService(BaseService):
 
     def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
-        self.item_pages = None
         self.user = user.model_dump()
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
@@ -98,14 +97,15 @@ class ReadingService(BaseService):
         return response
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
-        # TODO: Rules:
-        #   One entry must not save a page less than the last entry
+
         reading = await ReadingDataManager(self.session, user=self.user).get_reading_by_id(progress.reading_id)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
+
         last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
 
-        self.item_pages = reading.item.pages
+        item = reading.item
+        item_pages = item.pages
 
         # Current page/percentage can not be greater than last progress entry
         if ((last_progress and last_progress.page and progress.page and progress.page <= last_progress.page) or
@@ -113,28 +113,31 @@ class ReadingService(BaseService):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page/percentage could not be less than the last registered page')
 
         # Current page could not be greater then item pages
-        if (self.item_pages and progress.page) and (progress.page > self.item_pages):
+        if (item_pages and progress.page) and (progress.page > item_pages):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='Current page cannot be greater than the total pages of the item')
 
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
-            progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(last_progress, progress.page, progress.percentage), {'page': progress.page})
+            progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(progress_entry=last_progress, item_pages=item_pages,
+                                                                                                                current_page=progress.page, percentage=progress.percentage), {'page': progress.page})
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_progress_entry.item_id = reading.item_id
-            new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(new_progress_entry, progress.page, progress.percentage))
+            new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
+                                                                                                          current_page=progress.page, percentage=progress.percentage))
 
         # Update reading as read if pages == item.pages or percentage is 100%
-        if ((self.item_pages and progress.page and self.item_pages == progress.page)
+        if ((item_pages and progress.page and item_pages == progress.page)
                 or (progress.percentage and progress.percentage == 100)
                 or (new_entry.percentage == 100)):
             await ReadingDataManager(session=self.session).update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
 
         response = CreateProgressResponse(
             success=True,
+            item=item,
             progress=ProgressSchema.model_validate(new_entry)
-        )
+        ).transform()
 
         return response
 
@@ -148,17 +151,16 @@ class ReadingService(BaseService):
 
         return response
 
-    def __set_values(self, progress_entry: ReadingProgressModel, page: int, percentage: int) -> SQLModel:
-        if page is not None and page != 0:
-            perc = ((page / self.item_pages) * 100) if self.item_pages else 0
+    def __set_values(self, progress_entry: ReadingProgressModel, item_pages: int, current_page: int, percentage: int) -> SQLModel:
+        if current_page is not None and current_page != 0:
+            perc = ((current_page / item_pages) * 100) if item_pages else 0
 
-            progress_entry.page = page
+            progress_entry.page = current_page
             progress_entry.percentage = perc
 
         if percentage is not None and percentage != 0:
-            page = (percentage / 100) * self.item_pages if self.item_pages else 0
-            progress_entry.page = int(page)
+            current_page = (percentage / 100) * item_pages if item_pages else 0
+            progress_entry.page = int(current_page)
             progress_entry.percentage = percentage
-
 
         return progress_entry
