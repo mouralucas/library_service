@@ -98,7 +98,7 @@ class ReadingService(BaseService):
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
 
-        reading = await ReadingDataManager(self.session, user=self.user).get_reading_by_id(progress.reading_id)
+        reading = await ReadingDataManager(self.session, user=self.user).get_reading_by_id(progress.reading_id, get_item=True)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
 
@@ -137,7 +137,7 @@ class ReadingService(BaseService):
             success=True,
             item=item,
             progress=ProgressSchema.model_validate(new_entry)
-        ).transform()
+        )
 
         return response
 

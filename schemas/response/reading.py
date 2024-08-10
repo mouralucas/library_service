@@ -29,8 +29,8 @@ class CreateProgressResponse(SuccessResponseBase):
 
     def transform(self):
         resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress.page),
-                                                                       total_pages=str(self.item.pages),
-                                                                       percentage=self.progress.percentage) if self.progress.page and self.item.pages else None
+                                                                        total_pages=str(self.item.pages),
+                                                                        percentage=self.progress.percentage) if self.progress.page and self.item.pages else None
 
         self.item_title = self.item.title
         self.pages_read = resp_str
