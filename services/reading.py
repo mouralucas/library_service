@@ -133,11 +133,13 @@ class ReadingService(BaseService):
                 or (new_entry.percentage == 100)):
             await ReadingDataManager(session=self.session).update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
 
+        await self.session.refresh(item)
+
         response = CreateProgressResponse(
             success=True,
             item=item,
             progress=ProgressSchema.model_validate(new_entry)
-        )
+        ).transform()
 
         return response
 
