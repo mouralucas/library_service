@@ -22,9 +22,9 @@ class GetActiveReadingsResponse(SuccessResponseBase):
 
 
 class CreateProgressResponse(SuccessResponseBase):
-    item: ItemSchema = Field(..., description="The item information", exclude=True)
+    item: ItemSchema = Field(..., exclude=True)
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
-    pages_read: str | None = Field(None, serialization_alias='pages_read', description="The title of the item")
+    pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
     progress: ProgressSchema = Field(..., description="The reading progress information")
 
     def transform(self):
