@@ -28,7 +28,7 @@ class ItemManager(BaseDataManager):
             .values(**fields)
         )
 
-        updated_item = await ItemManager(session=self.session).update_one(sql_statement=stmt, sql_model=item)
+        updated_item = await self.update_one(sql_statement=stmt, sql_model=item)
 
         return updated_item
 
