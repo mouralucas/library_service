@@ -1,10 +1,8 @@
 import datetime
 import uuid
-from dataclasses import dataclass
-from typing import Optional, Any
 
 from fastapi import Query
-from pydantic import BaseModel, Field, field_validator, ValidationInfo, model_validator, root_validator, ValidationError
+from pydantic import BaseModel, Field, model_validator
 
 
 class CreateReadingRequest(BaseModel):
