@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import uuid
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Integer, SmallInteger
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -41,3 +41,10 @@ class ReadingProgressModel(SQLModel):
     percentage: Mapped[float] = mapped_column('percentage', nullable=True)
     rate: Mapped[int] = mapped_column('rate', nullable=True)
     comment: Mapped[str] = mapped_column('comment', nullable=True)
+
+# class ReadingGoalModel(SQLModel):
+#     __tablename__ = "reading_goal"
+#
+#     year: Mapped[int] = mapped_column("year", SmallInteger)
+#     quantity: Mapped[int] = mapped_column("quantity", SmallInteger, default=1)
+# TODO: if it is a goal for the current year, check the reading table for finished books in the same year

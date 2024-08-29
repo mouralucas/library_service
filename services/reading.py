@@ -21,12 +21,13 @@ class ReadingService(BaseService):
     def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
         self.user = user.model_dump()
+        self.reading_manager = ReadingDataManager(session=self.session, user=self.user)
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
         param = {
             'item_id': reading.item_id
         }
-        previous_readings = await ReadingDataManager(self.session, user=self.user).get_readings(params=param)
+        previous_readings = await self.reading_manager.get_readings(params=param)
         last_reading = previous_readings[0] if previous_readings else None
 
         # Cannot start a new reading with another still active
@@ -44,7 +45,7 @@ class ReadingService(BaseService):
         new_reading.status_id = 'read' if reading.finish_date else 'reading'
         new_reading.active = False if reading.finish_date else True
 
-        new_reading = await ReadingDataManager(self.session).create_reading(reading=new_reading)
+        new_reading = await self.reading_manager.create_reading(reading=new_reading)
         response = CreateReadingResponse(
             status_code=status.HTTP_201_CREATED,
             reading=ReadingSchema.model_validate(new_reading).transform()
@@ -67,7 +68,7 @@ class ReadingService(BaseService):
 
         stmt = stmt.order_by(ReadingModel.start_date)
 
-        readings = await ReadingDataManager(self.session).get_all(stmt, unique_result=True, raise_exception=True)
+        readings = await self.reading_manager.get_all(stmt, unique_result=True, raise_exception=True)
 
         item = readings[0].item
 
@@ -86,7 +87,7 @@ class ReadingService(BaseService):
         stmt = select(ReadingModel).where(ReadingModel.active == True,
                                           ReadingModel.owner_id == self.user['user_id'])
 
-        readings = await ReadingDataManager(self.session).get_all(stmt)
+        readings = await self.reading_manager.get_all(stmt)
 
         response = GetActiveReadingsResponse(
             status_code=status.HTTP_200_OK,
@@ -98,11 +99,11 @@ class ReadingService(BaseService):
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
 
-        reading = await ReadingDataManager(self.session, user=self.user).get_reading_by_id(progress.reading_id, get_item=True)
+        reading = await self.reading_manager.get_reading_by_id(progress.reading_id, get_item=True)
         if not reading:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
 
-        last_progress = await ReadingDataManager(self.session).get_latest_progress(progress.reading_id)
+        last_progress = await self.reading_manager.get_latest_progress(progress.reading_id)
 
         item = reading.item
         item_pages = item.pages
@@ -118,22 +119,24 @@ class ReadingService(BaseService):
 
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
-            progress_updated = await ReadingDataManager(session=self.session).update_progress(self.__set_values(progress_entry=last_progress, item_pages=item_pages,
+            progress_updated = await self.reading_manager.update_progress(self.__set_values(progress_entry=last_progress, item_pages=item_pages,
                                                                                                                 current_page=progress.page, percentage=progress.percentage), {'page': progress.page})
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_progress_entry.item_id = reading.item_id
-            new_entry = await ReadingDataManager(self.session).create_progress(progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
+            new_entry = await self.reading_manager.create_progress(progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
                                                                                                           current_page=progress.page, percentage=progress.percentage))
 
         # Update reading as read if pages == item.pages or percentage is 100%
         if ((item_pages and progress.page and item_pages == progress.page)
                 or (progress.percentage and progress.percentage == 100)
                 or (new_entry.percentage == 100)):
-            await ReadingDataManager(session=self.session).update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
+            await self.session.refresh(reading)
+            await self.reading_manager.update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
 
         await self.session.refresh(item)
+        await self.session.refresh(new_entry)
 
         response = CreateProgressResponse(
             success=True,
@@ -144,7 +147,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
-        progress = await ReadingDataManager(self.session).get_progress(reading_id=params.reading_id)
+        progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
 
         response = GetProgressResponse(
             quantity=len(progress) if progress else 0,
