@@ -1,52 +1,21 @@
-import datetime
-import uuid
-from typing import List, Type
-
 import pytest_asyncio
-from rolf_common.models import SQLModel
+from rolf_common.managers import BaseDataManager
 
-from managers.reading import ReadingDataManager
+from data_mock.reading import get_active_reading_mocked, get_reading_progress_mocked, get_reading_list_one_active_mocked
 from models import ReadingModel, ReadingProgressModel
-
-
-@pytest_asyncio.fixture
-async def create_one_reading(create_test_session, create_item, create_reading_status):
-    item = create_item
-    reading_list = []
-
-    reading = ReadingModel(item_id=item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
-                           start_date=datetime.date(2020, 1, 1),
-                           status_id='reading')
-    reading_1 = await ReadingDataManager(session=create_test_session).create_reading(reading)
-
-    return reading_1
+from schemas.reading import ReadingSchema, ProgressSchema
 
 
 @pytest_asyncio.fixture
 async def create_more_than_one_reading(create_test_session, create_item, create_reading_status):
-    item = create_item
-    reading_list = []
+    data_ = await BaseDataManager(create_test_session).add_or_ignore_all(ReadingModel, get_reading_list_one_active_mocked())
+    readings = [ReadingSchema.model_validate(data) for data in data_]
 
-    reading = ReadingModel(item_id=item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
-                           start_date=datetime.date(2020, 1, 1),
-                           finish_date=datetime.date(2020, 1, 20),
-                           active=False,
-                           status_id='read')
-    reading_1 = await ReadingDataManager(session=create_test_session).create_reading(reading)
-
-    reading = ReadingModel(item_id=item[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
-                           start_date=datetime.date(2021, 1, 1),
-                           status_id='reading')
-    reading_2 = await ReadingDataManager(session=create_test_session).create_reading(reading)
-
-    reading_list.append(reading_1)
-    reading_list.append(reading_2)
-
-    return reading_list
+    return readings
 
 
 @pytest_asyncio.fixture
-async def create_active_active_readings(create_test_session, create_item, create_reading_status) -> list[SQLModel]:
+async def create_active_active_readings(create_test_session, create_item, create_reading_status) -> list[ReadingSchema]:
     """
         This fixture create active readings from different items.
         It can create any numbers of readings as it's necessary, but to maintain integrity of the business rules, each active reading must have
@@ -56,42 +25,15 @@ async def create_active_active_readings(create_test_session, create_item, create
     :param create_reading_status:
     :return: the list of active readings
     """
-    items = create_item
-    reading_list = []
+    data_ = await BaseDataManager(create_test_session).add_or_ignore_all(ReadingModel, get_active_reading_mocked())
+    readings = [ReadingSchema.model_validate(data) for data in data_]
 
-    reading = ReadingModel(item_id=items[0].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
-                           start_date=datetime.date(2021, 1, 1),
-                           status_id='reading')
-    reading_1 = await ReadingDataManager(session=create_test_session).create_reading(reading)
-
-    reading = ReadingModel(item_id=items[1].id, owner_id=uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
-                           start_date=datetime.date(2021, 1, 1),
-                           status_id='reading')
-    reading_2 = await ReadingDataManager(session=create_test_session).create_reading(reading)
-
-    reading_list.append(reading_1)
-    reading_list.append(reading_2)
-
-    return reading_list
+    return readings
 
 
 @pytest_asyncio.fixture
-async def create_progress(create_test_session, create_one_reading):
-    readings = create_one_reading
+async def create_progress(create_test_session, create_active_active_readings) -> list[ProgressSchema]:
+    data_ = await BaseDataManager(create_test_session).add_or_ignore_all(ReadingProgressModel, get_reading_progress_mocked())
+    progress = [ProgressSchema.model_validate(data) for data in data_]
 
-    progress_list = []
-
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 1), page=37, percentage=10, item_id=readings.item_id)
-    progress_1 = await ReadingDataManager(session=create_test_session).create_progress(progress)
-
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 2), page=74, percentage=20, item_id=readings.item_id)
-    progress_2 = await ReadingDataManager(session=create_test_session).create_progress(progress)
-
-    progress = ReadingProgressModel(reading_id=readings.id, date=datetime.date(2024, 5, 3), page=111, percentage=30, item_id=readings.item_id)
-    progress_3 = await ReadingDataManager(session=create_test_session).create_progress(progress)
-
-    progress_list.append(progress_1)
-    progress_list.append(progress_2)
-    progress_list.append(progress_3)
-
-    return progress_list
+    return progress

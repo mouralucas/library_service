@@ -36,7 +36,7 @@ def get_item_mocked() -> list[dict[str, Any]]:
             'collection_id': collections[0]['id'],
             'last_status_id': item_status[0]['id'],
             'last_status_date': datetime.date.today() - relativedelta(days=1),
-            'pages': 389,
+            'pages': 370
         },
         {
             **default_model_dict,

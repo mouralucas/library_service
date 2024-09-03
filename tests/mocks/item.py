@@ -2,9 +2,8 @@ import pytest_asyncio
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
 
-from data_mock.core import get_item_status_mocked
 from data_mock.item import get_item_mocked, get_item_status_relation_mocked
-from models import ItemModel, ItemStatusModel, StatusModel
+from models import ItemModel, ItemStatusModel
 from schemas.item import ItemSchema
 
 
