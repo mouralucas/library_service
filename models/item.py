@@ -80,10 +80,10 @@ class ItemAuthorModel(SQLModel):
 class ItemStatusModel(SQLModel):
     __tablename__ = 'item_status'
 
-    status_id: Mapped[str] = mapped_column(ForeignKey('status.id'), primary_key=True)
+    status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
     status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id], lazy='selectin')
 
-    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'), primary_key=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
     item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
 
     date: Mapped[datetime.date] = mapped_column('date')
