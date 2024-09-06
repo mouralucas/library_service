@@ -1,165 +1,71 @@
 import pytest_asyncio
-
-from managers.author import AuthorManager
 from rolf_common.managers import BaseDataManager
-from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager
+from rolf_common.models import SQLModel
+
+from data_mock.core import get_item_status_mocked, get_reading_status_mocked, get_language_mocked, get_country_mocked, get_serie_mocked, get_collection_mocked, get_publisher_mocked, get_author_mocked
 from models import LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel, AuthorModel, StatusModel
+from schemas.core import StatusSchema, LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema, AuthorSchema
 
 
 @pytest_asyncio.fixture
-async def create_item_status(create_test_session):
-    status_list = []
+async def create_item_status(create_test_session) -> list[StatusSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(StatusModel, get_item_status_mocked())
+    item_status: list[StatusSchema] = [StatusSchema.model_validate(data) for data in data_]
 
-    status = StatusModel(id='owned', name='Na estante', type='ITEM.STATUS')
-    status_1 = await BaseDataManager(session=create_test_session).add_one(status)
-
-    status = StatusModel(id='bought', name='Comprado', type='ITEM.STATUS')
-    status_2 = await BaseDataManager(session=create_test_session).add_one(status)
-
-    status = StatusModel(id='desired', name='Desejado', type='ITEM.STATUS')
-    status_3 = await BaseDataManager(session=create_test_session).add_one(status)
-
-    status_list.append(status_1)
-    status_list.append(status_2)
-    status_list.append(status_3)
-
-    return status_list
+    return item_status
 
 
 @pytest_asyncio.fixture
-async def create_reading_status(create_test_session):
-    reading_status_list = []
+async def create_reading_status(create_test_session) -> list[StatusSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(StatusModel, get_reading_status_mocked())
+    reading_status: list[StatusSchema] = [StatusSchema.model_validate(data) for data in data_]
 
-    status = StatusModel(id='reading', name='Lendo', type='READING.STATUS')
-    status_1 = await BaseDataManager(session=create_test_session).add_one(status)
-
-    status = StatusModel(id='read', name='Lido', type='READING.STATUS')
-    status_2 = await BaseDataManager(session=create_test_session).add_one(status)
-
-    reading_status_list.append(status_1)
-    reading_status_list.append(status_2)
-
-    return reading_status_list
+    return reading_status
 
 
 @pytest_asyncio.fixture
-async def create_languages(create_test_session):
-    language_list = []
+async def create_languages(create_test_session) -> list[LanguageSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(LanguageModel, get_language_mocked())
+    languages: list[LanguageSchema] = [LanguageSchema.model_validate(data) for data in data_]
 
-    language = LanguageModel(id='EN', name='English', code='EN')
-    language_1 = await LanguageManager(session=create_test_session).create_language(language)
-
-    language = LanguageModel(id='PT', name='Portuguese', code='PT')
-    language_2 = await LanguageManager(session=create_test_session).create_language(language)
-
-    language_list.append(language_1)
-    language_list.append(language_2)
-
-    return language_list
+    return languages
 
 
 @pytest_asyncio.fixture
-async def create_countries(create_test_session):
-    countries_list = []
+async def create_countries(create_test_session) -> list[CountrySchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(CountryModel, get_country_mocked())
+    countries: list[CountrySchema] = [CountrySchema.model_validate(data) for data in data_]
 
-    country = CountryModel(id='BR', name='Brasil', continent='SA')
-    country_1 = await CountryManager(session=create_test_session).create_country(country)
-
-    country = CountryModel(id='DE', name='Alemanha', continent='EU')
-    country_2 = await CountryManager(session=create_test_session).create_country(country)
-
-    country = CountryModel(id='AU', name='Austrália', continent='OC')
-    country_3 = await CountryManager(session=create_test_session).create_country(country)
-
-    countries_list.append(country_1)
-    countries_list.append(country_2)
-    countries_list.append(country_3)
-
-    return countries_list
+    return countries
 
 
 @pytest_asyncio.fixture
-async def create_series(create_test_session):
-    series_list = []
+async def create_series(create_test_session) -> list[SerieSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(SerieModel, get_serie_mocked())
+    series: list[SerieSchema] = [SerieSchema.model_validate(data) for data in data_]
 
-    serie = SerieModel(id=0, name='Default', description='Default serie')
-    serie_0 = await SerieManager(session=create_test_session).create_serie(serie)
-
-    serie = SerieModel(name='Test serie', description='Test serie description')
-    serie_1 = await SerieManager(session=create_test_session).create_serie(serie)
-
-    serie = SerieModel(name='Test serie 2', description='Test serie 2 description')
-    serie_2 = await SerieManager(session=create_test_session).create_serie(serie)
-
-    series_list.append(serie_0)
-    series_list.append(serie_1)
-    series_list.append(serie_2)
-
-    return series_list
+    return series
 
 
 @pytest_asyncio.fixture
-async def create_collections(create_test_session) -> list:
-    collections_list = []
+async def create_collections(create_test_session) -> list[CollectionSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(CollectionModel, get_collection_mocked())
+    collections: list[CollectionSchema] = [CollectionSchema.model_validate(data) for data in data_]
 
-    collection = CollectionModel(id=0, name='Default', description='Default collection')
-    collection_0 = await CollectionManager(session=create_test_session).create_collection(collection)
-
-    collection = CollectionModel(name='Test collection', description='Test collection description')
-    collection_1 = await CollectionManager(session=create_test_session).create_collection(collection)
-
-    collection = CollectionModel(name='Test collection 2', description='Test collection 2 description')
-    collection_2 = await CollectionManager(session=create_test_session).create_collection(collection)
-
-    collections_list.append(collection_0)
-    collections_list.append(collection_1)
-    collections_list.append(collection_2)
-
-    return collections_list
+    return collections
 
 
 @pytest_asyncio.fixture
-async def create_publisher(create_test_session) -> list:
-    publishers_list = []
+async def create_publisher(create_test_session) -> list[PublisherSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(PublisherModel, get_publisher_mocked())
+    publishers: list[PublisherSchema] = [PublisherSchema.model_validate(data) for data in data_]
 
-    publisher = PublisherModel(name='Test publisher', description='Test publisher description')
-    publisher_1 = await PublisherManager(session=create_test_session).create_publisher(publisher)
-
-    publisher = PublisherModel(name='Other publisher', description='This is other publisher')
-    publisher_2 = await PublisherManager(session=create_test_session).create_publisher(publisher)
-
-    publishers_list.append(publisher_1)
-    publishers_list.append(publisher_2)
-
-    return publishers_list
+    return publishers
 
 
 @pytest_asyncio.fixture
-async def create_authors(create_test_session,
-                         create_languages,
-                         create_countries) -> list:
-    authors_list = []
-    list_countries = create_countries
-    list_languages = create_languages
+async def create_authors(create_test_session, create_languages, create_countries) -> list[AuthorSchema]:
+    data_: list[SQLModel] = await BaseDataManager(create_test_session).add_or_ignore_all(AuthorModel, get_author_mocked())
+    authors: list[AuthorSchema] = [AuthorSchema.model_validate(data) for data in data_]
 
-    author = AuthorModel(name="Jack Ryan",
-                         language_id=list_languages[0].id,
-                         country_id=list_countries[0].id,
-                         )
-    author_1 = await AuthorManager(session=create_test_session).create_author(author)
-
-    author = AuthorModel(name="Jason Bourne",
-                         language_id=list_languages[1].id,
-                         country_id=list_countries[1].id)
-    author_2 = await AuthorManager(session=create_test_session).create_author(author)
-
-    author = AuthorModel(name='Frodo Baggins',
-                         language_id=list_languages[0].id,
-                         country_id=list_countries[0].id)
-    author_3 = await AuthorManager(session=create_test_session).create_author(author)
-
-    authors_list.append(author_1)
-    authors_list.append(author_2)
-    authors_list.append(author_3)
-
-    return authors_list
+    return authors

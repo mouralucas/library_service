@@ -52,7 +52,6 @@ async def test_create_finished_reading(client, create_item, create_reading_statu
 async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     readings = create_more_than_one_reading
 
-    reading_id = readings[0].id
     item_id = readings[0].item_id
 
     param = {
@@ -74,17 +73,16 @@ async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     assert data['quantity'] > 1
     assert len(data['readings']) > 0
 
-    assert 'readingId' in data['readings'][0]
-    assert data['readings'][0]['readingId'] == str(reading_id)
-
-    assert 'itemId' in data['readings'][0]
-    assert data['readings'][0]['itemId'] == item_id
+    for reading in data['readings']:
+        assert 'readingId' in reading
+        assert 'itemId' in reading
+        assert reading['itemId'] == item_id
 
 
 @pytest.mark.asyncio
 async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     """
-        Exacly the same as test_get_reading_by_item_id, but in this case reading_id is used to get a reading. It must return only one instance
+        Exactly the same as test_get_reading_by_item_id, but in this case reading_id is used to get a reading. It must return only one instance
     :param client:
     :param create_reading:
     :return:
@@ -112,11 +110,13 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
 
     assert data['quantity'] == 1
     assert len(data['readings']) > 0
-    assert 'readingId' in data['readings'][0]
-    assert data['readings'][0]['readingId'] == str(reading_id)
 
-    assert 'itemId' in data['readings'][0]
-    assert data['readings'][0]['itemId'] == item_id
+    for reading in data['readings']:
+        assert 'readingId' in reading
+        assert reading['readingId'] == str(reading_id)
+
+        assert 'itemId' in reading
+        assert reading['itemId'] == item_id
 
 
 @pytest.mark.asyncio
@@ -136,8 +136,8 @@ async def test_get_active_readings(client, create_active_active_readings):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_with_page(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_with_page(client, create_active_active_readings):
+    reading = create_active_active_readings[0]
 
     reading_id = reading.id
     current_page = 42
@@ -163,8 +163,8 @@ async def test_create_progress_with_page(client, create_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_with_percentage(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_with_percentage(client, create_active_active_readings):
+    reading = create_active_active_readings[0]
 
     reading_id = reading.id
     current_percentage = 32
@@ -219,8 +219,8 @@ async def test_create_progress_lt_last_progress(client, create_progress):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_fail(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_fail(client, create_active_active_readings):
+    reading = create_active_active_readings[0]
 
     reading_id = reading.id
     item = reading.item
@@ -247,8 +247,8 @@ async def test_create_progress_fail(client, create_one_reading):
 
 
 @pytest.mark.asyncio
-async def test_create_progress_complete_reading_pages(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_complete_reading_pages(client, create_active_active_readings):
+    reading = create_active_active_readings[0]
 
     current_reading = reading
     reading_id = current_reading.id
@@ -279,8 +279,8 @@ async def test_create_progress_complete_reading_pages(client, create_one_reading
 
 
 @pytest.mark.asyncio
-async def test_create_progress_complete_reading_percentage(client, create_one_reading):
-    reading = create_one_reading
+async def test_create_progress_complete_reading_percentage(client, create_active_active_readings):
+    reading = create_active_active_readings[0]
 
     current_reading = reading
     reading_id = current_reading.id
