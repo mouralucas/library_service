@@ -10,12 +10,15 @@ class Settings(BaseSettings):
     test: bool = False
 
     # Project description
-    project_name: str = "Library Service Microservice"
+    project_name: str = 'library-service'
+    project_title: str = "Library Service Microservice"
     project_description: str = "This service contains all necessary functions to manage a library"
     project_version: str = "0.0.1"
 
     # Secrets settings
     jwt_token_secret: str = "my_dev_secret"
 
+    # Server and Gateway
+    eureka_server: str = 'http://localhost:8761/eureka'
 
 settings = Settings()
