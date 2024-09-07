@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     jwt_token_secret: str = "my_dev_secret"
 
     # Server and Gateway
-    eureka_server: str = 'http://localhost:8761/eureka'
+    eureka_host_name: str = 'http://localhost:8761/eureka'
+    library_host_ip: str = '127.0.0.1'
+    library_host_port: int = 8001
 
 settings = Settings()

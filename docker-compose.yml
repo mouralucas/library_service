@@ -5,7 +5,7 @@ services:
     environment:
       - library_database_url=$library_database_url
       - auth_service_base_url=$auth_service_base_url
-      - eureka_server=$eureka_server
+      - eureka_host_name=$eureka_host_name
     ports:
       - "8001:8000"
 
