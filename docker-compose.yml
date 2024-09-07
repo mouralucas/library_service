@@ -5,6 +5,7 @@ services:
     environment:
       - library_database_url=$library_database_url
       - auth_service_base_url=$auth_service_base_url
+      - eureka_host_name=$eureka_host_name
     ports:
       - "8001:8000"
 
@@ -18,7 +19,7 @@ services:
     depends_on:
       - "backend-library-service"
     environment:
-      - server_host={$server_host}
+      - server_host=$server_host
     logging:
       driver: "json-file"
       options:

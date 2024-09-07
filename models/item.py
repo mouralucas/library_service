@@ -36,6 +36,7 @@ class ItemModel(SQLModel):
     # authors
     main_author_id: Mapped[int] = mapped_column(ForeignKey('author.id'))
     main_author: Mapped['AuthorModel'] = relationship(foreign_keys=[main_author_id], lazy='noload')
+
     collection_id: Mapped[int] = mapped_column(ForeignKey('collection.id'))
     collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='noload')
     format: Mapped[str] = mapped_column('format', nullable=True)
@@ -52,8 +53,8 @@ class ItemModel(SQLModel):
     width: Mapped[float] = mapped_column('width', nullable=True)
     thickness: Mapped[float] = mapped_column('thickness', nullable=True)
 
-    summary: Mapped[str] = mapped_column('summary', nullable=True)
-    observation: Mapped[str] = mapped_column('observation', nullable=True)
+    summary: Mapped[str] = mapped_column('summary', nullable=True) # continue here
+    observation: Mapped[str] = mapped_column('observation', nullable=True) # go to user item
 
     origin: Mapped[str] = mapped_column('origin', default='SYSTEM')
 
@@ -61,7 +62,7 @@ class ItemModel(SQLModel):
 
     # Relations
     authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='noload', viewonly=True)
-    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='noload', viewonly=True)
+    status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='noload', viewonly=True) # go to user item
 
 
 class ItemAuthorModel(SQLModel):
@@ -87,3 +88,39 @@ class ItemStatusModel(SQLModel):
     item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
 
     date: Mapped[datetime.date] = mapped_column('date')
+
+
+# class ItemUserModel(SQLModel):
+#     item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
+#     item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='subquery')
+#
+#     publication_date: Mapped[datetime.date] = mapped_column('publication_date', nullable=True)
+#
+#     edition: Mapped[int] = mapped_column('edition', default=1)
+#
+#     language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
+#     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='noload')
+#     # # cover
+#     volume: Mapped[int] = mapped_column('volume', default=1)
+#     publisher_id: Mapped[int] = mapped_column(ForeignKey('publisher.id'), nullable=True)
+#     publisher: Mapped['PublisherModel'] = relationship(foreign_keys=[publisher_id], lazy='noload')
+#
+#     serie_id: Mapped[int] = mapped_column(ForeignKey('serie.id'), nullable=True)
+#     serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='noload')
+#     collection_id: Mapped[int] = mapped_column(ForeignKey('collection.id'))
+#     collection: Mapped['CollectionModel'] = relationship(foreign_keys=[collection_id], lazy='noload')
+#
+#     format: Mapped[str] = mapped_column('format', nullable=True)
+#     type: Mapped[str] = mapped_column('type', nullable=True)
+#
+#     last_status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
+#     last_status: Mapped['StatusModel'] = relationship(foreign_keys=[last_status_id], lazy='noload')
+#     last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
+#
+#     cover_price: Mapped[float] = mapped_column('cover_price', default=0)
+#     paid_price: Mapped[float] = mapped_column('paid_price', default=0)
+#
+#     dimensions: Mapped[str] = mapped_column('dimensions', nullable=True)
+#     height: Mapped[float] = mapped_column('height', nullable=True)
+#     width: Mapped[float] = mapped_column('width', nullable=True)
+#     thickness: Mapped[float] = mapped_column('thickness', nullable=True)
