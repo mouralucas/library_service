@@ -30,6 +30,7 @@ app = FastAPI(
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     docs_url="/",
     lifespan=lifespan,
+    root_path='/' + settings.project_name,
 )
 
 app.include_router(item.router)

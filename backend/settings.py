@@ -20,7 +20,8 @@ class Settings(BaseSettings):
 
     # Server and Gateway
     eureka_host_name: str = 'http://localhost:8761/eureka'
-    library_host_ip: str = '127.0.0.1'
+
+    library_host_ip: str = '192.168.0.29'
     library_host_port: int = 8001
 
 settings = Settings()
