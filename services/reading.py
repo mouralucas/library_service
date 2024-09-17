@@ -148,11 +148,13 @@ class ReadingService(BaseService):
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
+        item = progress[0].item if progress else None
 
         response = GetProgressResponse(
             quantity=len(progress) if progress else 0,
-            readingProgress=progress if progress else []
-        )
+            item=item,
+            progress=progress if progress else []
+        ).transform()
 
         return response
 

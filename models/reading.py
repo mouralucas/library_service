@@ -19,7 +19,7 @@ class ReadingModel(SQLModel):
     owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
     active: Mapped[bool] = mapped_column('active', default=True)
     item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
-    item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
+    item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='subquery')
     start_date: Mapped[datetime.date]
     finish_date: Mapped[datetime.date] = mapped_column('finish_date', nullable=True)
     number: Mapped[int] = mapped_column('number', default=1)
@@ -35,7 +35,7 @@ class ReadingProgressModel(SQLModel):
     reading: Mapped["ReadingModel"] = relationship(back_populates='progress')
     # TODO: after update the table, change table in database to not null
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
-    item: Mapped["ItemModel"] = relationship(foreign_keys=[item_id], lazy='noload')
+    item: Mapped["ItemModel"] = relationship(foreign_keys=[item_id], lazy='subquery')
     date: Mapped[datetime.date] = mapped_column('date')
     page: Mapped[int] = mapped_column('page', nullable=True)
     percentage: Mapped[float] = mapped_column('percentage', nullable=True)

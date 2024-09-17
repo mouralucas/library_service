@@ -155,11 +155,11 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
 
-    assert 'progress' in data
-    assert 'page' in data['progress']
-    assert 'percentage' in data['progress']
-    assert data['progress']['page'] == current_page
-    assert data['progress']['percentage'] == percentage
+    assert 'readingProgress' in data
+    assert 'page' in data['readingProgress']
+    assert 'percentage' in data['readingProgress']
+    assert data['readingProgress']['page'] == current_page
+    assert data['readingProgress']['percentage'] == percentage
 
 
 @pytest.mark.asyncio
@@ -182,11 +182,11 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
 
-    assert 'progress' in data
-    assert 'page' in data['progress']
-    assert 'percentage' in data['progress']
-    assert data['progress']['page'] == page
-    assert data['progress']['percentage'] == current_percentage
+    assert 'readingProgress' in data
+    assert 'page' in data['readingProgress']
+    assert 'percentage' in data['readingProgress']
+    assert data['readingProgress']['page'] == page
+    assert data['readingProgress']['percentage'] == current_percentage
 
 
 @pytest.mark.asyncio

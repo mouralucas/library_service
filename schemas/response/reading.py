@@ -25,7 +25,7 @@ class CreateProgressResponse(SuccessResponseBase):
     item: ItemSchema = Field(..., exclude=True)
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
-    progress: ProgressSchema = Field(..., description="The reading progress information")
+    progress: ProgressSchema = Field(..., serialization_alias='readingProgress', description="The reading progress information")
 
     def transform(self):
         resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress.page),
@@ -44,4 +44,12 @@ class CreateProgressResponse(SuccessResponseBase):
 
 class GetProgressResponse(SuccessResponseBase):
     quantity: int = Field(..., description="The number of entries returned")
-    readingProgress: list[ProgressSchema] = Field(..., description="The reading progress information")
+    item: ItemSchema | None = Field(None, exclude=True)
+    item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
+    pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
+    progress: list[ProgressSchema] = Field(..., serialization_alias='readingProgress', description="The reading progress information")
+
+    def transform(self):
+        self.item_title = self.item.title if self.item else None
+
+        return self
