@@ -1,9 +1,8 @@
 from typing import Any
 
 from fastapi import HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -47,7 +46,13 @@ class ItemManager(BaseDataManager):
 
         for key, value in params.model_dump().items():
             if value:
-                stmt = stmt.where(getattr(ItemModel, key) == value)
+                # TODO: Make this function better!!
+                attr = getattr(ItemModel, key)
+                if attr == ItemModel.title:
+                    stmt = stmt.where(func.lower(attr).like(f"%{value.lower()}%"))
+                else:
+                    stmt = stmt.where(attr == value)
+
 
         stmt = stmt.order_by(ItemModel.id)
 
