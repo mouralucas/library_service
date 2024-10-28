@@ -248,7 +248,7 @@ async def test_get_item_with_filter(client, create_item):
 
     assert 'items' in data
     assert 'quantity' in data
-    assert data['quantity'] == 1
+    assert data['quantity'] == 2 # Both titles start with same pattern, so both must be returned
 
     assert data['items'][0]['title'] == items[0].title
     assert data['items'][0]['pages'] == items[0].pages
