@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
@@ -14,80 +14,82 @@ class ReadingDataManager(BaseDataManager):
         super().__init__(session=session)
         self.user = user
 
-    async def create_reading(self, reading: ReadingModel) -> SQLModel:
-        new_reading = await self.add_one(reading)
+    async def create_reading(self, reading: ReadingModel) -> ReadingModel:
+        new_reading: SQLModel = await self.add_one(reading)
 
-        return new_reading
+        return cast(ReadingModel, new_reading)
 
-    async def update_reading(self, reading: SQLModel, fields: dict[str, Any]) -> SQLModel:
-        stmt = (update(ReadingModel)
-                .where(ReadingModel.id == reading.id)
-                .values(**fields))
+    async def update_reading(self, reading: SQLModel, fields: dict[str, Any]) -> ReadingModel:
+        query = (update(ReadingModel)
+                 .where(ReadingModel.id == reading.id)
+                 .values(**fields))
 
-        reading = await self.update_one(sql_statement=stmt, sql_model=reading)
+        reading: SQLModel = await self.update_one(sql_statement=query, sql_model=reading)
 
-        return reading
+        return cast(ReadingModel, reading)
 
-    async def get_reading_by_id(self, reading_id, get_item: bool = False) -> SQLModel | None:
-        stmt = select(ReadingModel).where(ReadingModel.id == reading_id,
-                                          ReadingModel.owner_id == self.user['user_id'])
+    async def get_reading_by_id(self, reading_id, get_item: bool = False) -> ReadingModel | None:
+        query = select(ReadingModel).where(ReadingModel.id == reading_id,
+                                           ReadingModel.owner_id == self.user['user_id'])
 
         if get_item:
-            stmt = stmt.options(joinedload(ReadingModel.item))
+            query = query.options(joinedload(ReadingModel.item))
 
-        reading: SQLModel = await self.get_only_one(stmt)
+        reading: SQLModel = await self.get_only_one(query)
 
-        return reading
+        return cast(ReadingModel, reading)
 
     async def get_readings(self, params: dict) -> list[SQLModel] | None:
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
-        stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
+        query = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
 
         for key, value in params.items():
-            stmt = stmt.where(getattr(ReadingModel, key) == value)
+            query = query.where(getattr(ReadingModel, key) == value)
 
-        stmt = stmt.order_by(ReadingModel.start_date.desc())
+        query = query.order_by(ReadingModel.start_date.desc())
 
-        readings = await self.get_all(stmt)
+        readings = await self.get_all(query)
 
         return readings
 
     async def get_item_active_reading(self, item_id: int) -> SQLModel | None:
-        stmt = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == 1)
-        reading: SQLModel = await self.get_only_one(stmt)
+        query = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == 1)
+
+        reading: SQLModel = await self.get_only_one(query)
 
         return reading
 
     # Progress Methods
-    async def create_progress(self, progress: SQLModel) -> SQLModel:
+    async def create_progress(self, progress: SQLModel) -> ReadingProgressModel:
         new_progress = await self.add_one(progress)
 
-        return new_progress
+        return cast(ReadingProgressModel, new_progress)
 
-    async def update_progress(self, progress: SQLModel, fields: dict[str, Any]) -> SQLModel:
-        stmt = (
+    async def update_progress(self, progress: SQLModel, fields: dict[str, Any]) -> ReadingProgressModel:
+        query = (
             update(ReadingProgressModel)
             .where(ReadingProgressModel.id == progress.id)
             .values(**fields)
         )
 
-        progress = await self.update_one(sql_statement=stmt, sql_model=progress)
+        progress = await self.update_one(sql_statement=query, sql_model=progress)
 
-        return progress
+        return cast(ReadingProgressModel, progress)
 
-    async def get_progress(self, reading_id):
-        stmt = (select(ReadingProgressModel)
+    async def get_progress(self, reading_id) -> list[ReadingProgressModel] | None:
+        query = (select(ReadingProgressModel)
                 .where(ReadingProgressModel.reading_id == reading_id)
                 .order_by(ReadingProgressModel.date.desc()))
 
-        progress_list = await self.get_all(stmt)
+        progress_list = await self.get_all(query)
 
-        return progress_list
+        return [cast(ReadingProgressModel, progress) for progress in progress_list] if progress_list else None
 
     async def get_latest_progress(self, reading_id) -> ReadingProgressModel | None:
-        stmt = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
+        query = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
 
-        latest_progress = await self.get_first(stmt)
+        # TODO: get_first should return SQLModel!!
+        latest_progress = await self.get_first(query)
 
         return latest_progress

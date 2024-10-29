@@ -148,6 +148,7 @@ class ReadingService(BaseService):
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
+        # TODO: get from item, if none progress the item is None also, or maybe get from reading
         item = progress[0]['ReadingProgressModel'].item if progress else None
 
         response = GetProgressResponse(
