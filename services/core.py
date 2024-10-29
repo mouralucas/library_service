@@ -33,7 +33,7 @@ class LanguageService(BaseService):
         response = GetLanguageResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(languages) if languages else 0,
-            languages=[LanguageSchema.model_validate(language) for language in languages] if languages else []
+            languages=[LanguageSchema.model_validate(language['LanguageModel']) for language in languages] if languages else []
         )
 
         return response
@@ -59,7 +59,7 @@ class CountryService(BaseService):
         response = GetCountryResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(countries) if countries else 0,
-            countries=[CountrySchema.model_validate(country) for country in countries] if countries else []
+            countries=[CountrySchema.model_validate(country['CountryModel']) for country in countries] if countries else []
         )
 
         return response
@@ -85,7 +85,7 @@ class SerieService(BaseService):
         response = GetSeriesResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(series) if series else 0,
-            series=[SerieSchema.model_validate(serie) for serie in series] if series else []
+            series=[SerieSchema.model_validate(serie['SerieModel']) for serie in series] if series else []
         )
 
         return response
@@ -111,7 +111,7 @@ class CollectionService(BaseService):
         response = GetCollectionResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(collections) if collections else 0,
-            collections=[CollectionSchema.model_validate(collection) for collection in collections] if collections else []
+            collections=[CollectionSchema.model_validate(collection['CollectionModel']) for collection in collections] if collections else []
         )
 
         return response
@@ -137,7 +137,7 @@ class PublisherService(BaseService):
         response = GetPublisherResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(publishers) if publishers else 0,
-            publishers=[PublisherSchema.model_validate(publisher) for publisher in publishers] if publishers else []
+            publishers=[PublisherSchema.model_validate(publisher['PublisherModel']) for publisher in publishers] if publishers else []
         )
 
         return response

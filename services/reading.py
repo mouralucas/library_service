@@ -70,14 +70,14 @@ class ReadingService(BaseService):
 
         readings = await self.reading_manager.get_all(stmt, unique_result=True, raise_exception=True)
 
-        item = readings[0].item
+        item = readings[0]['ReadingModel'].item if readings else None
 
         response = GetReadingResponse(
             success=True,
             status_code=status.HTTP_200_OK,
             item_title=item.title,
             quantity=len(readings) if readings else 0,
-            readings=[ReadingSchema.model_validate(reading) for reading in readings] if readings else []
+            readings=[ReadingSchema.model_validate(reading['ReadingModel']) for reading in readings] if readings else []
         )
 
         return response
@@ -92,7 +92,7 @@ class ReadingService(BaseService):
         response = GetActiveReadingsResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(readings) if readings else 0,
-            readings=[ReadingSchema.model_validate(reading).transform() for reading in readings] if readings else []
+            readings=[ReadingSchema.model_validate(reading['ReadingModel']).transform() for reading in readings] if readings else []
         )
 
         return response
@@ -120,13 +120,13 @@ class ReadingService(BaseService):
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
             progress_updated = await self.reading_manager.update_progress(self.__set_values(progress_entry=last_progress, item_pages=item_pages,
-                                                                                                                current_page=progress.page, percentage=progress.percentage), {'page': progress.page})
+                                                                                            current_page=progress.page, percentage=progress.percentage), {'page': progress.page})
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_progress_entry.item_id = reading.item_id
             new_entry = await self.reading_manager.create_progress(progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
-                                                                                                          current_page=progress.page, percentage=progress.percentage))
+                                                                                              current_page=progress.page, percentage=progress.percentage))
 
         # Update reading as read if pages == item.pages or percentage is 100%
         if ((item_pages and progress.page and item_pages == progress.page)
@@ -148,12 +148,12 @@ class ReadingService(BaseService):
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
-        item = progress[0].item if progress else None
+        item = progress[0]['ReadingProgressModel'].item if progress else None
 
         response = GetProgressResponse(
             quantity=len(progress) if progress else 0,
             item=item,
-            progress=progress if progress else []
+            progress=[ProgressSchema.model_validate(i['ReadingProgressModel']) for i in progress] if progress else []
         ).transform()
 
         return response

@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, cast
 
 from fastapi import HTTPException
-from sqlalchemy import select, update, func
+from sqlalchemy import select, update, func, RowMapping
 from rolf_common.managers import BaseDataManager
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -41,7 +41,7 @@ class ItemManager(BaseDataManager):
 
         return item
 
-    async def get_items(self, params: GetItemRequest) -> list[SQLModel] | None:
+    async def get_items(self, params: GetItemRequest) -> list[ItemModel] | None:
         stmt = select(ItemModel)
 
         for key, value in params.model_dump().items():
@@ -56,14 +56,14 @@ class ItemManager(BaseDataManager):
 
         stmt = stmt.order_by(ItemModel.id)
 
-        items: list[SQLModel] = await self.get_all(stmt, unique_result=True)
+        items: list[RowMapping] = await self.get_all(stmt, unique_result=True)
 
-        return items
+        return [cast(ItemModel, item) for item in items] if items else None
 
-    async def get_item_status_history(self, item_id: int) -> list[SQLModel] | None:
+    async def get_item_status_history(self, item_id: int) -> list[ItemStatusModel] | None:
         stmt = select(ItemStatusModel).where(ItemStatusModel.item_id == item_id).order_by(ItemStatusModel.date.desc())
 
         item_status = await self.get_all(stmt)
 
-        return item_status
+        return [cast(ItemStatusModel, item) for item in item_status] if item_status else None
 

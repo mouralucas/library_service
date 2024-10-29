@@ -62,17 +62,17 @@ class ItemService(BaseService):
         return response
 
     async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
-        items: list[SQLModel] = await ItemManager(self.session).get_items(params)
+        items: list[ItemModel] = await ItemManager(self.session).get_items(params)
 
         response = GetItemResponse(
             quantity=len(items) if items else 0,
             status_code=status.HTTP_200_OK,
-            items=[ItemSchema.model_validate(item) for item in items] if items else [],
+            items=[ItemSchema.model_validate(item['ItemModel']) for item in items] if items else [],
         )
 
         return response
 
-    async def __update_status(self, item: SQLModel, is_update: bool = False):
+    async def __update_status(self, item: ItemModel, is_update: bool = False):
         """
         :Name: __update_status
         :Created by: Lucas Penha de Moura - 22/06/2024
@@ -83,7 +83,7 @@ class ItemService(BaseService):
         """
         status_history = await ItemManager(session=self.session).get_item_status_history(item.id)
 
-        status_history = status_history[0] if status_history else None
+        status_history = status_history[0]['ItemStatusModel'] if status_history else None
 
         if not status_history or (status_history.status_id != item.last_status_id):
             new_status = ItemStatusModel(

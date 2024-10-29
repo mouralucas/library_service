@@ -1,18 +1,16 @@
-fastapi==0.109.2
-pydantic==2.6.1
-pydantic-settings==2.1.0
+fastapi==0.115.2
+pydantic==2.9.2
+pydantic-settings==2.6.0
 uvicorn==0.22.0
-sqlalchemy[asyncio]==2.0.15
-asyncpg==0.29.0
-starlette==0.36.3
+sqlalchemy[asyncio]==2.0.36
+starlette==0.40.0
 httpx==0.24.1
 python-dateutil~=2.9.0.post0
 git+https://github.com/mouralucas/rolf_common.git@main#egg=rolf_common
 
 #Database
-psycopg2-binary==2.9.9
-asyncpg==0.29.0 # com o async é preciso do psycopg?
-alembic==1.13.1
+asyncpg==0.29.0
+alembic==1.13.3
 aiosqlite==0.20.0
 
 # tests

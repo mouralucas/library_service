@@ -31,7 +31,7 @@ class AuthorService(BaseService):
         response = GetAuthorResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(authors) if authors else 0,
-            authors=[AuthorSchema.model_validate(author) for author in authors] if authors else []
+            authors=[AuthorSchema.model_validate(author['AuthorModel']) for author in authors] if authors else []
         )
 
         return response
