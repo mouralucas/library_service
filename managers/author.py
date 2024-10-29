@@ -1,14 +1,16 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import cast
 
 from rolf_common.managers import BaseDataManager
-from models import SQLModel, AuthorModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from models import AuthorModel
 
 
 class AuthorManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def create_author(self, author: AuthorModel) -> SQLModel:
+    async def create_author(self, author: AuthorModel) -> AuthorModel:
         """
         :Name: create_author
         :Created by: Lucas Penha de Moura - 21/05/2024
@@ -19,4 +21,4 @@ class AuthorManager(BaseDataManager):
         """
         new_author = await self.add_one(author)
 
-        return new_author
+        return cast(AuthorModel, new_author)

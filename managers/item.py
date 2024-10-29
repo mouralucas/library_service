@@ -65,5 +65,5 @@ class ItemManager(BaseDataManager):
 
         item_status = await self.get_all(stmt)
 
-        return [cast(ItemStatusModel, item) for item in item_status] if item_status else None
+        return [item['ItemStatusModel'] for item in item_status] if item_status else None
 

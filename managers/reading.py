@@ -39,7 +39,7 @@ class ReadingDataManager(BaseDataManager):
 
         return cast(ReadingModel, reading)
 
-    async def get_readings(self, params: dict) -> list[SQLModel] | None:
+    async def get_readings(self, params: dict) -> list[ReadingModel] | None:
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
         query = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
@@ -51,14 +51,14 @@ class ReadingDataManager(BaseDataManager):
 
         readings = await self.get_all(query)
 
-        return readings
+        return [reading['ReadingModel'] for reading in readings] if readings else None
 
-    async def get_item_active_reading(self, item_id: int) -> SQLModel | None:
+    async def get_item_active_reading(self, item_id: int) -> ReadingModel | None:
         query = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == 1)
 
         reading: SQLModel = await self.get_only_one(query)
 
-        return reading
+        return cast(ReadingModel, reading) if reading else None
 
     # Progress Methods
     async def create_progress(self, progress: SQLModel) -> ReadingProgressModel:
@@ -84,7 +84,7 @@ class ReadingDataManager(BaseDataManager):
 
         progress_list = await self.get_all(query)
 
-        return [cast(ReadingProgressModel, progress) for progress in progress_list] if progress_list else None
+        return [progress['ReadingProgressModel'] for progress in progress_list] if progress_list else None
 
     async def get_latest_progress(self, reading_id) -> ReadingProgressModel | None:
         query = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())

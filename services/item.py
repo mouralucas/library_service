@@ -83,7 +83,7 @@ class ItemService(BaseService):
         """
         status_history = await ItemManager(session=self.session).get_item_status_history(item.id)
 
-        status_history = status_history[0]['ItemStatusModel'] if status_history else None
+        status_history = status_history[0] if status_history else None
 
         if not status_history or (status_history.status_id != item.last_status_id):
             new_status = ItemStatusModel(
