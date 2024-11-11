@@ -67,7 +67,7 @@ class ItemService(BaseService):
         response = GetItemResponse(
             quantity=len(items) if items else 0,
             status_code=status.HTTP_200_OK,
-            items=[ItemSchema.model_validate(item['ItemModel']) for item in items] if items else [],
+            items=[ItemSchema.model_validate(item) for item in items] if items else None
         )
 
         return response

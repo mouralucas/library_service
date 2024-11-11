@@ -42,23 +42,23 @@ class ItemManager(BaseDataManager):
         return item
 
     async def get_items(self, params: GetItemRequest) -> list[ItemModel] | None:
-        stmt = select(ItemModel)
+        query = select(ItemModel)
 
         for key, value in params.model_dump().items():
             if value:
                 # TODO: Make this function better!!
                 attr = getattr(ItemModel, key)
                 if attr == ItemModel.title:
-                    stmt = stmt.where(func.lower(attr).like(f"%{value.lower()}%"))
+                    query = query.where(func.lower(attr).like(f"%{value.lower()}%"))
                 else:
-                    stmt = stmt.where(attr == value)
+                    query = query.where(attr == value)
 
 
-        stmt = stmt.order_by(ItemModel.id)
+        query = query.order_by(ItemModel.id)
 
-        items: list[RowMapping] = await self.get_all(stmt, unique_result=True)
+        items: list[RowMapping] = await self.get_all(query, unique_result=True)
 
-        return [cast(ItemModel, item) for item in items] if items else None
+        return [item['ItemModel'] for item in items] if items else None
 
     async def get_item_status_history(self, item_id: int) -> list[ItemStatusModel] | None:
         stmt = select(ItemStatusModel).where(ItemStatusModel.item_id == item_id).order_by(ItemStatusModel.date.desc())
