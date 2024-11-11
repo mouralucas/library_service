@@ -12,7 +12,7 @@ from schemas.response.reading import GetReadingResponse, CreateProgressResponse,
 from services.reading import ReadingService
 
 # Test new db connection
-from backend.database import db_session
+from backend.database import get_session
 
 router = APIRouter(prefix="/reading", tags=['Readings'])
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/reading", tags=['Readings'])
              status_code=status.HTTP_201_CREATED)
 async def create_reading(
         reading: CreateReadingRequest,
-        session: AsyncSession = Depends(db_session),
+        session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> CreateReadingResponse:
     response = await ReadingService(session=session, user=user).create_reading(reading=reading)
@@ -32,7 +32,7 @@ async def create_reading(
 @router.get('', summary='Get readings', description='Get all readings for a item', response_model_exclude_none=True)
 async def get_reading(
         params: GetReadingRequest = Depends(),
-        session: AsyncSession = Depends(db_session),
+        session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> GetReadingResponse:
     response = await ReadingService(session=session, user=user).get_reading(params=params)
@@ -42,7 +42,7 @@ async def get_reading(
 
 @router.get('/active', summary='Get active readings', description='Get active readings for a item')
 async def get_active_reading(
-        session: AsyncSession = Depends(db_session),
+        session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> GetActiveReadingsResponse:
     # TODO: it need to add user param/filter
@@ -55,7 +55,7 @@ async def get_active_reading(
              status_code=status.HTTP_201_CREATED)
 async def create_reading_progress(
         progress: CreateProgressRequest,
-        session: AsyncSession = Depends(db_session),
+        session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> CreateProgressResponse:
     # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
@@ -68,7 +68,7 @@ async def create_reading_progress(
             response_model_exclude_none=True)
 async def get_reading_progress(
         params: GetProgressRequest = Depends(),
-        session: AsyncSession = Depends(db_session),
+        session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> GetProgressResponse:
     # TODO: make accept item_id as param, than returns the progress for the last reading if more than one

@@ -20,16 +20,16 @@ class ItemManager(BaseDataManager):
 
         return new_item
 
-    async def update_item(self, item: SQLModel, fields: dict[str, Any]) -> SQLModel:
-        stmt = (
+    async def update_item(self, item: SQLModel, fields: dict[str, Any]) -> ItemModel:
+        query = (
             update(ItemModel)
             .where(ItemModel.id == item.id)
             .values(**fields)
         )
 
-        updated_item = await self.update_one(sql_statement=stmt, sql_model=item)
+        updated_item = await self.update_one(sql_statement=query, sql_model=item)
 
-        return updated_item
+        return cast(ItemModel, updated_item)
 
     async def get_item_by_id(self, item_id: int, raise_exception: bool = False) -> SQLModel | None:
         stmt = select(ItemModel).where(ItemModel.id == item_id)

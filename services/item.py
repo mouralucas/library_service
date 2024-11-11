@@ -38,6 +38,8 @@ class ItemService(BaseService):
     async def update_item(self, item: UpdateItemRequest) -> CreateItemResponse:
         current_item = await ItemManager(self.session).get_item_by_id(item_id=item.id)
 
+        # TODO: possible problem when set a field to null,
+        #  maybe compare to current_item
         clean_item_fields = {}
         for key, value in item.model_dump().items():
             if value:

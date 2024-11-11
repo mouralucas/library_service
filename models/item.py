@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from models.core import (LanguageModel, StatusModel, AuthorModel,
                          SerieModel, CollectionModel, PublisherModel)
 
-
+# TODO: change possible float fields to decimal
 class ItemModel(SQLModel):
     __tablename__ = "item"
 
