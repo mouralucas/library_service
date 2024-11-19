@@ -31,15 +31,15 @@ class ItemManager(BaseDataManager):
 
         return cast(ItemModel, updated_item)
 
-    async def get_item_by_id(self, item_id: int, raise_exception: bool = False) -> SQLModel | None:
-        stmt = select(ItemModel).where(ItemModel.id == item_id)
+    async def get_item_by_id(self, item_id: int, raise_exception: bool = False) -> ItemModel | None:
+        query = select(ItemModel).where(ItemModel.id == item_id)
 
-        item: SQLModel = await self.get_only_one(stmt)
+        item: SQLModel = await self.get_only_one(query)
 
         if not item and raise_exception:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Item not found')
 
-        return item
+        return cast(ItemModel, item)
 
     async def get_items(self, params: GetItemRequest) -> list[ItemModel] | None:
         query = select(ItemModel)
