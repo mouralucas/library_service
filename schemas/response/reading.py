@@ -50,6 +50,12 @@ class GetProgressResponse(SuccessResponseBase):
     progress: list[ProgressSchema] = Field(..., serialization_alias='readingProgress', description="The reading progress information")
 
     def transform(self):
+        resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress[0].page),
+                                                                        total_pages=str(self.item.pages),
+                                                                        percentage=self.progress[0].percentage) \
+            if self.progress and self.progress[0].page and self.item.pages else None
+
         self.item_title = self.item.title if self.item else None
+        self.pages_read = resp_str
 
         return self
