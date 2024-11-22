@@ -14,7 +14,7 @@ class CreateItemRequest(BaseModel):
     other_authors_id: list[int] = Field(None, alias='otherAuthorsId', description='The ids of other authors of the item')
     title: str = Field(..., alias='title', description='The name of the item')
     subtitle: str = Field(None, alias='subtitle', description='The subtitle of the item')
-    title_original: str = Field(None, alias='originalTitle', description='The original title of the item')
+    title_original: str = Field(None, alias='titleOriginal', description='The original title of the item')
     subtitle_original: str = Field(None, alias='originalSubtitle', description='The original subtitle of the item')
     isbn: str = Field(None, alias='isbn', description='The ISBN of the item')
     isbn10: str = Field(None, alias='isbn10', description='The ISBN 10 of the item')

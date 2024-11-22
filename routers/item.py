@@ -16,17 +16,6 @@ router = APIRouter(prefix="/item", tags=['Items'])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@router.get('', summary='Get items', description='Get items based on passed filters', )
-async def get_items(
-        params: GetItemRequest = Depends(),
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user, scopes=['permission_test', 'another_permission_test']),
-) -> GetItemResponse:
-    response = await ItemService(session=session, user=user).get_items(params)
-
-    return response
-
-
 @router.post('', summary='Create item', status_code=status.HTTP_201_CREATED, response_model_exclude_none=True)
 async def create_item(
         item: CreateItemRequest,
@@ -45,5 +34,16 @@ async def update_item(
         user: RequiredUser = Security(get_user)
 ) -> CreateItemResponse:
     response = await ItemService(session=session, user=user).update_item(item)
+
+    return response
+
+
+@router.get('', summary='Get items', description='Get items based on passed filters', )
+async def get_items(
+        params: GetItemRequest = Depends(),
+        session: AsyncSession = Depends(get_session),
+        user: RequiredUser = Security(get_user, scopes=['permission_test', 'another_permission_test']),
+) -> GetItemResponse:
+    response = await ItemService(session=session, user=user).get_items(params)
 
     return response
