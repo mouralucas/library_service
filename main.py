@@ -1,9 +1,15 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from rolf_common.base_middleware import LogsMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 from backend.settings import settings
+from lifespan import start_log_service, shutdown_log_service
 from routers import reading, item, author, core
+
+
 # import py_eureka_client.eureka_client as eureka_client
 
 
@@ -21,6 +27,18 @@ from routers import reading, item, author, core
 #         yield
 #     finally:
 #         await eureka_client.stop_async()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await asyncio.gather(
+        start_log_service(),
+    )
+
+    try:
+        yield
+    finally:
+        await asyncio.gather(
+            shutdown_log_service(),
+        )
 
 
 app = FastAPI(
@@ -29,9 +47,20 @@ app = FastAPI(
     version=settings.project_version,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     docs_url="/",
-    # lifespan=lifespan,
     root_path='/' + settings.project_name,
+    lifespan=lifespan,
 )
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.add_middleware(LogsMiddleware)
 
 app.include_router(item.router)
 app.include_router(reading.router)

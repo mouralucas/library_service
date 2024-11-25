@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import status, HTTPException
+from rolf_common.backend.logger import get_logger
 from rolf_common.models import SQLModel
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy import select
@@ -10,6 +11,7 @@ from sqlalchemy.orm import joinedload, aliased
 from managers.item import ItemManager
 from managers.reading import ReadingDataManager
 from models.reading import ReadingModel, ReadingProgressModel
+from schemas.item import ItemSchema
 from schemas.reading import ReadingSchema, ProgressSchema
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
 from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
@@ -113,14 +115,18 @@ class ReadingService(BaseService):
                 (last_progress and last_progress.percentage and progress.percentage and progress.percentage <= last_progress.percentage)):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page/percentage could not be less than the last registered page')
 
-        # Current page could not be greater then item pages
+        # Current page should not be greater than item pages
         if (item_pages and progress.page) and (progress.page > item_pages):
-            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='Current page cannot be greater than the total pages of the item')
+            error_txt = ('Current page ({current_page}) cannot be greater than the total pages of the item ({item_pages})'
+                         .format(current_page=progress.page, item_pages=item.pages))
+            get_logger().error(error_txt)
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt)
 
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
-            progress_updated = await self.reading_manager.update_progress(self.__set_values(progress_entry=last_progress, item_pages=item_pages,
-                                                                                            current_page=progress.page, percentage=progress.percentage), {'page': progress.page})
+            setted_progress = self.__set_values(progress_entry=last_progress, item_pages=item_pages,
+                                                current_page=progress.page, percentage=progress.percentage)
+            progress_updated = await self.reading_manager.update_progress(setted_progress, {'page': setted_progress.page})
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
@@ -140,7 +146,7 @@ class ReadingService(BaseService):
 
         response = CreateProgressResponse(
             success=True,
-            item=item,
+            item=ItemSchema.model_validate(item),
             progress=ProgressSchema.model_validate(new_entry)
         ).transform()
 
@@ -159,7 +165,8 @@ class ReadingService(BaseService):
 
         return response
 
-    def __set_values(self, progress_entry: ReadingProgressModel, item_pages: int, current_page: int, percentage: int) -> SQLModel:
+    @staticmethod
+    def __set_values(progress_entry: ReadingProgressModel, item_pages: int, current_page: int, percentage: int) -> SQLModel:
         if current_page is not None and current_page != 0:
             perc = ((current_page / item_pages) * 100) if item_pages else 0
 
