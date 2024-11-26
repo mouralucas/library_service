@@ -49,6 +49,7 @@ app = FastAPI(
     docs_url="/",
     root_path='/' + settings.project_name,
     lifespan=lifespan,
+    debug=True
 )
 
 app.add_middleware(

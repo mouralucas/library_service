@@ -1,3 +1,5 @@
+from typing import Any
+
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
@@ -58,12 +60,11 @@ class ItemService(BaseService):
         return response
 
     async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
-        items: list[ItemModel] = await ItemManager(self.session).get_items(params)
+        items: list[dict[str, Any]] = await ItemManager(self.session).get_items(params)
 
         response = GetItemResponse(
             quantity=len(items) if items else 0,
-            status_code=status.HTTP_200_OK,
-            items=[ItemSchema.model_validate(item) for item in items] if items else None
+            items=[ItemSchema.model_validate(item) for item in items] if items else None,
         )
 
         return response
