@@ -43,6 +43,7 @@ class ItemSchema(BaseModel):
     paid_price: float | None = Field(None, description='The item paid price')
 
     last_status_id: str = Field(..., description='The id of the last status of the item')
+    last_status_name: str | None = Field(None, description='The name of the last status')
     last_status: StatusSchema | None = Field(None, description='The last status of the item')
     last_status_date: datetime.date | None = Field(None, description='The date of the last status of the item')
 

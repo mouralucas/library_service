@@ -22,7 +22,8 @@ class ItemService(BaseService):
         item.owner_id = self.user['user_id']
 
         new_item = await ItemManager(session=self.session).create_item(
-            ItemModel(**item.model_dump(exclude={'other_authors_id'})))
+            ItemModel(**item.model_dump(exclude={'other_authors_id'}))
+        )
 
         await self.__update_status(new_item)
         await self.__add_author(item_id=new_item.id, main_author_id=item.main_author_id,
@@ -31,7 +32,6 @@ class ItemService(BaseService):
         await self.session.refresh(new_item)
 
         response = CreateItemResponse(
-            status_code=status.HTTP_201_CREATED,
             item=ItemSchema.model_validate(new_item)
         )
 
