@@ -1,15 +1,14 @@
-import datetime
-import random
 import uuid
+from datetime import datetime, date
 from typing import Any
 
 from dateutil.relativedelta import relativedelta
-from sqlalchemy.sql.functions import random
+from rolf_common.util.datetime import get_timestamp_aware
 
 from data_mock.core import get_author_mock, get_language_mock, get_publisher_mock, get_serie_mock, get_collection_mock, get_item_status_mock
 
 default_model_dict = {
-    'created_at': datetime.datetime.now(datetime.timezone.utc),
+    'created_at': get_timestamp_aware(),
     'active': True
 }
 
@@ -28,30 +27,59 @@ def get_item_mock() -> list[dict[str, Any]]:
             'owner_id': uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
             'id': 1,
             'main_author_id': authors[0]['id'],
-            'title': 'Esse é o título',
-            'subtitle': 'E esse é o subtítulo',
-            'language_id': languages[0]['id'],
+            'title': 'O Pistoleiro',
+            'title_original': 'The Gunslinger',
+            'subtitle': 'Primeiro livro da série A Torre Negra',
+            'language_id': languages[1]['id'],
             'publisher_id': publishers[0]['id'],
-            'serie_id': series[0]['id'],
+            'serie_id': series[1]['id'],
             'collection_id': collections[0]['id'],
             'last_status_id': item_status[0]['id'],
-            'last_status_date': datetime.date.today() - relativedelta(days=1),
-            'pages': 370
+            'last_status_date': date.today() - relativedelta(days=1),
+            'type': 'book',
+            'pages': 262
         },
         {
             **default_model_dict,
             'owner_id': uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
             'id': 2,
-            'main_author_id': authors[0]['id'],
-            'title': 'Esse é o título do outro livro',
-            'subtitle': 'E essa o outro subtítulo',
+            'main_author_id': authors[3]['id'],
+            'title': 'Coraline',
+            'title_original': 'Coraline',
             'language_id': languages[1]['id'],
-            'publisher_id': publishers[1]['id'],
+            'publisher_id': publishers[3]['id'],
+            'serie_id': series[0]['id'],
+            'collection_id': collections[0]['id'],
+            'last_status_id': item_status[3]['id'],
+            'last_status_date': date.today() - relativedelta(days=4),
+            'type': 'book',
+            'format': 'hardcover',
+            'pages': 224,
+            'publication_date': datetime(2020, 6, 19),
+            'original_publication_date': datetime(2002, 7, 2)
+        },
+        {
+            'owner_id': uuid.UUID("adf52a1e-7a19-11ed-a1eb-0242ac120002"),
+            'id': 3,
+            'main_author_id': authors[1]['id'],
+            'title': 'Neon Genesis Evangelion #01',
+            'title_original': 'Neon Genesis Evangelion #01',
+            'subtitle': 'Um dos melhores mangás de ficção científica retorna às bancas em novo formato',
+            'pages': 336,
+            'publication_date': datetime(2011, 10, 1),
+            'original_publication_date': datetime(1995, 8, 29),
             'serie_id': series[1]['id'],
+            'language_id': languages[1]['id'],
+            'volume': 1,
+            'publisher_id': publishers[2]['id'],
             'collection_id': collections[1]['id'],
-            'last_status_id': item_status[1]['id'],
-            'last_status_date': datetime.date.today() - relativedelta(days=4),
-            'pages': 570
+            'format': 'paperback',
+            'type': 'manga',
+            'last_status_id': item_status[0]['id'],
+            'last_status_date': date.today() - relativedelta(months=11, days=15),
+            'cover_price': 74.90,
+            'paid_price': 21.80,
+            'isbn': '9786555943412'
         }
     ]
 
@@ -66,16 +94,23 @@ def get_item_status_relation_mock() -> list[dict[str, Any]]:
         {
             **default_model_dict,
             'id': uuid.UUID('5f7d7470-1a23-4fc2-a20a-8a2c1454557c'),
-            'status_id': item_status[0]['id'],
+            'status_id': items[0]['last_status_id'],
             'item_id': items[0]['id'],
             'date': items[0]['last_status_date'],
         },
         {
             **default_model_dict,
             'id': uuid.UUID('9c366daf-4be8-4b8d-98c9-a7fdaaea19a9'),
-            'status_id': item_status[1]['id'],
+            'status_id': items[1]['last_status_id'],
             'item_id': items[1]['id'],
             'date': items[1]['last_status_date'],
+        },
+        {
+            **default_model_dict,
+            'id': uuid.UUID('78b181f6-71ca-4bb6-91a9-1ec70ff110e3'),
+            'status_id': items[2]['last_status_id'],
+            'item_id': items[2]['id'],
+            'date': items[2]['last_status_date'],
         }
     ]
 
@@ -91,7 +126,7 @@ def get_item_author_relation_mock() -> list[dict[str, Any]]:
             **default_model_dict,
             'id': uuid.UUID("ee31e9b1-e7cd-4b4d-aa60-8d99282a0e9c"),
             'item_id': items[0]['id'],
-            'author_id': authors[0]['id'],
+            'author_id': items[0]['main_author_id'],
             'is_main': True,
             'is_translator': False
         },
@@ -99,7 +134,15 @@ def get_item_author_relation_mock() -> list[dict[str, Any]]:
             **default_model_dict,
             'id': uuid.UUID('517da74f-7854-4e5a-b2e3-5748f07f5743'),
             'item_id': items[1]['id'],
-            'author_id': authors[0]['id'],
+            'author_id': items[1]['main_author_id'],
+            'is_main': True,
+            'is_translator': False
+        },
+        {
+            **default_model_dict,
+            'id': uuid.UUID('bc857166-833f-43a9-bb6e-863ed96a34f6'),
+            'item_id': items[2]['id'],
+            'author_id': items[2]['main_author_id'],
             'is_main': True,
             'is_translator': False
         }

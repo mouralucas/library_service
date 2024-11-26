@@ -8,7 +8,7 @@ ALEMBIC = alembic.config
 COMMAND_UPGRADE = upgrade head
 
 # Default target
-all: insert-data
+all: upgrade-database, insert-data
 
 
 # Run the Alembic upgrade command
