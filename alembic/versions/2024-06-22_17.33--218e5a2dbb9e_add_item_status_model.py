@@ -31,7 +31,7 @@ def upgrade() -> None:
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['item_id'], ['item.id'], ),
     sa.ForeignKeyConstraint(['status_id'], ['status.id'], ),
-    sa.PrimaryKeyConstraint('status_id', 'item_id', 'id')
+    sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
 

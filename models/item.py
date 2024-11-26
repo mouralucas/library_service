@@ -68,10 +68,10 @@ class ItemModel(SQLModel):
 class ItemAuthorModel(SQLModel):
     __tablename__ = "item_author"
 
-    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'), primary_key=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
     item: Mapped['ItemModel'] = relationship(foreign_keys=[item_id], lazy='selectin')
 
-    author_id: Mapped[int] = mapped_column(ForeignKey('author.id'), primary_key=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey('author.id'))
     author: Mapped['AuthorModel'] = relationship(foreign_keys=[author_id], lazy='selectin')
 
     is_main: Mapped[bool] = mapped_column('is_main', default=True)

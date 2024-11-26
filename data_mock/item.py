@@ -6,21 +6,21 @@ from typing import Any
 from dateutil.relativedelta import relativedelta
 from sqlalchemy.sql.functions import random
 
-from data_mock.core import get_author_mocked, get_language_mocked, get_publisher_mocked, get_serie_mocked, get_collection_mocked, get_item_status_mocked
+from data_mock.core import get_author_mock, get_language_mock, get_publisher_mock, get_serie_mock, get_collection_mock, get_item_status_mock
 
 default_model_dict = {
-    'created_at': datetime.datetime.utcnow(),
+    'created_at': datetime.datetime.now(datetime.timezone.utc),
     'active': True
 }
 
 
-def get_item_mocked() -> list[dict[str, Any]]:
-    authors = get_author_mocked()
-    languages = get_language_mocked()
-    publishers = get_publisher_mocked()
-    series = get_serie_mocked()
-    collections = get_collection_mocked()
-    item_status = get_item_status_mocked()
+def get_item_mock() -> list[dict[str, Any]]:
+    authors = get_author_mock()
+    languages = get_language_mock()
+    publishers = get_publisher_mock()
+    series = get_serie_mock()
+    collections = get_collection_mock()
+    item_status = get_item_status_mock()
 
     items: list[dict[str, Any]] = [
         {
@@ -58,9 +58,9 @@ def get_item_mocked() -> list[dict[str, Any]]:
     return items
 
 
-def get_item_status_relation_mocked() -> list[dict[str, Any]]:
-    item_status = get_item_status_mocked()
-    items = get_item_mocked()
+def get_item_status_relation_mock() -> list[dict[str, Any]]:
+    item_status = get_item_status_mock()
+    items = get_item_mock()
 
     item_status: list[dict[str, Any]] = [
         {
@@ -80,3 +80,29 @@ def get_item_status_relation_mocked() -> list[dict[str, Any]]:
     ]
 
     return item_status
+
+
+def get_item_author_relation_mock() -> list[dict[str, Any]]:
+    items = get_item_mock()
+    authors = get_author_mock()
+
+    item_author = [
+        {
+            **default_model_dict,
+            'id': uuid.UUID("ee31e9b1-e7cd-4b4d-aa60-8d99282a0e9c"),
+            'item_id': items[0]['id'],
+            'author_id': authors[0]['id'],
+            'is_main': True,
+            'is_translator': False
+        },
+        {
+            **default_model_dict,
+            'id': uuid.UUID('517da74f-7854-4e5a-b2e3-5748f07f5743'),
+            'item_id': items[1]['id'],
+            'author_id': authors[0]['id'],
+            'is_main': True,
+            'is_translator': False
+        }
+    ]
+
+    return item_author

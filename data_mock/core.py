@@ -8,7 +8,7 @@ default_model_dict = {
 }
 
 
-def get_item_status_mocked() -> list[dict[str, Any]]:
+def get_item_status_mock() -> list[dict[str, Any]]:
     item_status: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -33,7 +33,7 @@ def get_item_status_mocked() -> list[dict[str, Any]]:
     return item_status
 
 
-def get_reading_status_mocked() -> list[dict[str, Any]]:
+def get_reading_status_mock() -> list[dict[str, Any]]:
     reading_status: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -52,7 +52,7 @@ def get_reading_status_mocked() -> list[dict[str, Any]]:
     return reading_status
 
 
-def get_language_mocked() -> list[dict[str, Any]]:
+def get_language_mock() -> list[dict[str, Any]]:
     languages: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -71,7 +71,7 @@ def get_language_mocked() -> list[dict[str, Any]]:
     return languages
 
 
-def get_country_mocked() -> list[dict[str, Any]]:
+def get_country_mock() -> list[dict[str, Any]]:
     countries: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -96,7 +96,7 @@ def get_country_mocked() -> list[dict[str, Any]]:
     return countries
 
 
-def get_serie_mocked() -> list[dict[str, Any]]:
+def get_serie_mock() -> list[dict[str, Any]]:
     series: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -121,7 +121,7 @@ def get_serie_mocked() -> list[dict[str, Any]]:
     return series
 
 
-def get_collection_mocked() -> list[dict[str, Any]]:
+def get_collection_mock() -> list[dict[str, Any]]:
     collections: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -146,7 +146,7 @@ def get_collection_mocked() -> list[dict[str, Any]]:
     return collections
 
 
-def get_publisher_mocked() -> list[dict[str, Any]]:
+def get_publisher_mock() -> list[dict[str, Any]]:
     publishers: list[dict[str, Any]] = [
         {
             **default_model_dict,
@@ -163,9 +163,9 @@ def get_publisher_mocked() -> list[dict[str, Any]]:
     return publishers
 
 
-def get_author_mocked() -> list[dict[str, Any]]:
-    languages = get_language_mocked()
-    countries = get_country_mocked()
+def get_author_mock() -> list[dict[str, Any]]:
+    languages = get_language_mock()
+    countries = get_country_mock()
 
     authors: list[dict[str, Any]] = [
         {

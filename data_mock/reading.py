@@ -4,8 +4,8 @@ from typing import Any
 
 from dateutil.relativedelta import relativedelta
 
-from data_mock.core import get_reading_status_mocked
-from data_mock.item import get_item_mocked
+from data_mock.core import get_reading_status_mock
+from data_mock.item import get_item_mock
 
 default_model_dict = {
     'created_at': datetime.datetime.utcnow(),
@@ -14,8 +14,8 @@ default_model_dict = {
 
 
 def get_active_reading_mocked() -> list[dict[str, Any]]:
-    items = get_item_mocked()
-    reading_status = get_reading_status_mocked()
+    items = get_item_mock()
+    reading_status = get_reading_status_mock()
 
     reading: list[dict[str, Any]] = [
         {
@@ -40,8 +40,8 @@ def get_active_reading_mocked() -> list[dict[str, Any]]:
 
 
 def get_reading_list_one_active_mocked() -> list[dict[str, Any]]:
-    items = get_item_mocked()
-    reading_status = get_reading_status_mocked()
+    items = get_item_mock()
+    reading_status = get_reading_status_mock()
 
     readings: list[dict[str, Any]] = [
         {

@@ -60,3 +60,5 @@ class GetItemRequest(BaseModel):
     id: int | None = Field(Query(None, ge=1), alias='itemId')
     title: str | None = Field(Query(None, min_length=3), alias='title')
     main_author_id: int | None = Field(Query(None), alias='mainAuthorId')
+    type: str | None = Field(Query(None), alias='itemType')
+
