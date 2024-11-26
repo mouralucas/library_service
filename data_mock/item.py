@@ -68,7 +68,7 @@ def get_item_mock() -> list[dict[str, Any]]:
             'pages': 336,
             'publication_date': datetime(2011, 10, 1),
             'original_publication_date': datetime(1995, 8, 29),
-            'serie_id': series[1]['id'],
+            'serie_id': series[2]['id'],
             'language_id': languages[1]['id'],
             'volume': 1,
             'publisher_id': publishers[2]['id'],
