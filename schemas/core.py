@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, AliasGenerator
+from pydantic.alias_generators import to_camel
 
 
 class LanguageSchema(BaseModel):
@@ -10,10 +11,10 @@ class LanguageSchema(BaseModel):
 
 
 class StatusSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(serialization_alias=to_camel))
 
     id: str = Field(..., serialization_alias='statusId', description='The id of the status')
-    name: str = Field(..., serialization_alias='name', description='The name of the status')
+    name: str = Field(..., description='The name of the status')
     description: str | None = Field(None, description='The description of the status')
     order: int | None = Field(None, description='The order of the status')
     type: str = Field(..., serialization_alias='itemType', description='The type of the status')
