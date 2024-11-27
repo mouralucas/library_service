@@ -1,7 +1,7 @@
 from typing import cast
 
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import select
+from sqlalchemy import select, RowMapping
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel, PublisherModel, StatusModel
@@ -101,9 +101,12 @@ class StatusManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def get_status(self, status_type: str) -> StatusModel:
-        stmt = select(StatusModel).where(StatusModel.type == status_type)
+    async def get_statuses(self, status_type: str | None = None) -> list[SQLModel]:
+        query = select(StatusModel)
 
-        status: SQLModel = await self.get_only_one(stmt)
+        if status_type:
+            query = query.where(StatusModel.type == status_type)
 
-        return cast(StatusModel, status)
+        statuses: list[RowMapping] = await self.get_all(select_statement=query, unique_result=True)
+
+        return [status['StatusModel'] for status in statuses]

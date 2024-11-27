@@ -1,13 +1,14 @@
+from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager
+from managers.core import LanguageManager, CountryManager, SerieManager, CollectionManager, PublisherManager, StatusManager
 from models import LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel
-from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest
+from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema, StatusSchema
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest, GetStatusRequest
 from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, GetCollectionResponse, CreateCollectionResponse, CreatePublisherResponse, \
-    GetPublisherResponse
+    GetPublisherResponse, GetStatusResponse
 from rolf_common.services import BaseService
 
 
@@ -144,8 +145,16 @@ class PublisherService(BaseService):
 
 
 class StatusService(BaseService):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
+        self.user = user.model_dump()
 
-    def get_status(self, status_type: str):
-        pass
+    async def get_status(self, params: GetStatusRequest) -> GetStatusResponse:
+        statuses = await StatusManager(session=self.session).get_statuses(status_type=params.item_type)
+
+        response = GetStatusResponse(
+            quantity=len(statuses) if statuses else 0,
+            statuses=[StatusSchema.model_validate(s) for s in statuses] if statuses else [],
+        )
+
+        return response

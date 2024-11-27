@@ -1,7 +1,8 @@
-from pydantic import Field
+from pydantic import Field, ConfigDict, BaseModel, AliasGenerator
+from pydantic.alias_generators import to_camel
 
 from rolf_common.schemas import SuccessResponseBase
-from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema
+from schemas.core import LanguageSchema, CountrySchema, SerieSchema, CollectionSchema, PublisherSchema, StatusSchema
 
 
 class CreateLanguageResponse(SuccessResponseBase):
@@ -47,3 +48,10 @@ class CreatePublisherResponse(SuccessResponseBase):
 class GetPublisherResponse(SuccessResponseBase):
     quantity: int = Field(..., description='The quantity of publishers available')
     publishers: list[PublisherSchema] = Field(..., description='The publishers available')
+
+
+class GetStatusResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(serialization_alias=to_camel))
+
+    quantity: int = Field(..., description='The quantity of statuses available')
+    statuses: list[StatusSchema] = Field(..., description='The list of available statuses')

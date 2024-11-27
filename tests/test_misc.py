@@ -178,3 +178,24 @@ async def test_get_publisher(client, create_publisher):
     assert len(data['publishers']) == publishers_list_len
     assert data['publishers'][0]['publisherName'] == publishers[0].name
     assert data['publishers'][0]['description'] == publishers[0].description
+
+
+@pytest.mark.asyncio
+async def test_get_item_status(client, create_item_status, create_reading_status):
+    item_status = create_item_status
+    item_status_list_len = len(item_status)
+
+    params = {
+        'itemType': item_status[0].type,
+    }
+    response = await client.get('/status', params=params)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert 'statuses' in data
+    assert type(data['statuses']) is list
+    assert len(data['statuses']) == item_status_list_len
+
+    for s in data['statuses']:
+        assert s['itemType'] == 'ITEM.STATUS'

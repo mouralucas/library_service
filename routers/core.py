@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Security
+from rolf_common.schemas.auth import RequiredUser
+from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import get_session
-from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest
+from schemas.request.core import CreateLanguageRequest, CreateCountryRequest, CreateSerieRequest, CreateCollectionRequest, CreatePublisherRequest, GetStatusRequest
 from schemas.response.core import CreateLanguageResponse, GetLanguageResponse, CreateCountryResponse, GetCountryResponse, CreateSerieResponse, GetSeriesResponse, CreateCollectionResponse, GetCollectionResponse, CreatePublisherResponse, \
-    GetPublisherResponse
-from services.core import LanguageService, CountryService, SerieService, CollectionService, PublisherService
+    GetPublisherResponse, GetStatusResponse
+from services.core import LanguageService, CountryService, SerieService, CollectionService, PublisherService, StatusService
 
 router = APIRouter(prefix='', tags=['Base'])
 
@@ -85,3 +87,12 @@ async def get_publisher(session: AsyncSession = Depends(get_session)) -> GetPubl
     response = await PublisherService(session).get_publishers()
 
     return response
+
+
+@router.get('/status', summary='Get available statuses')
+async def get_status(
+        params: GetStatusRequest = Depends(),
+        session: AsyncSession = Depends(get_session),
+        user: RequiredUser = Security(get_user)
+) -> GetStatusResponse:
+    return await StatusService(session=session, user=user).get_status(params=params)

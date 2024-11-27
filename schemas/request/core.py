@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, AliasGenerator
+from pydantic.alias_generators import to_camel
 
 
 class CreateLanguageRequest(BaseModel):
@@ -32,3 +33,10 @@ class CreatePublisherRequest(BaseModel):
     country_id: str = Field(None, alias='countryId', description="Id of the country")
     parent_id: str = Field(None, alias='parentId', description="Id of the parent publisher")
 
+
+class GetStatusRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True,
+                              alias_generator=AliasGenerator(
+                                  alias=to_camel
+                              ))
+    item_type: str = Field(..., description="Type of the item")
