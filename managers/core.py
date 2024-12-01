@@ -96,6 +96,24 @@ class PublisherManager(BaseDataManager):
 
         return cast(PublisherModel, new_publisher)
 
+    async def get_publishers(self):
+        query = (
+            select(
+                PublisherModel.id,
+                PublisherModel.name,
+                PublisherModel.description,
+                PublisherModel.country_id,
+                CountryModel.name.label('country_name'),
+                PublisherModel.parent_id
+            )
+            .select_from(PublisherModel)
+            .outerjoin(CountryModel, PublisherModel.country_id == CountryModel.id)
+        )
+
+        publishers = await self.get_all(select_statement=query)
+
+        return [dict(publisher.items()) for publisher in publishers] if publishers else None
+
 
 class StatusManager(BaseDataManager):
     def __init__(self, session: AsyncSession):

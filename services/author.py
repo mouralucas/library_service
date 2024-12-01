@@ -24,14 +24,12 @@ class AuthorService(BaseService):
         return response
 
     async def get_author(self) -> GetAuthorResponse:
-        stmt = select(AuthorModel)
-
-        authors = await AuthorManager(session=self.session).get_all(select_statement=stmt)
+        authors = await AuthorManager(session=self.session).get_authors()
 
         response = GetAuthorResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(authors) if authors else 0,
-            authors=[AuthorSchema.model_validate(author['AuthorModel']) for author in authors] if authors else []
+            authors=[AuthorSchema.model_validate(author) for author in authors] if authors else []
         )
 
         return response

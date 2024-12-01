@@ -1,9 +1,10 @@
-from typing import cast
+from typing import cast, Any
 
 from rolf_common.managers import BaseDataManager
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import AuthorModel
+from models import AuthorModel, CountryModel, LanguageModel
 
 
 class AuthorManager(BaseDataManager):
@@ -22,3 +23,25 @@ class AuthorManager(BaseDataManager):
         new_author = await self.add_one(author)
 
         return cast(AuthorModel, new_author)
+
+    async def get_authors(self) -> list[dict[str, Any]]:
+        query = (
+            select(
+                AuthorModel.id,
+                AuthorModel.name,
+                AuthorModel.birth_date,
+                AuthorModel.description,
+                AuthorModel.country_id,
+                CountryModel.name.label('country_name'),
+                AuthorModel.language_id,
+                LanguageModel.name.label('language_name'),
+                AuthorModel.is_translator
+            )
+            .select_from(AuthorModel)
+            .join(CountryModel, AuthorModel.country_id == CountryModel.id)
+            .join(LanguageModel, AuthorModel.language_id == LanguageModel.id)
+        )
+
+        authors = await self.get_all(select_statement=query)
+
+        return [dict(author.items()) for author in authors] if authors else None
