@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Security
+from rolf_common.schemas.auth import RequiredUser
+from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -11,15 +13,20 @@ router = APIRouter(prefix="/author", tags=['Author'])
 
 
 @router.post('', status_code=status.HTTP_201_CREATED)
-async def create_author(author: CreateAuthorRequest,
-                        session: AsyncSession = Depends(get_session)) -> CreateAuthorResponse:
+async def create_author(
+        author: CreateAuthorRequest,
+        session: AsyncSession = Depends(get_session),
+        user: RequiredUser = Security(get_user)
+) -> CreateAuthorResponse:
     response = await AuthorService(session).create_author(author=author)
 
     return response
 
 
 @router.get('')
-async def get_authors(session: AsyncSession = Depends(get_session)) -> GetAuthorResponse:
+async def get_authors(
+        session: AsyncSession = Depends(get_session)
+) -> GetAuthorResponse:
     response = await AuthorService(session).get_author()
 
     return response

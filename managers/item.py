@@ -81,7 +81,7 @@ class ItemManager(BaseDataManager):
             .join(AuthorModel, ItemModel.main_author_id == AuthorModel.id)
             .join(SerieModel, ItemModel.serie_id == SerieModel.id)
             .join(CollectionModel, ItemModel.collection_id == CollectionModel.id)
-            .join(PublisherModel, ItemModel.publisher_id == PublisherModel.id)
+            .outerjoin(PublisherModel, ItemModel.publisher_id == PublisherModel.id)
             .join(StatusModel, ItemModel.last_status_id == StatusModel.id)
         )
 
