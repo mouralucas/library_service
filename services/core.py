@@ -133,12 +133,12 @@ class PublisherService(BaseService):
         return response
 
     async def get_publishers(self) -> GetPublisherResponse:
-        publishers = await PublisherManager(session=self.session).get_all(select(PublisherModel))
+        publishers = await PublisherManager(session=self.session).get_publishers()
 
         response = GetPublisherResponse(
             status_code=status.HTTP_200_OK,
             quantity=len(publishers) if publishers else 0,
-            publishers=[PublisherSchema.model_validate(publisher['PublisherModel']) for publisher in publishers] if publishers else []
+            publishers=[PublisherSchema.model_validate(publisher) for publisher in publishers] if publishers else []
         )
 
         return response

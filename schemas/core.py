@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel, Field, ConfigDict, AliasGenerator
 from pydantic.alias_generators import to_camel
 
@@ -45,21 +47,29 @@ class CollectionSchema(BaseModel):
 
 
 class PublisherSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True,
+                              alias_generator=AliasGenerator(serialization_alias=to_camel))
 
     id: int = Field(..., serialization_alias="publisherId", description="Unique identifier of the publisher")
     name: str = Field(..., serialization_alias="publisherName", description="The name of the publisher")
-    description: str | None = Field(None, serialization_alias="description", description="The description of the publisher")
-    country: CountrySchema | None = Field(None, serialization_alias="country", description="The country")
-    parent_id: int | None = Field(None, serialization_alias="parentId", description="The parent of the publisher")
+    description: str | None = Field(None, description="The description of the publisher")
+    country_id: str | None = Field(None, description='The id of the country')
+    country_name: str | None = Field(None, description='The name of the publisher country')
+    country: CountrySchema | None = Field(None, description="The country")
+    parent_id: int | None = Field(None, description="The parent of the publisher")
 
 
 class AuthorSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True,
+                              alias_generator=AliasGenerator(serialization_alias=to_camel))
 
     id: int = Field(..., serialization_alias="authorId", description="Unique id of the author")
     name: str = Field(..., serialization_alias="authorName", description="The name of the author")
-    country_id: str | None = Field(None, serialization_alias="countryId", description="The country id of the author")
-    country: CountrySchema | None = Field(None, serialization_alias="country", description="The country of the author")
-    language_id: str | None = Field(None, serialization_alias="languageId", description="The language id of the author")
-    language: LanguageSchema | None = Field(None, serialization_alias="language", description="The language of the author")
+    birth_date: date | None = Field(None, description='The birth date of the author')
+    description: str | None = Field(None, description='The description of the author')
+    country_id: str | None = Field(None, description="The country id of the author")
+    country_name: str | None = Field(None, description='The country name of the author')
+    country: CountrySchema | None = Field(None, description="The country of the author")
+    language_id: str | None = Field(None, description="The language id of the author")
+    language_name: str | None = Field(None, description='The language name of the author')
+    language: LanguageSchema | None = Field(None, description="The language of the author")
