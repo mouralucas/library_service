@@ -10,7 +10,7 @@ class LibrarySettings(Settings):
     test: bool = False
 
     # Project description
-    project_name: str = 'library-service'
+    project_name: str = 'library'
     project_title: str = "Library Service Microservice"
     project_description: str = "This service contains all necessary functions to manage a library"
     project_version: str = "0.0.1"

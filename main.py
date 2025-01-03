@@ -47,7 +47,7 @@ app = FastAPI(
     version=settings.project_version,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     docs_url="/",
-    root_path='/' + settings.project_name,
+    root_path='/api/' + settings.project_name,
     lifespan=lifespan,
     debug=True
 )
@@ -56,6 +56,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "http://localhost:80",
+        "http://localhost",
     ],
     allow_credentials=True,
     allow_methods=["*"],
