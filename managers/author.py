@@ -38,8 +38,8 @@ class AuthorManager(BaseDataManager):
                 AuthorModel.is_translator
             )
             .select_from(AuthorModel)
-            .join(CountryModel, AuthorModel.country_id == CountryModel.id)
-            .join(LanguageModel, AuthorModel.language_id == LanguageModel.id)
+            .outerjoin(CountryModel, AuthorModel.country_id == CountryModel.id)
+            .outerjoin(LanguageModel, AuthorModel.language_id == LanguageModel.id)
         )
 
         authors = await self.get_all(select_statement=query)

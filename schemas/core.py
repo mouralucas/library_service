@@ -32,10 +32,13 @@ class CountrySchema(BaseModel):
 
 
 class SerieSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(serialization_alias=to_camel))
 
     id: int = Field(..., serialization_alias="serieId", description="Unique identifier of the serie")
-    name: str = Field(..., serialization_alias="serieName", description="The name of the serie")
+    name: str = Field(..., serialization_alias='serieName', description="The name of the serie")
+    original_name: str | None = Field(None, description='The original name of the serie')
+    description: str | None = Field(None, description='The description of the serie')
+    country_id: str | None = Field(None, description='The id of the country')
 
 
 class CollectionSchema(BaseModel):

@@ -60,6 +60,9 @@ class SerieManager(BaseDataManager):
 
         return cast(SerieModel, new_serie)
 
+    async def get_series(self):
+        pass
+
 
 class CollectionManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
