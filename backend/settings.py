@@ -15,6 +15,9 @@ class LibrarySettings(Settings):
     project_description: str = "This service contains all necessary functions to manage a library"
     project_version: str = "0.0.1"
 
+    # Allowed origins CORS
+    allowed_origins: str = "http://localhost:3000,http://localhost:80,http://localhost"
+
     # Secrets settings
     jwt_token_secret: str = "my_dev_secret"
 
