@@ -1,0 +1,12 @@
+extend type Query {
+  getReading(id: ID!): Reading
+}
+
+extend type Mutation {
+  createReading(name: String!): Reading
+}
+
+type Reading {
+  id: ID!
+  name: String!
+}
