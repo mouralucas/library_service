@@ -1,11 +1,11 @@
 from services.item import ItemService
 
 
-def resolve_get_item(test, info, id):
+async def resolve_get_item(test, info, id):
     return {"id": id, "name": "Item do meu ovo" + id}
 
 
-def resolve_create_item(_, info, name):
+async def resolve_create_item(_, info, name):
     return {"id": "2", "name": name}
 
 

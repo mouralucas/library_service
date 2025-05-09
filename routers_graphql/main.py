@@ -1,4 +1,4 @@
-from ariadne import load_schema_from_path, QueryType, MutationType, make_executable_schema, graphql_sync
+from ariadne import load_schema_from_path, QueryType, MutationType, make_executable_schema, graphql
 from ariadne.asgi import GraphQL
 from ariadne.explorer import ExplorerPlayground
 from fastapi import APIRouter, Request, Depends, Security
@@ -38,7 +38,7 @@ async def graphql_server(
     user = None
     data = await request.json()
     value = {"request": request, "session": session, "user": user}
-    success, result = graphql_sync(schema, data, context_value=value, debug=True)
+    success, result = await graphql(schema, data, context_value=value, debug=True)
     status_code = 200 if success else 400
     return JSONResponse(result, status_code=status_code)
 
