@@ -1,19 +1,14 @@
 import asyncio
 from contextlib import asynccontextmanager
 
-from ariadne import load_schema_from_path, make_executable_schema, QueryType, MutationType
-from ariadne.asgi import GraphQL
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from rolf_common.base_middleware import LogsMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
-from backend.database import get_session
 from backend.settings import settings
 from lifespan import start_log_service, shutdown_log_service
 from routers import reading, item, author, core
-
-from resolvers.item import bind_item_resolvers, resolve_create_item
-from resolvers.reading import bind_reading_resolvers
+from routers_graphql import main
 
 
 # import py_eureka_client.eureka_client as eureka_client
@@ -72,18 +67,4 @@ app.include_router(reading.router)
 app.include_router(core.router)
 app.include_router(author.router)
 
-## GraphQL Definitions
-type_defs = (
-        load_schema_from_path("schemas_graphql/base.graphql") +
-        load_schema_from_path("schemas_graphql/reading.graphql") +
-        load_schema_from_path("schemas_graphql/item.graphql")
-)
-
-query = QueryType()
-mutation = MutationType()
-
-bind_reading_resolvers(query, mutation)
-bind_item_resolvers(query, mutation)
-
-schema = make_executable_schema(type_defs, query, mutation)
-app.add_route("/graphql", GraphQL(schema, debug=True))
+app.include_router(main.router)

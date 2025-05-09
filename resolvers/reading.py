@@ -1,8 +1,8 @@
-async def resolve_get_reading(_, info, id):
+def resolve_get_reading(_, info, id):
     return {"id": id, "name": "User " + id}
 
 
-async def resolve_create_reading(_, info, name):
+def resolve_create_reading(_, info, name):
     return {"id": "1", "name": name}
 
 
