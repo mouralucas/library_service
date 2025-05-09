@@ -11,7 +11,7 @@ from backend.database import get_session
 from resolvers.item import bind_item_resolvers
 from resolvers.reading import bind_reading_resolvers
 
-router = APIRouter(tags=["GraphQL"])
+router = APIRouter(tags=["GraphQL"], prefix='/graphql')
 
 type_defs = (
         load_schema_from_path("schemas_graphql/base.graphql") +
@@ -29,7 +29,7 @@ bind_item_resolvers(query, mutation)
 schema = make_executable_schema(type_defs, query, mutation)
 
 
-@router.post('/graphql')
+@router.post('')
 async def graphql_server(
         request: Request,
         # user: RequiredUser = Security(get_user),
@@ -44,6 +44,7 @@ async def graphql_server(
 
 playground_html = ExplorerPlayground().html(None)
 
-@router.get("/graphql")
+@router.get("")
 async def graphql_playground():
+    # TODO: edit to render GraphiQL playground
     return HTMLResponse(playground_html)

@@ -62,9 +62,9 @@ app.add_middleware(
 )
 app.add_middleware(LogsMiddleware)
 
+app.include_router(core.router)
 app.include_router(item.router)
 app.include_router(reading.router)
-app.include_router(core.router)
 app.include_router(author.router)
 
 app.include_router(main.router)
