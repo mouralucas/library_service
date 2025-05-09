@@ -8,12 +8,15 @@ httpx==0.24.1
 python-dateutil~=2.9.0.post0
 git+https://github.com/mouralucas/rolf_common.git@main#egg=rolf_common
 
-#Database
+# GraphQL support
+ariadne==0.26.2
+
+# Database
 asyncpg==0.29.0
 alembic==1.13.3
 aiosqlite==0.20.0
 
-# tests
+# Tests
 pytest==7.3.1
 pytest-asyncio==0.21.0
 
