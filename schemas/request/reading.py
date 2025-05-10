@@ -2,22 +2,23 @@ import datetime
 import uuid
 
 from fastapi import Query
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ConfigDict
 
 
 class CreateReadingRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
     owner_id: uuid.UUID = Field(None, alias="ownerId", description='The owner of the reading')
     item_id: int = Field(..., alias='itemId', description="The id of the item")
     start_date: datetime.date = Field(None, alias='startDate', description="The date that the user start reading the item")
     finish_date: datetime.date = Field(None, alias='finishDate', description="The date that the user finish reading the item")
     is_dropped: bool = Field(False, alias='isDropped', description="Indicate if the user has dropped the item")
 
-    @model_validator(mode='before')
-    def check_reading_finished(cls, data: dict) -> dict:
-        if not data.get('startDate') and not data.get('finishDate'):
-            raise ValueError('start or finish date must be specified')
-
-        return data
+    # @model_validator(mode='before')
+    # def check_reading_finished(cls, data: dict) -> dict:
+    #     if not data.get('startDate') and not data.get('finishDate'):
+    #         raise ValueError('start or finish date must be specified')
+    #
+    #     return data
 
 
 class GetReadingRequest(BaseModel):

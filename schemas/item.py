@@ -48,3 +48,6 @@ class ItemSchema(BaseModel):
     last_status_date: datetime.date | None = Field(None, description='The date of the last status of the item')
 
     summary: str | None = Field(None, description='The summary of the item')
+
+    def transform(self, item):
+        pass

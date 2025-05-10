@@ -85,7 +85,7 @@ class ItemManager(BaseDataManager):
             .join(StatusModel, ItemModel.last_status_id == StatusModel.id)
         )
 
-        for key, value in params.model_dump().items():
+        for key, value in params.model_dump().items() if params else []:
             if value:
                 # TODO: Make this function better!!
                 attr = getattr(ItemModel, key)

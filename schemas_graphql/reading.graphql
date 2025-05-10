@@ -1,12 +1,26 @@
 extend type Query {
-  getReading(id: ID!): Reading
+  getReading(id: String!): Reading
 }
 
 extend type Mutation {
-  createReading(name: String!): Reading
+  createReading(reading: ReadingInput!): Reading
 }
 
 type Reading {
-  id: ID!
-  name: String!
+  id: String!
+  item_id: Int!
+  item_title: String
+  start_date: String!
+  finish_date: String
+  number: Int
+  active: Boolean
+  status_id: String
+  status_name: String
+}
+
+input ReadingInput {
+  item_id: Int!
+  start_date: String!
+  finish_date: String
+  is_dropped: Boolean = false
 }

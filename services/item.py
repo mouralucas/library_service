@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Coroutine
 
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -69,11 +69,16 @@ class ItemService(BaseService):
 
         return response
 
+    async def get_item_by_id(self, item_id: int) -> ItemSchema:
+        item = await ItemManager(self.session).get_item_by_id(item_id)
+
+        return ItemSchema.model_validate(item)
+
     async def __update_status(self, item: ItemModel, is_update: bool = False):
         """
         :Name: __update_status
         :Created by: Lucas Penha de Moura - 22/06/2024
-            Update the status history for a item
+            Update the status history for an item
 
         :Params:
             serie: the ItemModel object

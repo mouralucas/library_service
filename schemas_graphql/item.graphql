@@ -1,12 +1,48 @@
 extend type Query {
-  getItem(id: ID!): Item
+  getItem(id: Int!): Item
+  getItems: GetItemResponse
 }
 
 extend type Mutation {
   createItem(name: String!): Item
 }
 
+type GetItemResponse {
+    quantity: Int,
+    items: [Item]
+}
+
 type Item {
   id: ID!
-  name: String!
+  main_author_id: Int!
+  main_author_name: String
+  title: String!
+  subtitle: String
+  title_original: String
+  subtitle_original: String
+  isbn: String
+  isbn10: String
+  type: String
+  pages: Int
+  volume: Int
+  edition: Int
+  publication_Date: String
+  original_publication_date: String
+  serie_id: String
+  serie_name: String
+  collection_id: String
+  collection_name: String
+  publisher_id: String
+  publisher_name: String
+  format: String
+  language_id: String
+  language_name: String
+  cover_price: Float
+  paid_price: Float
+
+  last_status_id: String
+  last_status_name: String
+  last_status_date: String
+
+  reading: Reading
 }
