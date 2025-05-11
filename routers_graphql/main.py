@@ -12,7 +12,7 @@ from resolvers.item import bind_item_resolvers
 from resolvers.reading import bind_reading_resolvers
 import uuid
 
-router = APIRouter(tags=["GraphQL"], prefix='/graphql/item')
+router = APIRouter(tags=["GraphQL"], prefix='/v2/item')
 
 type_defs = (
         load_schema_from_path("schemas_graphql/base.graphql") +
@@ -29,7 +29,7 @@ bind_item_resolvers(query, mutation)
 
 schema = make_executable_schema(type_defs, query, mutation)
 
-@router.post('')
+@router.post('', description='The V2 maps all GraphQL endpoint')
 async def graphql_server(
         request: Request,
         user: RequiredUser = Security(get_user),
@@ -45,7 +45,7 @@ async def graphql_server(
 
 playground_html = ExplorerPlayground().html(None)
 
-@router.get("")
+@router.get('', description='The GraphQL playground page')
 async def graphql_playground():
     # TODO: edit to render GraphiQL playground
     return HTMLResponse(playground_html)
