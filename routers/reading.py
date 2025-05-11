@@ -35,7 +35,7 @@ async def get_reading(
         session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> GetReadingResponse:
-    response = await ReadingService(session=session, user=user).get_reading(params=params)
+    response = await ReadingService(session=session, user=user).get_readings(params=params)
 
     return response
 

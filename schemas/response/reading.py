@@ -1,4 +1,5 @@
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, ConfigDict, AliasGenerator
+from pydantic.alias_generators import to_camel
 
 from rolf_common.schemas import SuccessResponseBase
 
@@ -10,7 +11,11 @@ class CreateReadingResponse(BaseModel):
     reading: ReadingSchema = Field(..., description="The reading information")
 
 
-class GetReadingResponse(SuccessResponseBase):
+class GetReadingResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(
+        serialization_alias=to_camel
+    ))
+
     item_title: str = Field(..., description="The title of the item")
     quantity: int = Field(..., description="The number of returned readings")
     readings: list[ReadingSchema]

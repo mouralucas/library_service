@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from fastapi import status, HTTPException
@@ -53,17 +54,17 @@ class ReadingService(BaseService):
         )
         return response
 
-    async def get_reading(self, params: GetReadingRequest) -> GetReadingResponse:
+    async def get_readings(self, params: GetReadingRequest = None) -> GetReadingResponse:
         # TODO: put stmt logic in manager in existing get_readings
         stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
 
-        if params.reading_id:
+        if params and params.reading_id:
             stmt = stmt.where(ReadingModel.id == params.reading_id)
 
-        if params.item_id:
+        if params and params.item_id:
             stmt = stmt.where(ReadingModel.item_id == params.item_id)
 
-        if params.get_progress:
+        if params and params.get_progress:
             progress_alias = aliased(ReadingProgressModel)
             stmt = stmt.options(joinedload(ReadingModel.progress.of_type(progress_alias))).order_by(progress_alias.date.desc())
 
@@ -74,14 +75,17 @@ class ReadingService(BaseService):
         item = readings[0]['ReadingModel'].item if readings else None
 
         response = GetReadingResponse(
-            success=True,
-            status_code=status.HTTP_200_OK,
             item_title=item.title,
             quantity=len(readings) if readings else 0,
             readings=[ReadingSchema.model_validate(reading['ReadingModel']) for reading in readings] if readings else []
         )
 
         return response
+
+    async def get_reading_by_id(self, reading_id: uuid.UUID) -> ReadingSchema:
+        reading = self.reading_manager.get_reading_by_id(reading_id=reading_id)
+
+        return ReadingSchema.model_validate(reading)
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         # TODO: stmt should be in manager

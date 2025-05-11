@@ -1,5 +1,6 @@
 extend type Query {
   getReading(id: String!): Reading
+  getReadings: ReadingOutput!
 }
 
 extend type Mutation {
@@ -28,4 +29,10 @@ input ReadingInput {
   start_date: String!
   finish_date: String
   is_dropped: Boolean = false
+}
+
+type ReadingOutput {
+  item_name: String
+  quantity: Int!
+  readings: [Reading!]
 }
