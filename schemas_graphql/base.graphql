@@ -1,7 +1,17 @@
 type Query {
-  _empty: String
+    # Item queries
+    getItem(id: Int!): Item
+    getItems: GetItemResponse
+
+    # Reading queries
+    getReading(reading_id: String!): ReadingOutput!
+    getReadings: ReadingOutput!
 }
 
 type Mutation {
-  _empty: String
+    # Item mutations
+    createItem(name: String!): Item
+
+    # Reading mutations
+    createReading(reading: ReadingInput!): CreateReadingResponse
 }
