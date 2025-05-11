@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 from rolf_common.schemas import SuccessResponseBase
 
@@ -6,7 +6,7 @@ from schemas.item import ItemSchema
 from schemas.reading import ReadingSchema, ProgressSchema
 
 
-class CreateReadingResponse(SuccessResponseBase):
+class CreateReadingResponse(BaseModel):
     reading: ReadingSchema = Field(..., description="The reading information")
 
 

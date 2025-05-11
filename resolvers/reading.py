@@ -1,3 +1,4 @@
+from schemas.reading import ReadingSchema
 from schemas.request.reading import CreateReadingRequest
 from schemas.response.reading import CreateReadingResponse
 from services.reading import ReadingService
@@ -11,7 +12,7 @@ async def resolve_create_reading(_, info, reading):
     new_reading = CreateReadingRequest.model_validate(reading)
 
     new_reading = await ReadingService(session=info.context["session"], user=info.context["user"]).create_reading(reading=new_reading)
-    return CreateReadingResponse.model_validate(new_reading)
+    return new_reading.model_dump()
 
 
 def bind_reading_resolvers(query, mutation):

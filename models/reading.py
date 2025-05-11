@@ -24,7 +24,7 @@ class ReadingModel(SQLModel):
     finish_date: Mapped[datetime.date] = mapped_column('finish_date', nullable=True)
     number: Mapped[int] = mapped_column('number', default=1)
     status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
-    status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id])
+    status: Mapped['StatusModel'] = relationship(foreign_keys=[status_id], lazy='subquery')
     progress: Mapped[list['ReadingProgressModel']] = relationship(back_populates='reading', lazy='noload')
 
 

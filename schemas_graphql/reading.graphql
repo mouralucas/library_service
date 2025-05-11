@@ -3,13 +3,18 @@ extend type Query {
 }
 
 extend type Mutation {
-  createReading(reading: ReadingInput!): Reading
+  createReading(reading: ReadingInput!): CreateReadingResponse
+}
+
+type CreateReadingResponse {
+  reading: Reading!
 }
 
 type Reading {
   id: String!
   item_id: Int!
   item_title: String
+  item: Item!
   start_date: String!
   finish_date: String
   number: Int

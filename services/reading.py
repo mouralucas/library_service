@@ -49,7 +49,6 @@ class ReadingService(BaseService):
 
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
         response = CreateReadingResponse(
-            status_code=status.HTTP_201_CREATED,
             reading=ReadingSchema.model_validate(new_reading).transform()
         )
         return response

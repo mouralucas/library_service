@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 
+from schemas.core import StatusSchema
 from schemas.item import ItemSchema
 
 
@@ -25,17 +26,20 @@ class ReadingSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: uuid.UUID = Field(..., serialization_alias='readingId', description="The id of the reading")
-    item: ItemSchema = Field(..., description="The", exclude=True)
+    item: ItemSchema = Field(..., description="The item of the reading")
     item_id: int = Field(..., serialization_alias='itemId', description="The id of the item")
     item_title: str = Field(None, serialization_alias='itemTitle', description="The title of the item")
     start_date: datetime.date = Field(..., serialization_alias='startDate', description="The date the reading start")
     finish_date: datetime.date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
     active: bool = Field(..., serialization_alias='active', description='If false reading could be finished or dropped, if true is reading now, check status')
+    status: StatusSchema = Field(..., description='The status of the reading')
     status_id: str = Field(..., serialization_alias='statusId', description="The id of the status")
+    status_name: str = Field(None, description='The name of the status')
     progress: list[ProgressSchema] | None = Field(None, serialization_alias='progress', description="The current progress of the reading")
 
     def transform(self):
         self.item_title = self.item.title
+        self.status_name = self.status.name
         # Add transformation as needed
         return self
