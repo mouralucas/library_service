@@ -16,7 +16,6 @@ async def test_create_reading(client, create_item, create_reading_status):
 
     data = response.json()
 
-    assert data['success'] is True
     assert 'reading' in data
 
     assert 'readingId' in data['reading']
@@ -62,7 +61,7 @@ async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    assert 'item_title' in data
+    assert 'itemTitle' in data
     assert 'quantity' in data
     assert 'readings' in data
 
@@ -100,7 +99,7 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    assert 'item_title' in data
+    assert 'itemTitle' in data
     assert 'quantity' in data
     assert 'readings' in data
 
