@@ -2,7 +2,8 @@ import datetime
 import uuid
 
 from fastapi import Query
-from pydantic import BaseModel, Field, model_validator, ConfigDict
+from pydantic import BaseModel, Field, model_validator, ConfigDict, AliasGenerator
+from pydantic.alias_generators import to_camel
 
 
 class CreateReadingRequest(BaseModel):
@@ -38,6 +39,10 @@ class GetReadingRequest(BaseModel):
 
 
 class CreateProgressRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=AliasGenerator(
+        alias=to_camel
+    ))
+
     reading_id: uuid.UUID = Field(..., alias='readingId', description='The id of the the reading')
     page: int = Field(0, alias='page', description='The current page in reading')
     percentage: int = Field(0, alias='percentage', description='The current page in reading', gt=0, le=100)

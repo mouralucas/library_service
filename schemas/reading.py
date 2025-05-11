@@ -17,8 +17,8 @@ class ProgressSchema(BaseModel):
     date: datetime.date = Field(..., serialization_alias='date', description='The date that the entry was created')
     page: int = Field(..., serialization_alias='page', description='The current page')
     percentage: float = Field(..., serialization_alias='percentage', description='The current percentage')
-    rate: Optional[int] = Field(None, serialization_alias='rate', description='The rate for this entry')
-    comment: Optional[str] = Field(None, serialization_alias='comment', description='The comment for this entry')
+    rate: int | None = Field(None, serialization_alias='rate', description='The rate for this entry')
+    comment: str | None = Field(None, serialization_alias='comment', description='The comment for this entry')
 
 
 class ReadingSchema(BaseModel):

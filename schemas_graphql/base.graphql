@@ -6,6 +6,7 @@ type Query {
     # Reading queries
     getReading(reading_id: String!): ReadingOutput!
     getReadings: ReadingOutput!
+    getReadingProgress(params: GetReadingProgress): ReadingProgressOutput!
 }
 
 type Mutation {
@@ -13,5 +14,6 @@ type Mutation {
     createItem(name: String!): Item
 
     # Reading mutations
-    createReading(reading: ReadingInput!): CreateReadingResponse
+    createReading(reading: ReadingInput!): CreateReadingResponse!
+    createReadingProgress(progress: ReadingProgressInput!): GetReadingProgresOutput!
 }

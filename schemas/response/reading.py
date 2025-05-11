@@ -26,7 +26,7 @@ class GetActiveReadingsResponse(BaseModel):
     readings: list[ReadingSchema]
 
 
-class CreateProgressResponse(SuccessResponseBase):
+class CreateProgressResponse(BaseModel):
     item: ItemSchema = Field(..., exclude=True)
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
@@ -47,7 +47,7 @@ class CreateProgressResponse(SuccessResponseBase):
 #     currentReadingProgress: ProgressSchema = Field(..., description="The current reading progress for an item")
 
 
-class GetProgressResponse(SuccessResponseBase):
+class GetProgressResponse(BaseModel):
     quantity: int = Field(..., description="The number of entries returned")
     item: ItemSchema | None = Field(None, exclude=True)
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")

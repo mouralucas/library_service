@@ -27,3 +27,40 @@ type ReadingOutput {
   quantity: Int!
   readings: [Reading!]
 }
+
+type ReadingProgress {
+  id: String!
+  reading: Reading!
+  date: String!
+  page: Int
+  percentage: Float
+  rate: Int
+  comment: String
+}
+
+input GetReadingProgress {
+  reading_id: String!
+}
+
+input ReadingProgressInput {
+  reading_id: String!
+  page: Int
+  percentage: Int
+  date: String
+  rate: Int
+  comment: String
+}
+
+type ReadingProgressOutput {
+  quantity: Int!
+  item: Item!
+  item_title: String
+  pages_read: Int
+  progress: [ReadingProgress]!
+}
+
+type GetReadingProgresOutput {
+  item_title: String!
+  pages_read: String
+  progress: ReadingProgress!
+}

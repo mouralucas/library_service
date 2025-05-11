@@ -123,7 +123,7 @@ class ReadingService(BaseService):
                 (last_progress and last_progress.percentage and progress.percentage and progress.percentage <= last_progress.percentage)):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page/percentage could not be less than the last registered page')
 
-        # Current page should not be greater than item pages
+        # The Current page should not be greater than item pages
         if (item_pages and progress.page) and (progress.page > item_pages):
             error_txt = ('Current page ({current_page}) cannot be greater than the total pages of the item ({item_pages})'
                          .format(current_page=progress.page, item_pages=item.pages))
@@ -132,9 +132,9 @@ class ReadingService(BaseService):
 
         # Only one entry per day is allowed
         if last_progress and last_progress.date == datetime.now().date():
-            setted_progress = self.__set_values(progress_entry=last_progress, item_pages=item_pages,
+            seted_progress = self.__set_values(progress_entry=last_progress, item_pages=item_pages,
                                                 current_page=progress.page, percentage=progress.percentage)
-            progress_updated = await self.reading_manager.update_progress(setted_progress, {'page': setted_progress.page})
+            progress_updated = await self.reading_manager.update_progress(seted_progress, {'page': seted_progress.page})
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
@@ -153,7 +153,6 @@ class ReadingService(BaseService):
         await self.session.refresh(new_entry)
 
         response = CreateProgressResponse(
-            success=True,
             item=ItemSchema.model_validate(item),
             progress=ProgressSchema.model_validate(new_entry)
         ).transform()
@@ -161,9 +160,12 @@ class ReadingService(BaseService):
         return response
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
+        reading = await self.reading_manager.get_reading_by_id(reading_id=params.reading_id)
+
+        # TODO: get progress from reading object
         progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
-        # TODO: get from item, if none progress the item is None also, or maybe get from reading
-        item = progress[0].item if progress else None
+
+        item = reading.item
 
         response = GetProgressResponse(
             quantity=len(progress) if progress else 0,
