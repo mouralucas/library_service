@@ -21,7 +21,7 @@ class GetReadingResponse(BaseModel):
     readings: list[ReadingSchema]
 
 
-class GetActiveReadingsResponse(SuccessResponseBase):
+class GetActiveReadingsResponse(BaseModel):
     quantity: int = Field(..., description="The number of active readings")
     readings: list[ReadingSchema]
 

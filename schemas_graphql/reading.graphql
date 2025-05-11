@@ -1,5 +1,5 @@
 extend type Query {
-  getReading(id: String!): Reading
+  getReading(reading_id: String!): ReadingOutput!
   getReadings: ReadingOutput!
 }
 
@@ -32,7 +32,7 @@ input ReadingInput {
 }
 
 type ReadingOutput {
-  item_name: String
+  item_title: String!
   quantity: Int!
   readings: [Reading!]
 }

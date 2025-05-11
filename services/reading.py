@@ -82,10 +82,16 @@ class ReadingService(BaseService):
 
         return response
 
-    async def get_reading_by_id(self, reading_id: uuid.UUID) -> ReadingSchema:
-        reading = self.reading_manager.get_reading_by_id(reading_id=reading_id)
+    async def get_reading_by_id(self, reading_id: uuid.UUID) -> GetReadingResponse:
+        reading = await self.reading_manager.get_reading_by_id(reading_id=reading_id)
 
-        return ReadingSchema.model_validate(reading)
+        response = GetReadingResponse(
+            item_title=reading.item.title,
+            quantity=1 if reading else 0,
+            readings=[ReadingSchema.model_validate(reading).transform()],
+        )
+
+        return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         # TODO: stmt should be in manager
@@ -95,7 +101,6 @@ class ReadingService(BaseService):
         readings = await self.reading_manager.get_all(stmt)
 
         response = GetActiveReadingsResponse(
-            status_code=status.HTTP_200_OK,
             quantity=len(readings) if readings else 0,
             readings=[ReadingSchema.model_validate(reading['ReadingModel']).transform() for reading in readings] if readings else []
         )
