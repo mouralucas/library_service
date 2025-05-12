@@ -4,9 +4,10 @@ type Query {
     getItems: GetItemResponse
 
     # Reading queries
-    getReading(reading_id: String!): ReadingOutput!
-    getReadings: ReadingOutput!
-    getReadingProgress(params: GetReadingProgress): ReadingProgressOutput!
+    getReading(reading_id: String!): GetReadingOutput!
+    getReadings: GetReadingOutput!
+    getActiveReadings: GetActiveReadingsOutput!
+    getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
 }
 
 type Mutation {
@@ -14,6 +15,6 @@ type Mutation {
     createItem(name: String!): Item
 
     # Reading mutations
-    createReading(reading: ReadingInput!): CreateReadingResponse!
-    createReadingProgress(progress: ReadingProgressInput!): GetReadingProgresOutput!
+    createReading(reading: CreateReadingInput!): CreateReadingOutput!
+    createReadingProgress(progress: GetReadingProgressInput!): GetReadingProgresOutput!
 }

@@ -22,8 +22,12 @@ class GetReadingResponse(BaseModel):
 
 
 class GetActiveReadingsResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(
+        serialization_alias=to_camel
+    ))
+
     quantity: int = Field(..., description="The number of active readings")
-    readings: list[ReadingSchema]
+    readings: list[ReadingSchema] = Field(None, description="The list of active readings")
 
 
 class CreateProgressResponse(BaseModel):

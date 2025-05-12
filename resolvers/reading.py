@@ -32,9 +32,15 @@ async def resolve_create_progress(_, info, progress):
 
     return new_progress.model_dump()
 
+async def resolve_get_active_readings(_, info):
+    readings = await ReadingService(session=info.context["session"], user=info.context["user"]).get_active_readings()
+
+    return readings.model_dump()
+
 def bind_reading_resolvers(query, mutation):
     query.set_field("getReading", resolve_get_reading)
     query.set_field("getReadings", resolve_get_readings)
+    query.set_field("getActiveReadings", resolve_get_active_readings)
     query.set_field('getReadingProgress', resolve_get_progress)
     mutation.set_field("createReading", resolve_create_reading)
     mutation.set_field("createReadingProgress", resolve_create_progress)

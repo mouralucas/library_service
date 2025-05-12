@@ -1,66 +1,75 @@
-type CreateReadingResponse {
-  reading: Reading!
-}
-
+# Base types
 type Reading {
-  id: String!
-  item_id: Int!
-  item_title: String
-  item: Item!
-  start_date: String!
-  finish_date: String
-  number: Int
-  active: Boolean
-  status_id: String
-  status_name: String
-}
-
-input ReadingInput {
-  item_id: Int!
-  start_date: String!
-  finish_date: String
-  is_dropped: Boolean = false
-}
-
-type ReadingOutput {
-  item_title: String!
-  quantity: Int!
-  readings: [Reading!]
+    id: String!
+    item_id: Int!
+    item_title: String
+    item: Item!
+    start_date: String!
+    finish_date: String
+    number: Int
+    active: Boolean
+    status_id: String
+    status_name: String
 }
 
 type ReadingProgress {
-  id: String!
-  reading: Reading!
-  date: String!
-  page: Int
-  percentage: Float
-  rate: Int
-  comment: String
+    id: String!
+    reading: Reading!
+    date: String!
+    page: Int
+    percentage: Float
+    rate: Int
+    comment: String
 }
 
-input GetReadingProgress {
-  reading_id: String!
+# Input types (parameters)
+input CreateReadingInput {
+    item_id: Int!
+    start_date: String!
+    finish_date: String
+    is_dropped: Boolean = false
 }
 
-input ReadingProgressInput {
-  reading_id: String!
-  page: Int
-  percentage: Int
-  date: String
-  rate: Int
-  comment: String
+input GetReadingProgressInput {
+    reading_id: String!
 }
 
-type ReadingProgressOutput {
-  quantity: Int!
-  item: Item!
-  item_title: String
-  pages_read: Int
-  progress: [ReadingProgress]!
+input CreateReadingProgressInput {
+    reading_id: String!
+    page: Int
+    percentage: Int
+    date: String
+    rate: Int
+    comment: String
+}
+
+
+# Output types (responses)
+type GetReadingOutput {
+    item_title: String!
+    quantity: Int!
+    readings: [Reading!]
+}
+
+type CreateReadingOutput {
+    reading: Reading!
+}
+
+type GetReadingProgressOutput {
+    quantity: Int!
+    item: Item!
+    item_title: String
+    pages_read: Int
+    progress: [ReadingProgress]!
 }
 
 type GetReadingProgresOutput {
-  item_title: String!
-  pages_read: String
-  progress: ReadingProgress!
+    item_title: String!
+    pages_read: String
+    progress: ReadingProgress!
+}
+
+type GetActiveReadingsOutput {
+    quantity: Int!
+    readings: [Reading]!
 }
