@@ -1,6 +1,6 @@
 from ariadne import load_schema_from_path, QueryType, MutationType, make_executable_schema, graphql
 from ariadne.asgi import GraphQL
-from ariadne.explorer import ExplorerPlayground
+from ariadne.explorer import ExplorerPlayground, ExplorerGraphiQL
 from fastapi import APIRouter, Request, Depends, Security
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
@@ -43,7 +43,7 @@ async def graphql_server(
     status_code = 200 if success else 400
     return JSONResponse(result, status_code=status_code)
 
-playground_html = ExplorerPlayground().html(None)
+playground_html = ExplorerGraphiQL().html(None)
 
 @router.get('', description='The GraphQL playground page')
 async def graphql_playground():
