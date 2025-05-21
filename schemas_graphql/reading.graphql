@@ -59,11 +59,12 @@ type GetReadingProgressOutput {
     quantity: Int!
     item: Item!
     item_title: String
-    pages_read: Int
+    pages_read: String
     progress: [ReadingProgress]!
 }
 
-type GetReadingProgresOutput {
+type CreateReadingProgressOutput {
+    item: Item!
     item_title: String!
     pages_read: String
     progress: ReadingProgress!
