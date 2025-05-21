@@ -16,5 +16,5 @@ type Mutation {
 
     # Reading mutations
     createReading(reading: CreateReadingInput!): CreateReadingOutput!
-    createReadingProgress(progress: GetReadingProgressInput!): CreateReadingProgressOutput!
+    createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
 }
