@@ -58,6 +58,8 @@ class ItemManager(BaseDataManager):
                 SerieModel.name.label('serie_name'),
                 ItemModel.language_id,
                 ItemModel.volume,
+                ItemModel.isbn,
+                ItemModel.isbn10,
                 ItemModel.publisher_id,
                 PublisherModel.name.label('publisher_name'),
                 ItemModel.main_author_id,
