@@ -1,4 +1,4 @@
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, GetProgressRequest, CreateProgressRequest
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest, GetProgressRequest, CreateProgressRequest, GetReadingStatsRequest
 from services.reading import ReadingService
 
 
@@ -37,10 +37,19 @@ async def resolve_get_active_readings(_, info):
 
     return readings.model_dump()
 
+
+async def resolve_get_reading_stats(_, info, params):
+    params_ = GetReadingStatsRequest.model_validate(params)
+    stats = await ReadingService(session=info.context["session"], user=info.context["user"]).get_reading_stats(params=params_)
+
+    return stats.model_dump()
+
 def bind_reading_resolvers(query, mutation):
     query.set_field("getReading", resolve_get_reading)
     query.set_field("getReadings", resolve_get_readings)
     query.set_field("getActiveReadings", resolve_get_active_readings)
     query.set_field('getReadingProgress', resolve_get_progress)
+    query.set_field('getReadingStats', resolve_get_reading_stats)
+
     mutation.set_field("createReading", resolve_create_reading)
     mutation.set_field("createReadingProgress", resolve_create_progress)

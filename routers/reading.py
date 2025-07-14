@@ -6,7 +6,8 @@ from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
+from schemas.reading import GetReadingStatsResponse
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
 from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, \
     CreateReadingResponse, GetActiveReadingsResponse
 from services.reading import ReadingService
@@ -49,6 +50,14 @@ async def get_active_reading(
     response = await ReadingService(session=session, user=user).get_active_readings()
 
     return response
+
+@router.get('/stats', summary='Get reading stats', description='Get reading stats for a user')
+async def get_reading_stats(
+        params: GetReadingStatsRequest = Depends(),
+        session: AsyncSession = Depends(get_session),
+        user: RequiredUser = Security(get_user)
+) -> GetReadingStatsResponse:
+    return await ReadingService(session=session, user=user).get_reading_stats(params=params)
 
 
 @router.post('/progress', summary='Add progress', description='Add a new progress for a reading',

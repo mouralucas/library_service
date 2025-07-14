@@ -43,6 +43,10 @@ input CreateReadingProgressInput {
     comment: String
 }
 
+input GetReadingStatsInput {
+    item_id: Int!
+}
+
 
 # Output types (responses)
 type GetReadingOutput {
@@ -73,4 +77,12 @@ type CreateReadingProgressOutput {
 type GetActiveReadingsOutput {
     quantity: Int!
     readings: [Reading]!
+}
+
+type GetReadingStatsOutput {
+    item: Item!
+    item_title: String!
+    readings_count: Int!
+    current_reading: Reading
+    current_page: Int
 }

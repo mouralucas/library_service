@@ -64,3 +64,11 @@ class CreateProgressRequest(BaseModel):
 class GetProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))
     item_id: uuid.UUID | None = Field(Query(None, alias='itemId', description="The id of the item"))
+
+
+class GetReadingStatsRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=AliasGenerator(
+        alias=to_camel
+    ))
+
+    item_id: int = Field(..., description="The id of the item")

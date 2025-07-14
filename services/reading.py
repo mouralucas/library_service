@@ -10,11 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, aliased
 
 from managers.item import ItemManager
-from managers.reading import ReadingDataManager
+from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
-from schemas.reading import ReadingSchema, ProgressSchema
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest
+from schemas.reading import GetReadingStatsResponse, ReadingSchema, ProgressSchema
+from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
 from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.base import BaseService
 
@@ -24,13 +24,10 @@ class ReadingService(BaseService):
     def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
         self.user = user.model_dump()
-        self.reading_manager = ReadingDataManager(session=self.session, user=self.user)
+        self.reading_manager = ReadingManager(session=self.session, user=self.user)
 
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
-        param = {
-            'item_id': reading.item_id
-        }
-        previous_readings = await self.reading_manager.get_readings(params=param)
+        previous_readings = await self.reading_manager.get_readings(item_id=reading.item_id)
         last_reading = previous_readings[0] if previous_readings else None
 
         # Cannot start a new reading with another still active
@@ -172,6 +169,30 @@ class ReadingService(BaseService):
             item=item,
             progress=[ProgressSchema.model_validate(i) for i in progress] if progress else []
         ).transform()
+
+        return response
+
+    async def get_reading_stats(self, params: GetReadingStatsRequest) -> GetReadingStatsResponse:
+        item = ItemManager(session=self.session).get_item_by_id(item_id=params.item_id)
+        item_readings = await self.reading_manager.get_readings(item_id=params.item_id)
+
+        # Get information about the last reading
+        readings_count = len(item_readings) if item_readings else 0
+        last_reading = item_readings[0] if item_readings else None
+        last_reading_date = last_reading.start_date if last_reading else None
+
+        # Get information about the current reading
+        current_reading = await self.reading_manager.get_item_active_reading(item_id=params.item_id)
+        current_reading_progress = await self.reading_manager.get_latest_progress(reading_id=current_reading.id) if current_reading else None
+        current_page = current_reading_progress.page if current_reading_progress else None
+        current_percentage = current_reading_progress.percentage if current_reading_progress else None
+
+        response = GetReadingStatsResponse(
+            readings_count=readings_count,
+            last_reading_date=last_reading_date,
+            current_page=current_page,
+            current_percentage=current_percentage
+        )
 
         return response
 

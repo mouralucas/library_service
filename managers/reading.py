@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload
 from models.reading import ReadingModel, ReadingProgressModel
 
 
-class ReadingDataManager(BaseDataManager):
+class ReadingManager(BaseDataManager):
     def __init__(self, session: AsyncSession, user: dict[str, Any] = None):
         super().__init__(session=session)
         self.user = user
@@ -39,13 +39,13 @@ class ReadingDataManager(BaseDataManager):
 
         return cast(ReadingModel, reading)
 
-    async def get_readings(self, params: dict) -> list[ReadingModel] | None:
+    async def get_readings(self, item_id) -> list[ReadingModel] | None:
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
-        query = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
-
-        for key, value in params.items():
-            query = query.where(getattr(ReadingModel, key) == value)
+        query = select(ReadingModel).where(
+            ReadingModel.owner_id == self.user['user_id'],
+            ReadingModel.item_id == item_id
+            )
 
         query = query.order_by(ReadingModel.start_date.desc())
 
@@ -54,7 +54,7 @@ class ReadingDataManager(BaseDataManager):
         return [reading['ReadingModel'] for reading in readings] if readings else None
 
     async def get_item_active_reading(self, item_id: int) -> ReadingModel | None:
-        query = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == 1)
+        query = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active == True)
 
         reading: SQLModel = await self.get_only_one(query)
 

@@ -43,3 +43,12 @@ class ReadingSchema(BaseModel):
         self.status_name = self.status.name
         # Add transformation as needed
         return self
+
+class GetReadingStatsResponse(BaseModel):
+    __repr_name__ = 'Reading Stats'
+    model_config = ConfigDict(from_attributes=True)
+
+    readings_count: int = Field(..., serialization_alias='readingsCount', description='The total number of readings')
+    last_reading_date: datetime.date | None = Field(None, serialization_alias='lastReadingDate', description='The date of the last reading')
+    current_page: int | None = Field(None, serialization_alias='currentPage', description='The current page of the reading')
+    current_percentage: float | None = Field(None, serialization_alias='currentPercentage', description='The current percentage of the reading')
