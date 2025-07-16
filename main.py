@@ -7,7 +7,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from backend.settings import settings
 from lifespan import start_log_service, shutdown_log_service
-from routers import reading, item, author, core
+from routers import reading, item, author, core, health_check
 from routers_graphql import main
 
 
@@ -66,5 +66,5 @@ app.include_router(core.router)
 app.include_router(item.router)
 app.include_router(reading.router)
 app.include_router(author.router)
-
+app.include_router(health_check.router)
 app.include_router(main.router)
