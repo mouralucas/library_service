@@ -1,5 +1,8 @@
 import asyncio
 
+import pytest_asyncio
+from httpx import AsyncClient, ASGITransport
+
 import uuid
 import pytest
 import pytest_asyncio
@@ -57,5 +60,6 @@ def override_user_service():
 
 @pytest_asyncio.fixture(scope='function', autouse=True)
 async def client():
-    async with AsyncClient(app=app, base_url="http://test") as client:
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
         yield client

@@ -1,11 +1,10 @@
 # Library Service
 
-This service contains all necessary endpoints to handle library requests,
-such as create a new item, add and author, publisher, new reading and reading progress, etc.
+Este serviço contem os endipoints necessarios para lidar com requests da biblioteca, como criar novos items, adicionar autores, editoras, leituras, etc.
 
-## Installation for development
+## Instalação para desenvolvimento
 
-There are two ways to run this project. 
+Basta rodar o container:
 
 ```bash
 sudo docker compose build
@@ -15,32 +14,11 @@ sudo docker compose build
 sudo docker compose up
 ```
 
-This two commands will create the development database and run the project in port 8001.
+Esses comandos criam um container Docker com o banco de dados de desenvolvimento roda o projeto na porta 8001
 
-First step is to create a new virtual environment. There are many ways to do that, 
-but the simpler ways is to execute the following command:
+## Executar e debugar no VSCode
 
-```bash
-python3 -m venv venv
-```
-
-This line will create a virtual environment called venv using the command venv from Python.
-
-Than activate the venv.
-
-```bash
-sorce venv/bin/activate
-```
-
-To complete the configuration, install all requirements:
-
-```bash
-pip3 install -r requirements
-```
-
-## Run and debug in VSCode
-
-If not exist, create a .vscode folder and a launch.json file with the following content:
+Caso não exista, crie a pasta .vscode na raiz do projeto e um arquivo launch.json com o seguinte código:
 
 ```json
 {
@@ -85,20 +63,42 @@ If not exist, create a .vscode folder and a launch.json file with the following 
   }
 ```
 
-The env `auth_service_base_url` is only needed when not running the user_server locally.
+A variável `auth_service_base_url` somente é necessária quando rodar o serviço user_server localmente.
 ....
 
 ## Migrations
 
-To run migrations, first create the file with the database changes:
+As migrações são utilizadas para a criação/edição das informações do banco de dados. Elas mapeiam os models do sql alchemy do projeto e aplicam no banco de dados
+
+## Instalação do Alembic
+
+Para inicializar o alembic basta rodar o seguinte comando:
+
+```bash
+alembic init alembic
+``` 
+
+Esse comando irá gerar os arquivos básicos do Alembic
+
+```
+alembic/
+  env.py
+  README
+  script.py.mako
+  versions/
+alembic.ini
+```
+
+Para rodar as migrações, rode o comando 'revision' para que o Alembic identifique as modificações nos models e gere um arquivo de migração
 
 ```bash
 python3 -m alembic.config revision --autogenerate -m [migration message]
 ```
 
-Use a migration message that correspond with the changes in SQL models.
+Use mensagens que correnspondam com as mudanças aplicadas nos models.
 
-Finally, apply the changes into the database using:
+Finalmente, aplique as modificações no banco de dados
+
 ```bash
 python3 -m alembic.config upgrade head
 ```
