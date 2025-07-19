@@ -1,4 +1,4 @@
-from pydantic import Field, BaseModel, ConfigDict, AliasGenerator
+from pydantic import Field, BaseModel, ConfigDict, AliasGenerator, model_validator
 from pydantic.alias_generators import to_camel
 
 from rolf_common.schemas import SuccessResponseBase
@@ -58,13 +58,15 @@ class GetProgressResponse(BaseModel):
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
     progress: list[ProgressSchema] = Field(..., serialization_alias='readingProgress', description="The reading progress information")
 
-    def transform(self):
-        resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress[0].page),
-                                                                        total_pages=str(self.item.pages),
-                                                                        percentage=self.progress[0].percentage) \
-            if self.progress and self.progress[0].page and self.item.pages else None
-
-        self.item_title = self.item.title if self.item else None
-        self.pages_read = resp_str
-
+    @model_validator(mode='after')
+    def compute_derived_fields(self):
+        if self.item:
+            self.item_title = self.item.title
+            if self.progress and self.progress[0].page and self.item.pages:
+                self.pages_read = '{}/{} - {}%'.format(
+                    self.progress[0].page,
+                    self.item.pages,
+                    self.progress[0].percentage
+                )
         return self
+

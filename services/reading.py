@@ -158,9 +158,10 @@ class ReadingService(BaseService):
 
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=params.reading_id)
-
-        # TODO: get progress from reading object
-        progress = await self.reading_manager.get_progress(reading_id=params.reading_id)
+        if not reading:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Reading not found')
+        
+        progress: list[ReadingProgressModel] | None = await self.reading_manager.get_progress(reading_id=params.reading_id)
 
         item = reading.item
 
@@ -168,12 +169,12 @@ class ReadingService(BaseService):
             quantity=len(progress) if progress else 0,
             item=item,
             progress=[ProgressSchema.model_validate(i) for i in progress] if progress else []
-        ).transform()
+        )
 
         return response
 
     async def get_reading_stats(self, params: GetReadingStatsRequest) -> GetReadingStatsResponse:
-        item = ItemManager(session=self.session).get_item_by_id(item_id=params.item_id)
+        # item = await ItemManager(session=self.session).get_item_by_id(item_id=params.item_id)
         item_readings = await self.reading_manager.get_readings(item_id=params.item_id)
 
         # Get information about the last reading
