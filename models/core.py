@@ -51,6 +51,7 @@ class CollectionModel(SQLModel):
     id: Mapped[int] = mapped_column('id', primary_key=True)
     name: Mapped[str] = mapped_column('name')
     description: Mapped[str] = mapped_column('description', nullable=True)
+    serie: Mapped[int] = mapped_column(ForeignKey('serie.id'), nullable=True, doc="The serie id if collection is related to a serie")
 
 
 class PublisherModel(SQLModel):
