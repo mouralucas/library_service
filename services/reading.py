@@ -47,7 +47,7 @@ class ReadingService(BaseService):
 
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
         response = CreateReadingResponse(
-            reading=ReadingSchema.model_validate(new_reading).transform()
+            reading=ReadingSchema.model_validate(new_reading)
         )
         return response
 
@@ -85,7 +85,7 @@ class ReadingService(BaseService):
         response = GetReadingResponse(
             item_title=reading.item.title,
             quantity=1 if reading else 0,
-            readings=[ReadingSchema.model_validate(reading).transform()],
+            readings=[ReadingSchema.model_validate(reading)],
         )
 
         return response
@@ -99,7 +99,7 @@ class ReadingService(BaseService):
 
         response = GetActiveReadingsResponse(
             quantity=len(readings) if readings else 0,
-            readings=[ReadingSchema.model_validate(reading['ReadingModel']).transform() for reading in readings] if readings else []
+            readings=[ReadingSchema.model_validate(reading['ReadingModel']) for reading in readings] if readings else []
         )
 
         return response
@@ -152,7 +152,7 @@ class ReadingService(BaseService):
         response = CreateProgressResponse(
             item=ItemSchema.model_validate(item),
             progress=ProgressSchema.model_validate(new_entry)
-        ).transform()
+        )
 
         return response
 
