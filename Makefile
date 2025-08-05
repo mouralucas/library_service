@@ -8,12 +8,17 @@ ALEMBIC = alembic.config
 COMMAND_UPGRADE = upgrade head
 
 # Default target
-all: upgrade-database, insert-data
+initializeDatabase: install_venv, activate_venv, run_database_migrations, insert-data
 
+install_venv:
+	python3 -m venv .venv
+
+activate_venv:
+	source .venv/bin/activate
 
 # Run the Alembic upgrade command
-upgrade-database:
-	source venv/bin/activate && $(PYTHON) -m $(ALEMBIC) $(COMMAND_UPGRADE)
+run_database_migrations:
+	$(PYTHON) -m $(ALEMBIC) $(COMMAND_UPGRADE)
 
 
 # Create basic data in docker database
