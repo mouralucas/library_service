@@ -48,6 +48,25 @@ async def test_create_finished_reading(client, create_item, create_reading_statu
 
 
 @pytest.mark.asyncio
+async def test_create_reading_without_start_date(client, create_item, create_reading_status):
+    """
+    This test is to check if the start_date is set to current date when not provided
+    So the validation here is just to check if the response has a 'reading' key
+    """
+    items = create_item
+
+    params = {
+        "itemId": items[0].id,
+    }
+    response = await client.post("/reading", json=params)
+
+    assert response.status_code == status.HTTP_201_CREATED
+    data = response.json()
+    
+    assert 'reading' in data
+    
+    
+@pytest.mark.asyncio
 async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     readings = create_more_than_one_reading
 
@@ -336,3 +355,15 @@ async def test_get_reading_stats_no_reading_for_item(client, create_item):
     
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    
+    assert 'stats' in data
+    assert 'readingsCount' in data['stats']
+    assert data['stats']['readingsCount'] == 0
+    assert 'lastReadingDate' in data['stats']
+    assert data['stats']['lastReadingDate'] is None
+    # assert 'averageReadingTime' in data['stats']
+    # assert data['stats']['averageReadingTime'] is None
+    assert 'currentPage' in data['stats']
+    assert data['stats']['currentPage'] == None
+    assert 'currentPercentage' in data['stats']
+    assert data['stats']['currentPercentage'] == None

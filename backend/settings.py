@@ -6,7 +6,7 @@ class LibrarySettings(Settings):
     library_database_url: str = 'postgresql+asyncpg://dev-user:password@localhost:5432/library_dev_db'
     test_database_url: str = 'sqlite+aiosqlite:///:memory:'
     echo_sql: bool = False
-    echo_test_sql: bool = True
+    echo_test_sql: bool = False
     test: bool = False
 
     # Project description

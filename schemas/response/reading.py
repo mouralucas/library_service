@@ -4,7 +4,7 @@ from pydantic.alias_generators import to_camel
 from rolf_common.schemas import SuccessResponseBase
 
 from schemas.item import ItemSchema
-from schemas.reading import ReadingSchema, ProgressSchema
+from schemas.reading import ReadingSchema, ProgressSchema, ReadingStats
 
 
 class CreateReadingResponse(BaseModel):
@@ -36,6 +36,7 @@ class CreateProgressResponse(BaseModel):
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
     progress: ProgressSchema = Field(..., serialization_alias='readingProgress', description="The reading progress information")
 
+    # TODO: change transform to model_validator 'after'
     def transform(self):
         resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress.page),
                                                                         total_pages=str(self.item.pages),
@@ -70,3 +71,8 @@ class GetProgressResponse(BaseModel):
                 )
         return self
 
+class GetReadingStatsResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(
+        serialization_alias=to_camel
+    ))
+    stats: ReadingStats = Field(..., description="The reading statistics")

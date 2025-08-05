@@ -5,11 +5,9 @@ from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-
-from schemas.reading import GetReadingStatsResponse
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
 from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, \
-    CreateReadingResponse, GetActiveReadingsResponse
+    CreateReadingResponse, GetActiveReadingsResponse, GetReadingStatsResponse
 from services.reading import ReadingService
 
 # Test new db connection

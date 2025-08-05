@@ -80,14 +80,14 @@ class ReadingManager(BaseDataManager):
     async def get_progress(self, reading_id) -> list[ReadingProgressModel] | None:
         query = (select(ReadingProgressModel)
                 .where(ReadingProgressModel.reading_id == reading_id)
-                .order_by(ReadingProgressModel.date.desc()))
+                .order_by(ReadingProgressModel.progressDate.desc()))
 
         progress_list = await self.get_all(query)
 
         return [progress['ReadingProgressModel'] for progress in progress_list] if progress_list else None
 
     async def get_latest_progress(self, reading_id) -> ReadingProgressModel | None:
-        query = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.date.desc())
+        query = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.progressDate.desc())
 
         # TODO: get_first should return SQLModel!!
         latest_progress = await self.get_first(query)

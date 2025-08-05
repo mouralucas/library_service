@@ -13,7 +13,8 @@ from managers.item import ItemManager
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
-from schemas.reading import GetReadingStatsResponse, ReadingSchema, ProgressSchema
+from schemas.reading import ReadingSchema, ProgressSchema, ReadingStats
+from schemas.response.reading import GetReadingStatsResponse
 from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
 from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
 from services.base import BaseService
@@ -189,10 +190,12 @@ class ReadingService(BaseService):
         current_percentage = current_reading_progress.percentage if current_reading_progress else None
 
         response = GetReadingStatsResponse(
-            readings_count=readings_count,
-            last_reading_date=last_reading_date,
-            current_page=current_page,
-            current_percentage=current_percentage
+            stats=ReadingStats(
+                readings_count=readings_count,
+                last_reading_date=last_reading_date,
+                current_page=current_page,
+                current_percentage=current_percentage
+            )
         )
 
         return response
@@ -206,7 +209,7 @@ class ReadingService(BaseService):
             progress_entry.percentage = perc
 
         if percentage is not None and percentage != 0:
-            current_page = (percentage / 100) * item_pages if item_pages else 0
+            current_page = int((percentage / 100) * item_pages) if item_pages else 0
             progress_entry.page = int(current_page)
             progress_entry.percentage = percentage
 
