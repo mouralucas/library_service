@@ -1,6 +1,6 @@
 import uuid
 from datetime import date, datetime
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 
 from schemas.core import StatusSchema
 from schemas.item import ItemSchema
@@ -34,11 +34,11 @@ class ReadingSchema(BaseModel):
     status_name: str | None = Field(None, description='The name of the status')
     progress: list[ProgressSchema] | None = Field(None, serialization_alias='progress', description="The current progress of the reading")
 
-    # TODO: change transform to a validate_model after
+    @model_validator(mode='after')
     def transform(self):
         self.item_title = self.item.title
         self.status_name = self.status.name
-        # Add transformation as needed
+
         return self
 
 class ReadingStats(BaseModel):

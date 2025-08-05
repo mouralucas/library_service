@@ -35,8 +35,8 @@ class CreateProgressResponse(BaseModel):
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
     progress: ProgressSchema = Field(..., serialization_alias='readingProgress', description="The reading progress information")
-
-    # TODO: change transform to model_validator 'after'
+    
+    @model_validator(mode='after')
     def transform(self):
         resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress.page),
                                                                         total_pages=str(self.item.pages),
@@ -44,13 +44,8 @@ class CreateProgressResponse(BaseModel):
 
         self.item_title = self.item.title
         self.pages_read = resp_str
-
+        
         return self
-
-
-# class CreateProgressResponse(SuccessResponseBase):
-#     currentReadingProgress: ProgressSchema = Field(..., description="The current reading progress for an item")
-
 
 class GetProgressResponse(BaseModel):
     quantity: int = Field(..., description="The number of entries returned")
