@@ -29,7 +29,7 @@ class ReadingSchema(BaseModel):
     start_date: date = Field(..., serialization_alias='startDate', description="The date the reading start")
     finish_date: date | None = Field(None, serialization_alias='finishDate', description="The date the reading ends")
     number: int = Field(..., serialization_alias='readingNumber', description="The number of the reading, if it is first, second time, etc")
-    active: bool = Field(..., serialization_alias='active', 
+    active: bool = Field(..., serialization_alias='active',
                          description='If false reading could be finished or dropped, if true is reading now, check status')
     status: StatusSchema = Field(..., description='The status of the reading')
     status_id: str = Field(..., serialization_alias='statusId', description="The id of the status")

@@ -14,7 +14,7 @@ class StatusModel(SQLModel):
     order: Mapped[int] = mapped_column('order', nullable=True)
     type: Mapped[str] = mapped_column('type', nullable=True)
 
-    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', lazy='noload', viewonly=True)
+    items: Mapped["ItemModel"] = relationship("ItemModel", secondary='item_status', lazy='noload', viewonly=True)  # noqa: F821
 
 
 class LanguageModel(SQLModel):
@@ -78,4 +78,4 @@ class AuthorModel(SQLModel):
     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='noload')
     is_translator: Mapped[bool] = mapped_column('is_translator', default=False)
 
-    items: Mapped["ItemModel"] = relationship('ItemModel', secondary='item_author', viewonly=True, lazy='noload')
+    items: Mapped["ItemModel"] = relationship('ItemModel', secondary='item_author', viewonly=True, lazy='noload')  # noqa: F821

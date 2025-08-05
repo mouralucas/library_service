@@ -36,7 +36,8 @@ class CreateProgressResponse(BaseModel):
 
     @model_validator(mode='after')
     def transform(self):
-        resp_str = f'{str(self.progress.page)}/{str(self.item.pages)} - {self.progress.percentage}%' if self.progress.page and self.item.pages else None
+        resp_str = f'{str(self.progress.page)}/{str(self.item.pages)} - {self.progress.percentage}%' \
+            if self.progress.page and self.item.pages else None
 
         self.item_title = self.item.title
         self.pages_read = resp_str
