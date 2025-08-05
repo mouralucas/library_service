@@ -1,4 +1,5 @@
-from datetime import datetime, date, UTC
+from datetime import UTC, date, datetime
+
 
 def utc_timestamp() -> datetime:
     """

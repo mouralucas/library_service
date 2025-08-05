@@ -1,4 +1,3 @@
-from sqlalchemy import select
 from starlette import status
 
 from managers.author import AuthorManager

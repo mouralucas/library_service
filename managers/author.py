@@ -1,4 +1,4 @@
-from typing import cast, Any
+from typing import Any, cast
 
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import select

@@ -1,9 +1,31 @@
-from rolf_common.managers import BaseDataManager
 import asyncio
+
+from rolf_common.managers import BaseDataManager
+
 from backend.database import sessionmanager
-from data_mock.core import get_item_status_mock, get_reading_status_mock, get_language_mock, get_country_mock, get_serie_mock, get_collection_mock, get_publisher_mock, get_author_mock
-from data_mock.item import get_item_mock, get_item_status_relation_mock, get_item_author_relation_mock
-from models import StatusModel, LanguageModel, CountryModel, SerieModel, CollectionModel, PublisherModel, AuthorModel, ItemModel, ItemStatusModel, ItemAuthorModel
+from data_mock.core import (
+    get_author_mock,
+    get_collection_mock,
+    get_country_mock,
+    get_item_status_mock,
+    get_language_mock,
+    get_publisher_mock,
+    get_reading_status_mock,
+    get_serie_mock,
+)
+from data_mock.item import get_item_author_relation_mock, get_item_mock, get_item_status_relation_mock
+from models import (
+    AuthorModel,
+    CollectionModel,
+    CountryModel,
+    ItemAuthorModel,
+    ItemModel,
+    ItemStatusModel,
+    LanguageModel,
+    PublisherModel,
+    SerieModel,
+    StatusModel,
+)
 
 
 async def populate():

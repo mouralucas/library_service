@@ -1,22 +1,27 @@
 import uuid
 from datetime import datetime
 
-from fastapi import status, HTTPException
+from fastapi import HTTPException, status
 from rolf_common.backend.logger import get_logger
 from rolf_common.models import SQLModel
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, aliased
+from sqlalchemy.orm import aliased, joinedload
 
-from managers.item import ItemManager
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
-from schemas.reading import ReadingSchema, ProgressSchema, ReadingStats
-from schemas.response.reading import GetReadingStatsResponse
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
-from schemas.response.reading import GetReadingResponse, GetProgressResponse, CreateProgressResponse, CreateReadingResponse, GetActiveReadingsResponse
+from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
+from schemas.request.reading import CreateProgressRequest, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.response.reading import (
+    CreateProgressResponse,
+    CreateReadingResponse,
+    GetActiveReadingsResponse,
+    GetProgressResponse,
+    GetReadingResponse,
+    GetReadingStatsResponse,
+)
 from services.base import BaseService
 
 
@@ -93,7 +98,7 @@ class ReadingService(BaseService):
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         # TODO: stmt should be in manager
-        stmt = select(ReadingModel).where(ReadingModel.active == True,
+        stmt = select(ReadingModel).where(ReadingModel.active,
                                           ReadingModel.owner_id == self.user['user_id'])
 
         readings = await self.reading_manager.get_all(stmt)
@@ -119,12 +124,12 @@ class ReadingService(BaseService):
         # Current page/percentage can not be greater than last progress entry
         if ((last_progress and last_progress.page and progress.page and progress.page <= last_progress.page) or
                 (last_progress and last_progress.percentage and progress.percentage and progress.percentage <= last_progress.percentage)):
-            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail='The current page/percentage could not be less than the last registered page')
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED,
+                                detail='The current page/percentage could not be less than the last registered page')
 
         # The Current page should not be greater than item pages
         if (item_pages and progress.page) and (progress.page > item_pages):
-            error_txt = ('Current page ({current_page}) cannot be greater than the total pages of the item ({item_pages})'
-                         .format(current_page=progress.page, item_pages=item.pages))
+            error_txt = (f'Current page ({progress.page}) cannot be greater than the total pages of the item ({item.pages})')
             get_logger().error(error_txt)
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt)
 
@@ -137,8 +142,9 @@ class ReadingService(BaseService):
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump())
             new_progress_entry.item_id = reading.item_id
-            new_entry = await self.reading_manager.create_progress(progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
-                                                                                              current_page=progress.page, percentage=progress.percentage))
+            new_entry = await self.reading_manager.create_progress(
+                progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
+                current_page=progress.page, percentage=progress.percentage))
 
         # Update reading as read if pages == item.pages or percentage is 100%
         if ((item_pages and progress.page and item_pages == progress.page)
@@ -161,7 +167,7 @@ class ReadingService(BaseService):
         reading = await self.reading_manager.get_reading_by_id(reading_id=params.reading_id)
         if not reading:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Reading not found')
-        
+
         progress: list[ReadingProgressModel] | None = await self.reading_manager.get_progress(reading_id=params.reading_id)
 
         item = reading.item

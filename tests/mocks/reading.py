@@ -1,9 +1,9 @@
 import pytest_asyncio
 from rolf_common.managers import BaseDataManager
 
-from data_mock.reading import get_active_reading_mock, get_reading_progress_mock, get_reading_list_one_active_mock
+from data_mock.reading import get_active_reading_mock, get_reading_list_one_active_mock, get_reading_progress_mock
 from models import ReadingModel, ReadingProgressModel
-from schemas.reading import ReadingSchema, ProgressSchema
+from schemas.reading import ProgressSchema, ReadingSchema
 
 
 @pytest_asyncio.fixture

@@ -62,10 +62,10 @@ async def test_create_reading_without_start_date(client, create_item, create_rea
 
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
-    
+
     assert 'reading' in data
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     readings = create_more_than_one_reading
@@ -347,15 +347,15 @@ async def test_get_progress(client, create_progress):
 async def test_get_reading_stats_no_reading_for_item(client, create_item):
     item = create_item[0]
     item_id = item.id
-    
+
     payload = {
         'itemId': item_id,
     }
     response = await client.get("/reading/stats", params=payload)
-    
+
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    
+
     assert 'stats' in data
     assert 'readingsCount' in data['stats']
     assert data['stats']['readingsCount'] == 0
@@ -364,6 +364,6 @@ async def test_get_reading_stats_no_reading_for_item(client, create_item):
     # assert 'averageReadingTime' in data['stats']
     # assert data['stats']['averageReadingTime'] is None
     assert 'currentPage' in data['stats']
-    assert data['stats']['currentPage'] == None
+    assert data['stats']['currentPage'] is None
     assert 'currentPercentage' in data['stats']
-    assert data['stats']['currentPercentage'] == None
+    assert data['stats']['currentPercentage'] is None

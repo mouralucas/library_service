@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from backend.database import get_session
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from backend.database import get_session
 
 router = APIRouter(prefix='/health-check', tags=['Health Check'])
 
@@ -22,8 +23,8 @@ async def database_health_check(
     Health check endpoint to verify database connectivity.
     """
     try:
-        await session.execute(text("SELECT 1"))  
+        await session.execute(text("SELECT 1"))
         return {"status": "ok", "message": "Database is reachable"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database connection failed: {str(e)}")
-    response = await CollectionService(session=session).get_collections()
+

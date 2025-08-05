@@ -5,8 +5,8 @@ from rolf_common.models import SQLModel
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models.core import (LanguageModel, StatusModel, AuthorModel,
-                         SerieModel, CollectionModel, PublisherModel)
+from models.core import AuthorModel, CollectionModel, LanguageModel, PublisherModel, SerieModel, StatusModel
+
 
 # TODO: change possible float fields to decimal
 class ItemModel(SQLModel):
@@ -60,7 +60,7 @@ class ItemModel(SQLModel):
 
     cover: Mapped[str] = mapped_column('cover', nullable=True)
 
-    # related_to_id: Mapped[int] = mapped_column(ForeignKey('item.id'), nullable=True, doc='Identify same book but different version') 
+    # related_to_id: Mapped[int] = mapped_column(ForeignKey('item.id'), nullable=True, doc='Identify same book but different version')
 
     # Relations
     authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='noload', viewonly=True)

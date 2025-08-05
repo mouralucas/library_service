@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict, AliasGenerator
+from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 

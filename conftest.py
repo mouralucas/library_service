@@ -1,24 +1,20 @@
 import asyncio
-
-import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-
 import uuid
+
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
+from rolf_common.models import Base
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
 
-from backend.database import get_session
-from backend.database import test_sessionmanager
+from backend.database import get_session, test_sessionmanager
 from main import app
-from rolf_common.models import Base
 
 # The mocks imports cannot be removed, they let all fixtures be available globally
-from tests.mocks.core import *
-from tests.mocks.item import *
-from tests.mocks.reading import *
+from tests.mocks.core import *  # noqa: F403
+from tests.mocks.item import *  # noqa: F403
+from tests.mocks.reading import *  # noqa: F403
 
 
 @pytest.fixture(scope="session")

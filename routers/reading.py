@@ -1,17 +1,22 @@
-import uuid
 
 from fastapi import APIRouter, Depends, Security
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
-from schemas.request.reading import CreateReadingRequest, GetReadingRequest, CreateProgressRequest, GetProgressRequest, GetReadingStatsRequest
-from schemas.response.reading import GetReadingResponse, CreateProgressResponse, GetProgressResponse, \
-    CreateReadingResponse, GetActiveReadingsResponse, GetReadingStatsResponse
-from services.reading import ReadingService
 
 # Test new db connection
 from backend.database import get_session
+from schemas.request.reading import CreateProgressRequest, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.response.reading import (
+    CreateProgressResponse,
+    CreateReadingResponse,
+    GetActiveReadingsResponse,
+    GetProgressResponse,
+    GetReadingResponse,
+    GetReadingStatsResponse,
+)
+from services.reading import ReadingService
 
 router = APIRouter(prefix="/reading", tags=['Readings'])
 

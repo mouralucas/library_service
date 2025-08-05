@@ -1,10 +1,8 @@
-from pydantic import Field, BaseModel, ConfigDict, AliasGenerator, model_validator
+from pydantic import AliasGenerator, BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
-from rolf_common.schemas import SuccessResponseBase
-
 from schemas.item import ItemSchema
-from schemas.reading import ReadingSchema, ProgressSchema, ReadingStats
+from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
 
 
 class CreateReadingResponse(BaseModel):
@@ -35,16 +33,14 @@ class CreateProgressResponse(BaseModel):
     item_title: str | None = Field(None, serialization_alias='itemTitle', description="The title of the item")
     pages_read: str | None = Field(None, serialization_alias='pagesRead', description="Total pages read so far, if pages are available in item")
     progress: ProgressSchema = Field(..., serialization_alias='readingProgress', description="The reading progress information")
-    
+
     @model_validator(mode='after')
     def transform(self):
-        resp_str = '{latest_page}/{total_pages} - {percentage}%'.format(latest_page=str(self.progress.page),
-                                                                        total_pages=str(self.item.pages),
-                                                                        percentage=self.progress.percentage) if self.progress.page and self.item.pages else None
+        resp_str = f'{str(self.progress.page)}/{str(self.item.pages)} - {self.progress.percentage}%' if self.progress.page and self.item.pages else None
 
         self.item_title = self.item.title
         self.pages_read = resp_str
-        
+
         return self
 
 class GetProgressResponse(BaseModel):
@@ -59,11 +55,7 @@ class GetProgressResponse(BaseModel):
         if self.item:
             self.item_title = self.item.title
             if self.progress and self.progress[0].page and self.item.pages:
-                self.pages_read = '{}/{} - {}%'.format(
-                    self.progress[0].page,
-                    self.item.pages,
-                    self.progress[0].percentage
-                )
+                self.pages_read = f'{self.progress[0].page}/{self.item.pages} - {self.progress[0].percentage}%'
         return self
 
 class GetReadingStatsResponse(BaseModel):

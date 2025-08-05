@@ -1,10 +1,10 @@
 from typing import cast
 
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import select, RowMapping
+from sqlalchemy import RowMapping, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import LanguageModel, SQLModel, CountryModel, CollectionModel, SerieModel, PublisherModel, StatusModel
+from models import CollectionModel, CountryModel, LanguageModel, PublisherModel, SerieModel, SQLModel, StatusModel
 
 
 class LanguageManager(BaseDataManager):

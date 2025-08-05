@@ -1,11 +1,11 @@
 import uuid
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Any
 
 from dateutil.relativedelta import relativedelta
 from rolf_common.util.datetime import get_timestamp_aware
 
-from data_mock.core import get_author_mock, get_language_mock, get_publisher_mock, get_serie_mock, get_collection_mock, get_item_status_mock
+from data_mock.core import get_author_mock, get_collection_mock, get_item_status_mock, get_language_mock, get_publisher_mock, get_serie_mock
 
 default_model_dict = {
     'created_at': get_timestamp_aware(),
@@ -119,7 +119,6 @@ def get_item_status_relation_mock() -> list[dict[str, Any]]:
 
 def get_item_author_relation_mock() -> list[dict[str, Any]]:
     items = get_item_mock()
-    authors = get_author_mock()
 
     item_author = [
         {

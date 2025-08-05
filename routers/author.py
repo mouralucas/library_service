@@ -6,7 +6,7 @@ from starlette import status
 
 from backend.database import get_session
 from schemas.request.author import CreateAuthorRequest
-from schemas.response.author import GetAuthorResponse, CreateAuthorResponse
+from schemas.response.author import CreateAuthorResponse, GetAuthorResponse
 from services.author import AuthorService
 
 router = APIRouter(prefix="/author", tags=['Author'])

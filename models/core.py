@@ -1,8 +1,7 @@
 import datetime
 
-from sqlalchemy import ForeignKey
-
 from rolf_common.models import SQLModel
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 

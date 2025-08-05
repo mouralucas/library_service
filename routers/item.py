@@ -1,4 +1,3 @@
-import uuid
 
 from fastapi import APIRouter, Depends, Security
 from fastapi.security import OAuth2PasswordBearer
@@ -8,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import get_session
-from schemas.request.item import GetItemRequest, CreateItemRequest, UpdateItemRequest
-from schemas.response.item import GetItemResponse, CreateItemResponse
+from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
+from schemas.response.item import CreateItemResponse, GetItemResponse
 from services.item import ItemService
 
 router = APIRouter(prefix="/item", tags=['Items'])

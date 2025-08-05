@@ -1,12 +1,12 @@
 from typing import Any, cast
 
 from fastapi import HTTPException
-from sqlalchemy import select, update, func, RowMapping
 from rolf_common.managers import BaseDataManager
+from sqlalchemy import RowMapping, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from models import SQLModel, AuthorModel, SerieModel, CollectionModel, PublisherModel, StatusModel
+from models import AuthorModel, CollectionModel, PublisherModel, SerieModel, SQLModel, StatusModel
 from models.item import ItemModel, ItemStatusModel
 from schemas.request.item import GetItemRequest
 

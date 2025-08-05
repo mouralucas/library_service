@@ -6,10 +6,9 @@ from rolf_common.base_middleware import LogsMiddleware
 from starlette.middleware.cors import CORSMiddleware
 
 from backend.settings import settings
-from lifespan import start_log_service, shutdown_log_service
-from routers import reading, item, author, core, health_check
+from lifespan import shutdown_log_service, start_log_service
+from routers import author, core, health_check, item, reading
 from routers_graphql import main
-
 
 # import py_eureka_client.eureka_client as eureka_client
 

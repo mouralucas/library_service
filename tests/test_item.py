@@ -1,6 +1,7 @@
+import copy
+
 import pytest
 from fastapi import status
-import copy
 
 
 @pytest.mark.asyncio
@@ -129,10 +130,7 @@ async def test_create_item_without_non_required(client, create_languages, create
     item_subtitle = "Test subtitle"
     item_original_title = "Test item original title"
     item_original_subtitle = "Test item original subtitle"
-    pages = 756
     last_status_date = '2024-06-01'
-    cover_price = 110.15
-    paid_price = 57.90
 
     languages = create_languages
     authors = create_authors

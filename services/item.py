@@ -1,14 +1,13 @@
-from typing import Any, Coroutine
+from typing import Any
 
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from managers.item import ItemManager
-from models import SQLModel, ItemModel, ItemStatusModel, ItemAuthorModel
+from models import ItemAuthorModel, ItemModel, ItemStatusModel
 from schemas.item import ItemSchema
-from schemas.request.item import GetItemRequest, CreateItemRequest, UpdateItemRequest
-from schemas.response.item import GetItemResponse, CreateItemResponse
+from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
+from schemas.response.item import CreateItemResponse, GetItemResponse
 from services.base import BaseService
 
 
