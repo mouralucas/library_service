@@ -60,6 +60,8 @@ class ItemModel(SQLModel):
 
     cover: Mapped[str] = mapped_column('cover', nullable=True)
 
+    # related_to_id: Mapped[int] = mapped_column(ForeignKey('item.id'), nullable=True, doc='Identify same book but different version') 
+
     # Relations
     authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='noload', viewonly=True)
     status: Mapped[list['StatusModel']] = relationship("StatusModel", secondary='item_status', lazy='noload', viewonly=True) # go to user item
