@@ -191,6 +191,7 @@ class ReadingService(BaseService):
 
         # Get information about the current reading
         current_reading = await self.reading_manager.get_item_active_reading(item_id=params.item_id)
+        is_currently_reading = True if current_reading else False
         current_reading_progress = await self.reading_manager.get_latest_progress(reading_id=current_reading.id) if current_reading else None
         current_page = current_reading_progress.page if current_reading_progress else None
         current_percentage = current_reading_progress.percentage if current_reading_progress else None
@@ -199,6 +200,7 @@ class ReadingService(BaseService):
             stats=ReadingStats(
                 readings_count=readings_count,
                 last_reading_date=last_reading_date,
+                is_currently_reading=is_currently_reading,
                 current_page=current_page,
                 current_percentage=current_percentage
             )
