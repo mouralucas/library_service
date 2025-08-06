@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
-
+from typing import Literal
 from fastapi import Query
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
@@ -60,7 +60,7 @@ class CreateProgressRequestV2(BaseModel):
     ))
 
     reading_id: uuid.UUID = Field(..., description='The id of the the reading')
-    progress_type: str = Field(..., description='The type of the progress (page or percentage)')
+    progress_type: Literal['prcentage', 'page'] = Field(..., description='The type of the progress (page or percentage)')
     value: int = Field(..., description='The value of the progress')
     progress_date: date = Field(default_factory=date.today, description='The date that progress was taken')
     rate: int | None = Field(None, description='The rate of the reading so far')

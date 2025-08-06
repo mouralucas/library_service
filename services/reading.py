@@ -163,6 +163,62 @@ class ReadingService(BaseService):
 
         return response
 
+    async def create_progress_v2(self, progress: CreateProgressRequestV2):
+        page = progress.value if progress.progress_type == 'page' else None
+        percentage = progress.value if progress.progress_type == 'percentage' else None
+
+        # TODO: add raise_exception param or kwarg for it
+        reading = await self.reading_manager.get_reading_by_id(progress.reading_id, get_item=True)
+        if not reading:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, detail='Reading not found')
+
+        last_progress = await self.reading_manager.get_latest_progress(progress.reading_id)
+
+        item = reading.item
+        item_pages = item.pages
+
+        # Current page/percentage can not be greater than last progress entry
+        if ((last_progress and last_progress.page and page and page <= last_progress.page) or
+                (last_progress and last_progress.percentage and percentage and percentage <= last_progress.percentage)):
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED,
+                                detail='The current page/percentage could not be less than the last registered page')
+
+        # The Current page should not be greater than item pages
+        if (item_pages and page) and (page > item_pages):
+            error_txt = (f'Current page ({progress.page}) cannot be greater than the total pages of the item ({item.pages})')
+            get_logger().error(error_txt)
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt)
+
+        # Only one entry per day is allowed
+        if last_progress and last_progress.date == datetime.now().date():
+            seted_progress = self.__set_values(progress_entry=last_progress, item_pages=item_pages,
+                                                current_page=page, percentage=percentage)
+            progress_updated = await self.reading_manager.update_progress(seted_progress, {'page': seted_progress.page})
+            new_entry = progress_updated
+        else:
+            new_progress_entry = ReadingProgressModel(**progress.model_dump(exclude{'progress_type', 'value'}))
+            new_progress_entry.item_id = reading.item_id
+            new_entry = await self.reading_manager.create_progress(
+                progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
+                current_page=page, percentage=percentage))
+
+        # Update reading as read if pages == item.pages or percentage is 100%
+        if ((item_pages and page and item_pages == page)
+                or (percentage and percentage == 100)
+                or (new_entry.percentage == 100)):
+            await self.session.refresh(reading)
+            await self.reading_manager.update_reading(reading=reading, fields={'active': False, 'status_id': 'read'})
+
+        await self.session.refresh(item)
+        await self.session.refresh(new_entry)
+
+        response = CreateProgressResponse(
+            item=ItemSchema.model_validate(item),
+            progress=ProgressSchema.model_validate(new_entry)
+        )
+
+        return response
+
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=params.reading_id)
         if not reading:
