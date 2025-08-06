@@ -50,5 +50,13 @@ class ReadingStats(BaseModel):
     readings_count: int = Field(..., serialization_alias='readingsCount', description='The total number of readings')
     last_reading_date: date | None = Field(None, serialization_alias='lastReadingDate', description='The date of the last reading')
     is_currently_reading: bool = Field(..., serialization_alias='isCurrentlyReading', description='If there is an active reading')
+    current_reading_id: uuid.UUID | None = Field(None, serialization_alias='currentReadingId', description='The id of the current reading')
     current_page: int | None = Field(None, serialization_alias='currentPage', description='The current page of the reading')
     current_percentage: float | None = Field(None, serialization_alias='currentPercentage', description='The current percentage of the reading')
+
+    @model_validator(mode='after')
+    def validate_response(self):
+        if not self.is_currently_reading and self.current_reading_id is None:
+            raise ValueError('If there is an active reading, currentReadingId must be provided')
+
+        return self

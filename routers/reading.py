@@ -7,7 +7,7 @@ from starlette import status
 
 # Test new db connection
 from backend.database import get_session
-from schemas.request.reading import CreateProgressRequest, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.request.reading import CreateProgressRequest, CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
 from schemas.response.reading import (
     CreateProgressResponse,
     CreateReadingResponse,
@@ -66,7 +66,7 @@ async def get_reading_stats(
 @router.post('/progress', summary='Add progress', description='Add a new progress for a reading',
              status_code=status.HTTP_201_CREATED)
 async def create_reading_progress(
-        progress: CreateProgressRequest,
+        progress: CreateProgressRequestV2,
         session: AsyncSession = Depends(get_session),
         user: RequiredUser = Security(get_user)
 ) -> CreateProgressResponse:

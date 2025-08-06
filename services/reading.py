@@ -13,7 +13,7 @@ from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
 from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
-from schemas.request.reading import CreateProgressRequest, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.request.reading import CreateProgressRequest, CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
 from schemas.response.reading import (
     CreateProgressResponse,
     CreateReadingResponse,
@@ -110,7 +110,7 @@ class ReadingService(BaseService):
 
         return response
 
-    async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
+    async def create_progress(self, progress: CreateProgressRequestV2) -> CreateProgressResponse:
 
         reading = await self.reading_manager.get_reading_by_id(progress.reading_id, get_item=True)
         if not reading:
@@ -192,6 +192,7 @@ class ReadingService(BaseService):
         # Get information about the current reading
         current_reading = await self.reading_manager.get_item_active_reading(item_id=params.item_id)
         is_currently_reading = True if current_reading else False
+        current_reading_id = current_reading.id if current_reading else None
         current_reading_progress = await self.reading_manager.get_latest_progress(reading_id=current_reading.id) if current_reading else None
         current_page = current_reading_progress.page if current_reading_progress else None
         current_percentage = current_reading_progress.percentage if current_reading_progress else None
@@ -201,6 +202,7 @@ class ReadingService(BaseService):
                 readings_count=readings_count,
                 last_reading_date=last_reading_date,
                 is_currently_reading=is_currently_reading,
+                current_reading_id=current_reading_id,
                 current_page=current_page,
                 current_percentage=current_percentage
             )

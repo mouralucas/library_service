@@ -54,6 +54,20 @@ class CreateProgressRequest(BaseModel):
         return self
 
 
+class CreateProgressRequestV2(BaseModel):
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True, alias_generator=AliasGenerator(
+        alias=to_camel
+    ))
+
+    reading_id: uuid.UUID = Field(..., description='The id of the the reading')
+    progress_type: str = Field(..., description='The type of the progress (page or percentage)')
+    value: int = Field(..., description='The value of the progress')
+    progress_date: date = Field(default_factory=date.today, description='The date that progress was taken')
+    rate: int | None = Field(None, description='The rate of the reading so far')
+    comment: str | None = Field(None, description='The comments for the reading so far')
+
+
+
 class GetProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))
     item_id: uuid.UUID | None = Field(Query(None, alias='itemId', description="The id of the item"))
