@@ -66,7 +66,15 @@ class CreateProgressRequestV2(BaseModel):
     rate: int | None = Field(None, description='The rate of the reading so far')
     comment: str | None = Field(None, description='The comments for the reading so far')
 
+    @model_validator(mode='after')
+    def check_value_range(self) -> 'CreateProgressRequestV2':
+        if self.progress_type == 'percentage' and not (0 < self.value <= 100):
+            raise ValueError('percentage must be between 1 and 100')
 
+        if self.progress_type == 'page' and self.value < 0:
+            raise ValueError('page must be a positive integer')
+
+        return self
 
 class GetProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))

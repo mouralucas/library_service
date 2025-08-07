@@ -185,7 +185,7 @@ class ReadingService(BaseService):
 
         # The Current page should not be greater than item pages
         if (item_pages and page) and (page > item_pages):
-            error_txt = (f'Current page ({progress.page}) cannot be greater than the total pages of the item ({item.pages})')
+            error_txt = (f'Current page ({page}) cannot be greater than the total pages of the item ({item.pages})')
             get_logger().error(error_txt)
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt)
 

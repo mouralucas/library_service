@@ -56,7 +56,7 @@ class ReadingStats(BaseModel):
 
     @model_validator(mode='after')
     def validate_response(self):
-        if not self.is_currently_reading and self.current_reading_id is None:
+        if self.is_currently_reading and self.current_reading_id is None:
             raise ValueError('If there is an active reading, currentReadingId must be provided')
 
         return self
