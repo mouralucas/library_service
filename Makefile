@@ -1,26 +1,28 @@
 # Use bash as the shell
 SHELL := /bin/bash
 
-# Define the Python interpreter and the Alembic command
-VENV_PATH = venv
-PYTHON = python3
-ALEMBIC = alembic.config
-COMMAND_UPGRADE = upgrade head
+# Configuração
+VENV_PATH := .venv
+PYTHON := $(VENV_PATH)/bin/python
+ALEMBIC := alembic
+COMMAND_UPGRADE := upgrade head
 
-# Default target
-initializeDatabase: install_venv, activate_venv, run_database_migrations, insert-data
+# Alvo padrão
+initializeDatabase: check_venv run_database_migrations insert_data
 
-install_venv:
-	python3 -m venv .venv
+# Verifica se a venv existe, se não, cria
+check_venv:
+	@if [ ! -d "$(VENV_PATH)" ]; then \
+		echo "Criando virtualenv em $(VENV_PATH)"; \
+		python3 -m venv $(VENV_PATH); \
+	else \
+		echo "Virtualenv já existe em $(VENV_PATH)"; \
+	fi
 
-activate_venv:
-	source .venv/bin/activate
-
-# Run the Alembic upgrade command
+# Roda as migrations com Alembic usando o python da venv
 run_database_migrations:
 	$(PYTHON) -m $(ALEMBIC) $(COMMAND_UPGRADE)
 
-
-# Create basic data in docker database
-insert-data:
-	source venv/bin/activate && $(PYTHON) populate-database.py
+# Insere dados usando a venv
+insert_data:
+	$(PYTHON) populate-database.py

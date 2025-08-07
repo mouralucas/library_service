@@ -5,7 +5,6 @@ from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-# Test new db connection
 from backend.database import get_session
 from schemas.request.reading import CreateProgressRequest, CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
 from schemas.response.reading import (
@@ -14,7 +13,7 @@ from schemas.response.reading import (
     GetActiveReadingsResponse,
     GetProgressResponse,
     GetReadingResponse,
-    GetReadingStatsResponse,
+    GetReadingStatsResponse
 )
 from services.reading import ReadingService
 
@@ -71,7 +70,7 @@ async def create_reading_progress(
         user: RequiredUser = Security(get_user)
 ) -> CreateProgressResponse:
     # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
-    response = await ReadingService(session=session, user=user).create_progress(progress=progress)
+    response = await ReadingService(session=session, user=user).create_progress_v2(progress=progress)
 
     return response
 

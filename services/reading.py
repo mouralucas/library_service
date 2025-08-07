@@ -110,7 +110,7 @@ class ReadingService(BaseService):
 
         return response
 
-    async def create_progress(self, progress: CreateProgressRequestV2) -> CreateProgressResponse:
+    async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
 
         reading = await self.reading_manager.get_reading_by_id(progress.reading_id, get_item=True)
         if not reading:
@@ -196,7 +196,7 @@ class ReadingService(BaseService):
             progress_updated = await self.reading_manager.update_progress(seted_progress, {'page': seted_progress.page})
             new_entry = progress_updated
         else:
-            new_progress_entry = ReadingProgressModel(**progress.model_dump(exclude{'progress_type', 'value'}))
+            new_progress_entry = ReadingProgressModel(**progress.model_dump(exclude={'progress_type', 'value'}))
             new_progress_entry.item_id = reading.item_id
             new_entry = await self.reading_manager.create_progress(
                 progress=self.__set_values(progress_entry=new_progress_entry, item_pages=item_pages,
@@ -267,7 +267,7 @@ class ReadingService(BaseService):
         return response
 
     @staticmethod
-    def __set_values(progress_entry: ReadingProgressModel, item_pages: int, current_page: int, percentage: int) -> SQLModel:
+    def __set_values(progress_entry: ReadingProgressModel, item_pages: int, current_page: int | None, percentage: int | None) -> SQLModel:
         if current_page is not None and current_page != 0:
             perc = ((current_page / item_pages) * 100) if item_pages else 0
 
