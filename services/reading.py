@@ -176,6 +176,11 @@ class ReadingService(BaseService):
 
         item = reading.item
         item_pages = item.pages
+        
+        # The new entry can not be older than the last progress entry
+        if last_progress and last_progress.progress_date > progress.progress_date:
+            raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED,
+                                detail='The new progress entry date can not be older than the last registered progress entry')
 
         # Current page/percentage can not be greater than last progress entry
         if ((last_progress and last_progress.page and page and page <= last_progress.page) or
@@ -190,10 +195,12 @@ class ReadingService(BaseService):
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt)
 
         # Only one entry per day is allowed
-        if last_progress and last_progress.date == datetime.now().date():
+        if last_progress and last_progress.progress_date == datetime.now().date():
             seted_progress = self.__set_values(progress_entry=last_progress, item_pages=item_pages,
                                                 current_page=page, percentage=percentage)
             progress_updated = await self.reading_manager.update_progress(seted_progress, {'page': seted_progress.page})
+            progress_updated.rate = progress.rate
+            progress_updated.comment = progress.comment
             new_entry = progress_updated
         else:
             new_progress_entry = ReadingProgressModel(**progress.model_dump(exclude={'progress_type', 'value'}))
