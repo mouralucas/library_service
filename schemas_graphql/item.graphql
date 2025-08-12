@@ -1,3 +1,14 @@
+extend type Query {
+  # Item queries
+  getItem(id: Int!): Item
+  getItems: GetItemResponse
+}
+
+extend type Mutation {
+    # Item mutations
+    createItem(name: String!): Item
+}
+
 type GetItemResponse {
     quantity: Int,
     items: [Item]

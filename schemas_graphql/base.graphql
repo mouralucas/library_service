@@ -1,21 +1,2 @@
-type Query {
-    # Item queries
-    getItem(id: Int!): Item
-    getItems: GetItemResponse
-
-    # Reading queries
-    getReading(reading_id: String!): GetReadingOutput!
-    getReadings: GetReadingOutput!
-    getActiveReadings: GetActiveReadingsOutput!
-    getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
-    getReadingStats(params: GetReadingStatsInput): GetReadingStatsOutput!
-}
-
-type Mutation {
-    # Item mutations
-    createItem(name: String!): Item
-
-    # Reading mutations
-    createReading(reading: CreateReadingInput!): CreateReadingOutput!
-    createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
-}
+type Query
+type Mutation

@@ -102,3 +102,10 @@ Finalmente, aplique as modificações no banco de dados
 ```bash
 python3 -m alembic.config upgrade head
 ```
+
+
+## Ativar venv no Powershell
+
+```bash
+Set-ExecutionPolicy Unrestricted -Scope Process
+```

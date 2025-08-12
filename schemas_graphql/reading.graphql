@@ -1,3 +1,19 @@
+
+extend type Query {
+    # Reading queries
+    getReading(reading_id: String!): GetReadingOutput!
+    getReadings: GetReadingOutput!
+    getActiveReadings: GetActiveReadingsOutput!
+    getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
+    getReadingStats(params: GetReadingStatsInput): GetReadingStatsOutput!
+}
+
+extend type Mutation {
+    # Reading mutations
+    createReading(reading: CreateReadingInput!): CreateReadingOutput!
+    createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
+}
+
 # Base types
 type Reading {
     id: String!
