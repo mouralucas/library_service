@@ -5,7 +5,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    # Item mutations
     createItem(name: String!): Item
 }
 
@@ -15,36 +14,36 @@ type GetItemResponse {
 }
 
 type Item {
-  id: ID!
-  main_author_id: Int!
-  main_author_name: String
+  itemId: ID!
+  mainAuthorId: Int!
+  mainAuthorName: String
   title: String!
   subtitle: String
-  title_original: String
-  subtitle_original: String
+  titleOriginal: String
+  subtitleOriginal: String
   isbn: String
   isbn10: String
   type: String
   pages: Int
   volume: Int
   edition: Int
-  publication_Date: String
-  original_publication_date: String
-  serie_id: String
-  serie_name: String
-  collection_id: String
-  collection_name: String
-  publisher_id: String
-  publisher_name: String
+  publicationDate: String
+  originalPublicationDate: String
+  serieId: String
+  serieName: String
+  collectionId: String
+  collectionName: String
+  publisherId: String
+  publisherName: String
   format: String
-  language_id: String
-  language_name: String
-  cover_price: Float
-  paid_price: Float
+  languageId: String
+  languageName: String
+  coverPrice: Float
+  paidPrice: Float
 
-  last_status_id: String
-  last_status_name: String
-  last_status_date: String
+  lastStatusId: String
+  lastStatusName: String
+  lastStatusDate: String
 
   reading: Reading
 }

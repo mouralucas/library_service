@@ -17,15 +17,15 @@ extend type Mutation {
 # Base types
 type Reading {
     id: String!
-    item_id: Int!
-    item_title: String
+    itemId: Int!
+    itemTitle: String
     item: Item!
-    start_date: String!
-    finish_date: String
+    startDate: String!
+    finishDate: String
     number: Int
     active: Boolean
-    status_id: String
-    status_name: String
+    statusId: String
+    statusName: String
 }
 
 type ReadingProgress {
@@ -40,18 +40,18 @@ type ReadingProgress {
 
 # Input types (parameters)
 input CreateReadingInput {
-    item_id: Int!
-    start_date: String!
-    finish_date: String
-    is_dropped: Boolean = false
+    itemId: Int!
+    startDate: String!
+    finishDate: String
+    isDropped: Boolean = false
 }
 
 input GetReadingProgressInput {
-    reading_id: String!
+    readingId: String!
 }
 
 input CreateReadingProgressInput {
-    reading_id: String!
+    readingId: String!
     page: Int
     percentage: Int
     date: String
@@ -60,13 +60,13 @@ input CreateReadingProgressInput {
 }
 
 input GetReadingStatsInput {
-    item_id: Int!
+    itemId: Int!
 }
 
 
 # Output types (responses)
 type GetReadingOutput {
-    item_title: String!
+    itemTitle: String!
     quantity: Int!
     readings: [Reading!]
 }
@@ -78,15 +78,15 @@ type CreateReadingOutput {
 type GetReadingProgressOutput {
     quantity: Int!
     item: Item!
-    item_title: String
-    pages_read: String
+    itemTitle: String
+    pagesRead: String
     progress: [ReadingProgress]!
 }
 
 type CreateReadingProgressOutput {
     item: Item!
-    item_title: String!
-    pages_read: String
+    itemTitle: String!
+    pagesRead: String
     progress: ReadingProgress!
 }
 
@@ -97,8 +97,8 @@ type GetActiveReadingsOutput {
 
 type GetReadingStatsOutput {
     item: Item!
-    item_title: String!
-    readings_count: Int!
-    current_reading: Reading
-    current_page: Int
+    itemTitle: String!
+    readingsCount: Int!
+    currentReading: Reading
+    currentPage: Int
 }
