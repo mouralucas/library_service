@@ -1,12 +1,21 @@
 extend type Query {
   # Item queries
   getItem(id: Int!): Item
-  getItems: GetItemResponse
+  getItems(params: GetItemRequest): GetItemResponse
 }
 
 extend type Mutation {
     createItem(name: String!): Item
 }
+
+
+input GetItemRequest {
+  itemId: Int
+  title: String
+  mainAuthorId: Int
+  itemType: String
+}
+
 
 type GetItemResponse {
     quantity: Int,

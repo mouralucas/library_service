@@ -1,3 +1,4 @@
+from schemas.request.item import GetItemRequest
 from services.item import ItemService
 
 
@@ -7,8 +8,10 @@ async def resolve_get_item(_, info, id):
     return item.model_dump(by_alias=True)
 
 
-async def resolver_get_items(_, info):
-    items = await ItemService(session=info.context["session"], user=info.context["user"]).get_items()
+async def resolver_get_items(_, info, params):
+    params_ = GetItemRequest.model_validate(params)
+
+    items = await ItemService(session=info.context["session"], user=info.context["user"]).get_items(params=params_)
 
     return items.model_dump(by_alias=True)
 

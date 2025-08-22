@@ -55,10 +55,9 @@ class UpdateItemRequest(CreateItemRequest):
     cover: str = Field(None, alias='cover', description='Cover of the item')
 
 
-# @dataclass
 class GetItemRequest(BaseModel):
-    id: int | None = Field(Query(None, ge=1), alias='itemId')
-    title: str | None = Field(Query(None, min_length=3), alias='title')
-    main_author_id: int | None = Field(Query(None), alias='mainAuthorId')
-    type: str | None = Field(Query(None), alias='itemType')
+    id: int | None = Field(None, alias='itemId')
+    title: str | None = Field(None, alias='title')
+    main_author_id: int | None = Field(None, alias='mainAuthorId')
+    type: str | None = Field(None, alias='itemType')
 
