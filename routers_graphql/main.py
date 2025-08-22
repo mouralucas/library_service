@@ -9,8 +9,9 @@ from starlette.responses import HTMLResponse, JSONResponse
 import uuid
 from backend.database import get_session
 from resolvers.item import bind_item_resolvers
+from resolvers.reading import bind_reading_resolvers
 
-router = APIRouter(tags=["GraphQL"], prefix='/v2/item')
+router = APIRouter(tags=["GraphQL"], prefix='/graphql/library')
 
 type_defs = (
         load_schema_from_path("schemas_graphql/base.graphql") +
@@ -23,6 +24,7 @@ mutation = MutationType()
 
 # Associa os resolvers
 bind_item_resolvers(query, mutation)
+bind_reading_resolvers(query, mutation)
 
 schema = make_executable_schema(type_defs, query, mutation)
 
