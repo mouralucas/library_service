@@ -1,0 +1,32 @@
+extend type Query {
+    getAuthors(params: GetAuthorsRequest): GetAuthorsResponse 
+}
+
+
+input GetAuthorsRequest {
+    authorId: Int
+}
+
+type GetAuthorsResponse {
+    quantity: Int!
+    authors: [Author]!
+}
+
+input CreateAuthorRequest {
+    name: String!
+    countryId: String
+    languageId: String
+    description: String
+    isTranslator: Boolean = False
+}
+
+type Author {
+    authorId: ID!
+    authorName: String!
+    birthDate: String
+    description: String
+    countryId: String
+    coutryName: String
+    languageId: String
+    languageName: String
+}

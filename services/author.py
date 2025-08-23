@@ -26,7 +26,6 @@ class AuthorService(BaseService):
         authors = await AuthorManager(session=self.session).get_authors()
 
         response = GetAuthorResponse(
-            status_code=status.HTTP_200_OK,
             quantity=len(authors) if authors else 0,
             authors=[AuthorSchema.model_validate(author) for author in authors] if authors else []
         )

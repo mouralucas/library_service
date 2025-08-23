@@ -2,6 +2,14 @@ from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
+class GetAuthorsRequest(BaseModel):
+    model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(
+        alias=to_camel
+    ))
+
+    author_id: int | None = Field(None)
+
+
 class CreateAuthorRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(
         alias=to_camel
