@@ -1,11 +1,14 @@
 extend type Query {
     getAuthors(params: GetAuthorsRequest): GetAuthorsResponse 
+    getSeries: GetSerieResponse
 }
 
 extend type Mutation {
     createAuthor(author: CreateAuthorRequest): CreateAuthorResponse!
 }
 
+
+# Author schemas
 input GetAuthorsRequest {
     authorId: Int
 }
@@ -27,7 +30,6 @@ type CreateAuthorResponse  {
     author: Author!
 }
 
-
 type Author {
     authorId: ID!
     authorName: String!
@@ -37,4 +39,18 @@ type Author {
     countryName: String
     languageId: String
     languageName: String
+}
+
+# Series schemas
+type GetSerieResponse {
+    quantity: Int!
+    series: [Serie]
+}
+
+type Serie {
+    serieId: String!
+    serieName: String!
+    description: String
+    order: Int
+    itemType: String
 }

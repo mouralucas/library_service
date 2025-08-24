@@ -27,7 +27,7 @@ class CreateSerieResponse(SuccessResponseBase):
     serie: SerieSchema = Field(..., serialization_alias='serie', description='The serie created')
 
 
-class GetSeriesResponse(SuccessResponseBase):
+class GetSeriesResponse(BaseModel):
     quantity: int = Field(..., description='The quantity of series available')
     series: list[SerieSchema] = Field(..., serialization_alias='series', description='The series available')
 
