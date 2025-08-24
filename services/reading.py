@@ -13,7 +13,14 @@ from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
 from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
-from schemas.request.reading import CreateProgressRequest, CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.request.reading import (
+    CreateProgressRequest,
+    CreateProgressRequestV2,
+    CreateReadingRequest,
+    GetProgressRequest,
+    GetReadingRequest,
+    GetReadingStatsRequest,
+)
 from schemas.response.reading import (
     CreateProgressResponse,
     CreateReadingResponse,
@@ -176,7 +183,7 @@ class ReadingService(BaseService):
 
         item = reading.item
         item_pages = item.pages
-        
+
         # The new entry can not be older than the last progress entry
         if last_progress and last_progress.progress_date > progress.progress_date:
             raise HTTPException(status_code=status.HTTP_428_PRECONDITION_REQUIRED,

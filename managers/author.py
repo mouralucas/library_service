@@ -24,7 +24,7 @@ class AuthorManager(BaseDataManager):
 
         return cast(AuthorModel, new_author)
 
-    async def get_authors(self) -> list[dict[str, Any]]:
+    async def get_authors(self, author_id: int | None = None) -> list[dict[str, Any]]:
         query = (
             select(
                 AuthorModel.id,
@@ -41,6 +41,9 @@ class AuthorManager(BaseDataManager):
             .outerjoin(CountryModel, AuthorModel.country_id == CountryModel.id)
             .outerjoin(LanguageModel, AuthorModel.language_id == LanguageModel.id)
         )
+
+        if author_id:
+            query.where(AuthorModel.id==author_id)
 
         authors = await self.get_all(select_statement=query)
 

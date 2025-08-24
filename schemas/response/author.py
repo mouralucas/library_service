@@ -1,10 +1,9 @@
 from pydantic import BaseModel, Field
-from rolf_common.schemas import SuccessResponseBase
 
 from schemas.item import AuthorSchema
 
 
-class CreateAuthorResponse(SuccessResponseBase):
+class CreateAuthorResponse(BaseModel):
     author: AuthorSchema
 
 

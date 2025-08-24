@@ -1,9 +1,8 @@
-from starlette import status
 
 from managers.author import AuthorManager
 from models import AuthorModel
 from schemas.item import AuthorSchema
-from schemas.request.author import CreateAuthorRequest
+from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
 from schemas.response.author import CreateAuthorResponse, GetAuthorResponse
 from services.base import BaseService
 
@@ -16,13 +15,12 @@ class AuthorService(BaseService):
         new_author = await AuthorManager(session=self.session).create_author(AuthorModel(**author.model_dump()))
 
         response = CreateAuthorResponse(
-            status_code=status.HTTP_201_CREATED,
             author=AuthorSchema.model_validate(new_author)
         )
 
         return response
 
-    async def get_author(self) -> GetAuthorResponse:
+    async def get_author(self, params: GetAuthorsRequest) -> GetAuthorResponse:
         authors = await AuthorManager(session=self.session).get_authors()
 
         response = GetAuthorResponse(

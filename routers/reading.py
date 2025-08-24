@@ -6,14 +6,20 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import get_session
-from schemas.request.reading import CreateProgressRequest, CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingRequest, GetReadingStatsRequest
+from schemas.request.reading import (
+    CreateProgressRequestV2,
+    CreateReadingRequest,
+    GetProgressRequest,
+    GetReadingRequest,
+    GetReadingStatsRequest,
+)
 from schemas.response.reading import (
     CreateProgressResponse,
     CreateReadingResponse,
     GetActiveReadingsResponse,
     GetProgressResponse,
     GetReadingResponse,
-    GetReadingStatsResponse
+    GetReadingStatsResponse,
 )
 from services.reading import ReadingService
 

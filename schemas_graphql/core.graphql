@@ -2,6 +2,9 @@ extend type Query {
     getAuthors(params: GetAuthorsRequest): GetAuthorsResponse 
 }
 
+extend type Mutation {
+    createAuthor(author: CreateAuthorRequest): CreateAuthorResponse!
+}
 
 input GetAuthorsRequest {
     authorId: Int
@@ -19,6 +22,11 @@ input CreateAuthorRequest {
     description: String
     isTranslator: Boolean = False
 }
+
+type CreateAuthorResponse  {
+    author: Author!
+}
+
 
 type Author {
     authorId: ID!

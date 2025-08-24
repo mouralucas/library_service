@@ -163,11 +163,11 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     item = reading.item
     total_pages = item.pages
     percentage = float(current_page / total_pages * 100)
-    progressType = 'page'
+    progress_type = 'page'
 
     payload = {
         'readingId': str(reading_id),
-        'progressType': progressType,
+        'progressType': progress_type,
         'value': current_page
     }
     response = await client.post("/reading/progress", json=payload)
@@ -192,11 +192,11 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     item = reading.item
     total_pages = item.pages
     page = int(current_percentage / 100 * total_pages)
-    progressType = 'percentage'
+    progress_type = 'percentage'
 
     payload = {
         'readingId': str(reading_id),
-        'progressType': progressType,
+        'progressType': progress_type,
         'value': current_percentage
     }
     response = await client.post("/reading/progress", json=payload)
