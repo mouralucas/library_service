@@ -1,10 +1,15 @@
 extend type Query {
     getAuthors(params: GetAuthorsRequest): GetAuthorsResponse 
     getSeries: GetSerieResponse
+    getCollections: GetCollectionResponse
+    getPublishers: GetPublishersResponse
 }
 
 extend type Mutation {
     createAuthor(author: CreateAuthorRequest): CreateAuthorResponse!
+    createSerie(serie: CreateSerieRequest): CreateSerieResponse!
+    createCollection(collection: CreateCollectionRequest): CreateCollectionResponse!
+    createPublisher(publihser: CreatePublisherRequest): CreatePublisherResponse!
 }
 
 
@@ -47,10 +52,65 @@ type GetSerieResponse {
     series: [Serie]
 }
 
+input CreateSerieRequest {
+    serieName: String!
+}
+
+type CreateSerieResponse {
+    serie: Serie!
+}
+
 type Serie {
     serieId: String!
     serieName: String!
     description: String
     order: Int
     itemType: String
+}
+
+# Collections schemas
+type GetCollectionResponse {
+    quantity: Int!
+    collections: [Collection]!
+}
+
+input CreateCollectionRequest {
+    collectionsName: String!
+    description: String
+}
+
+type CreateCollectionResponse {
+    collection: Collection
+}
+
+type Collection {
+    collectionId: ID!
+    collectionName: String!
+    description: String
+}
+
+# Publishers schemas
+type GetPublishersResponse {
+    quantity: Int!
+    publishers: [Publisher]!
+}
+
+input CreatePublisherRequest {
+    publisherName: String!
+    countryId: String
+    description: String
+    parentId: Int
+}
+
+type CreatePublisherResponse {
+    publisher: Publisher
+}
+
+type Publisher{
+    publisherId: ID!
+    publisherName: String!
+    description: String
+    countryId: String
+    countryName: String
+    parentId: Int
 }

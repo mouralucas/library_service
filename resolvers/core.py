@@ -1,8 +1,9 @@
 from ariadne import MutationType, QueryType
 
 from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
+from schemas.request.core import CreateCollectionRequest, CreatePublisherRequest, CreateSerieRequest
 from services.author import AuthorService
-from services.core import SerieService
+from services.core import CollectionService, PublisherService, SerieService
 
 
 async def get_authors_resolver(_, info, params):
@@ -26,8 +27,48 @@ async def get_series_resolver(_, info):
 
     return series.model_dump(by_alias=True)
 
-def bind_core_resolvers(query: QueryType, mutation: MutationType):
-    query.set_field("getAuthors", get_authors_resolver)
-    query.set_field("getSeries", resolver=get_series_resolver)
 
-    mutation.set_field("createAuthor", create_author_resolver)
+async def create_serie_resolver(_, info, serie):
+    serie_ = CreateSerieRequest.model_validate(serie)
+
+    new_serie = await SerieService(session=info.context['session']).create_serie(serie=serie_)
+
+    return new_serie.model_dump(by_alias=True)
+
+async def get_collections_resolver(_, info):
+    response = await CollectionService(session=info.context['session']).get_collections()
+
+    return response.model_dump(by_alias=True)
+
+
+async def create_collection_resolver(_, info, collection):
+    collection_ = CreateCollectionRequest.model_validate(collection)
+
+    new_collection = await CollectionService(session=info.context['session']).create_collection(collection=collection_)
+
+    return new_collection.model_dump(by_alias=True)
+
+
+async def get_publishers_resolver(_, info):
+    publishers = await PublisherService(session=info.context['session']).get_publishers()
+
+    return publishers.model_dump(by_alias=True)
+
+
+async def create_publisher_resolver(_, info, publisher):
+    publisher_ = CreatePublisherRequest.model_validate(publisher)
+
+    new_publisher = await PublisherService(session=info.context['session']).create_publisher(publisher=publisher_)
+
+    return new_publisher.model_dump(by_alias=True)
+
+def bind_core_resolvers(query: QueryType, mutation: MutationType):
+    query.set_field("getAuthors", resolver=get_authors_resolver)
+    query.set_field("getSeries", resolver=get_series_resolver)
+    query.set_field("getCollections", resolver=get_collections_resolver)
+    query.set_field("getPublishers", resolver=get_publishers_resolver)
+
+
+    mutation.set_field("createAuthor", resolver=create_author_resolver)
+    mutation.set_field("createSerie", resolver=create_author_resolver)
+    mutation.set_field("createCollection", resolver=create_collection_resolver)

@@ -24,14 +24,14 @@ class CreateSerieRequest(BaseModel):
 
 class CreateCollectionRequest(BaseModel):
     name: str = Field(..., alias='collectionName', description="Name of the collection")
-    description: str = Field(None, alias='description', description="Description of the collection")
+    description: str | None = Field(None, alias='description', description="Description of the collection")
 
 
 class CreatePublisherRequest(BaseModel):
     name: str = Field(..., alias='publisherName', description="Name of the publisher")
-    description: str = Field(None, alias='description', description="Description of the publisher")
-    country_id: str = Field(None, alias='countryId', description="Id of the country")
-    parent_id: str = Field(None, alias='parentId', description="Id of the parent publisher")
+    description: str | None = Field(None, alias='description', description="Description of the publisher")
+    country_id: str | None = Field(None, alias='countryId', description="Id of the country")
+    parent_id: str | None = Field(None, alias='parentId', description="Id of the parent publisher")
 
 
 class GetStatusRequest(BaseModel):
