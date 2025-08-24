@@ -34,7 +34,7 @@ type Author {
     birthDate: String
     description: String
     countryId: String
-    coutryName: String
+    countryName: String
     languageId: String
     languageName: String
 }
