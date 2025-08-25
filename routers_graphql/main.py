@@ -5,6 +5,7 @@ from ariadne import MutationType, QueryType, graphql, load_schema_from_path, mak
 from ariadne.explorer import ExplorerGraphiQL
 from fastapi import APIRouter, Depends, Request, Security
 from rolf_common.schemas.auth import RequiredUser
+from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import HTMLResponse, JSONResponse
 
