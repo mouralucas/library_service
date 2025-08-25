@@ -3,7 +3,7 @@ import uuid
 
 from ariadne import MutationType, QueryType, graphql, load_schema_from_path, make_executable_schema
 from ariadne.explorer import ExplorerGraphiQL
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Security
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import HTMLResponse, JSONResponse
