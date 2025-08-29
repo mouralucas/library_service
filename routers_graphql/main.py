@@ -1,5 +1,4 @@
 
-import uuid
 
 from ariadne import MutationType, QueryType, graphql, load_schema_from_path, make_executable_schema
 from ariadne.explorer import ExplorerGraphiQL

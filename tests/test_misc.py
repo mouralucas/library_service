@@ -42,8 +42,8 @@ async def test_create_country(client):
     continent = 'SA'
 
     payload = {
-        'id': country_id,
-        'name': name,
+        'countryId': country_id,
+        'countryName': name,
         'continent': continent
     }
 
@@ -52,8 +52,8 @@ async def test_create_country(client):
     data = response.json()
     assert response.status_code == status.HTTP_201_CREATED
     assert 'country' in data
-    assert data['country']['id'] == country_id
-    assert data['country']['name'] == name
+    assert data['country']['countryId'] == country_id
+    assert data['country']['countryName'] == name
     assert data['country']['continent'] == continent
 
 

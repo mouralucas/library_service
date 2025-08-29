@@ -32,19 +32,29 @@ jobs:
           command: pytest --junitxml=junit.xml || ((($? == 5)) && echo 'Did not find any tests to run.')
       - store_test_results:
           path: junit.xml
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
+
+  lint-ruff:
     executor: python-executor
     steps:
-      # Replace this with steps to deploy to users
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-python-packages-{{ checksum "requirements.txt" }}
+            - v1-python-packages-
+      - python/install-packages:
+          pkg-manager: pip
       - run:
-          name: Deploy Library Service
-          command: '#e.g. ./deploy.sh'
-
+          name: Run ruff check
+          command: ruff check .
 
 workflows:
-  build-and-test:
+  ci-pipeline:
     jobs:
+      - lint-ruff:
+          filters:
+            branches:
+              only:
+                - develop
       - test-service:
           filters:
             branches:
