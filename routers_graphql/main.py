@@ -3,8 +3,9 @@ import uuid
 
 from ariadne import MutationType, QueryType, graphql, load_schema_from_path, make_executable_schema
 from ariadne.explorer import ExplorerGraphiQL
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Security
 from rolf_common.schemas.auth import RequiredUser
+from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import HTMLResponse, JSONResponse
 
@@ -36,10 +37,10 @@ schema = make_executable_schema(type_defs, query, mutation)
 @router.post('', description='The V2 maps all GraphQL endpoint')
 async def graphql_server(
         request: Request,
-#        user: RequiredUser = Security(get_user),
+        user: RequiredUser = Security(get_user),
         session: AsyncSession = Depends(get_session),
 ):
-    user = RequiredUser(user_id=uuid.uuid4())
+    # user = RequiredUser(user_id=uuid.uuid4())
     data = await request.json()
     value = {"request": request, "session": session, "user": user}
     success, result = await graphql(schema, data, context_value=value, debug=True)
