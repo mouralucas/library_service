@@ -4,6 +4,7 @@ extend type Query {
     getCollections: GetCollectionResponse!
     getPublishers: GetPublishersResponse!
     getLanguages: GetLanguagesResponse!
+    getCountries: GetCountryResponse!
 }
 
 extend type Mutation {
@@ -12,6 +13,7 @@ extend type Mutation {
     createCollection(collection: CreateCollectionRequest): CreateCollectionResponse!
     createPublisher(publihser: CreatePublisherRequest): CreatePublisherResponse!
     createLanguage(language: CreateLanguageRequest): CreateLanguageResponse!
+    createCountry(country: CreateCountryRequest): CreateCountryResponse!
 }
 
 
@@ -137,4 +139,29 @@ type Language {
     languageId: String!
     languageName: String!
     languageCode: String
+}
+
+# Country schemas
+type GetCountryResponse {
+    quantity: Int!
+    countries: [Country]!
+}
+
+input CreateCountryRequest {
+    countryId: String!
+    countryName: String!
+    continent: String!
+    description: String
+}
+
+type CreateCountryResponse {
+    country: Country!
+}
+
+
+type Country {
+    countryId: String!
+    countryName: String!
+    continent: String
+    description: String
 }

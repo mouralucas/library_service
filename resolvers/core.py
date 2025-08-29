@@ -1,9 +1,11 @@
 from ariadne import MutationType, QueryType
+from routers.core import create_language
+from schemas.core import CountrySchema
 
 from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
-from schemas.request.core import CreateCollectionRequest, CreatePublisherRequest, CreateSerieRequest
+from schemas.request.core import CreateCollectionRequest, CreateCountryRequest, CreateLanguageRequest, CreatePublisherRequest, CreateSerieRequest
 from services.author import AuthorService
-from services.core import CollectionService, PublisherService, SerieService
+from services.core import CollectionService, CountryService, LanguageService, PublisherService, SerieService
 
 
 async def get_authors_resolver(_, info, params):
@@ -35,6 +37,7 @@ async def create_serie_resolver(_, info, serie):
 
     return new_serie.model_dump(by_alias=True)
 
+
 async def get_collections_resolver(_, info):
     response = await CollectionService(session=info.context['session']).get_collections()
 
@@ -62,13 +65,46 @@ async def create_publisher_resolver(_, info, publisher):
 
     return new_publisher.model_dump(by_alias=True)
 
+
+async def get_languages_resolver(_, info):
+    languages = await LanguageService(session=info.context['session']).get_languages()
+
+    return languages.model_dump(by_alias=True)
+
+
+async def crate_language_resolver(_, info, language):
+    language_ = CreateLanguageRequest.model_validate(language)
+
+    new_language = await LanguageService(session=info.context['session']).create_language(language=language_)
+
+    return new_language.model_dump(by_alias=True)
+
+
+async def get_countries_resolver(_, info):
+    countries = await CountryService(session=info.context['session']).get_countries()
+
+    return countries.model_dump(by_alias=True)
+
+
+async def create_country_resolver(_, info, country):
+    country_ = CreateCountryRequest.model_validate(country)
+
+    new_country = await CountryService(session=info.context['session']).create_country(country=country_)
+
+    return new_country.model_dump(by_alias=True)
+
+
 def bind_core_resolvers(query: QueryType, mutation: MutationType):
     query.set_field("getAuthors", resolver=get_authors_resolver)
     query.set_field("getSeries", resolver=get_series_resolver)
     query.set_field("getCollections", resolver=get_collections_resolver)
     query.set_field("getPublishers", resolver=get_publishers_resolver)
+    query.set_field("getLanguages", resolver=get_languages_resolver)
+    query.set_field("getCountries", resolver=get_countries_resolver)
 
 
     mutation.set_field("createAuthor", resolver=create_author_resolver)
     mutation.set_field("createSerie", resolver=create_author_resolver)
     mutation.set_field("createCollection", resolver=create_collection_resolver)
+    mutation.set_field("createLanguage", resolver=crate_language_resolver)
+    mutation.set_field("createCountry", resolver=create_country_resolver)

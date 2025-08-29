@@ -25,8 +25,8 @@ class StatusSchema(BaseModel):
 class CountrySchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: str
-    name: str
+    id: str = Field(..., serialization_alias='countryId')
+    name: str = Field(..., serialization_alias='countryName')
     continent: str
     description: str | None
 
