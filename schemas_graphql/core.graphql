@@ -1,8 +1,9 @@
 extend type Query {
-    getAuthors(params: GetAuthorsRequest): GetAuthorsResponse 
-    getSeries: GetSerieResponse
-    getCollections: GetCollectionResponse
-    getPublishers: GetPublishersResponse
+    getAuthors(params: GetAuthorsRequest): GetAuthorsResponse!
+    getSeries: GetSerieResponse!
+    getCollections: GetCollectionResponse!
+    getPublishers: GetPublishersResponse!
+    getLanguages: GetLanguagesResponse!
 }
 
 extend type Mutation {
@@ -10,6 +11,7 @@ extend type Mutation {
     createSerie(serie: CreateSerieRequest): CreateSerieResponse!
     createCollection(collection: CreateCollectionRequest): CreateCollectionResponse!
     createPublisher(publihser: CreatePublisherRequest): CreatePublisherResponse!
+    createLanguage(language: CreateLanguageRequest): CreateLanguageResponse!
 }
 
 
@@ -113,4 +115,26 @@ type Publisher{
     countryId: String
     countryName: String
     parentId: Int
+}
+
+# Language schemas
+type GetLanguagesResponse {
+    quantity: Int!
+    languages: [Language]!
+}
+
+input CreateLanguageRequest {
+    languageId: String!
+    languageName: String!
+    languageCode: String!
+}
+
+type CreateLanguageResponse {
+    language: Language!
+}
+
+type Language {
+    languageId: String!
+    languageName: String!
+    languageCode: String
 }
