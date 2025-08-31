@@ -77,6 +77,7 @@ class CreateProgressRequestV2(BaseModel):
 
         return self
 
+
 class GetProgressRequest(BaseModel):
     reading_id: uuid.UUID = Field(Query(..., alias='readingId', description="The id of the reading"))
     item_id: uuid.UUID | None = Field(Query(None, alias='itemId', description="The id of the item"))

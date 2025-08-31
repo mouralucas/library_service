@@ -1,11 +1,11 @@
 
 extend type Query {
     # Reading queries
-    getReading(reading_id: String!): GetReadingOutput!
-    getReadings: GetReadingOutput!
+    getReading(reading_id: String!): GetReadingsResponse!
+    getReadings: GetReadingsResponse!
     getActiveReadings: GetActiveReadingsOutput!
     getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
-    getReadingStats(params: GetReadingStatsInput): GetReadingStatsOutput!
+    getReadingStats(params: GetReadingStatsInput): GetReadingStatsResponse!
 }
 
 extend type Mutation {
@@ -14,18 +14,69 @@ extend type Mutation {
     createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
 }
 
-# Base types
+
+# Reading schemas
+type GetReadingsResponse {
+    itemTitle: String!
+    quantity: Int!
+    readings: [Reading!]
+}
+
+input CreateReadingInput {
+    readingId: String
+    itemId: Int!
+    startDate: String!
+    finishDate: String
+    isDropped: Boolean = false
+}
+
+
+type CreateReadingOutput {
+    reading: Reading!
+}
+
+
 type Reading {
-    id: String!
+    readingId: String!
     itemId: Int!
     itemTitle: String
     item: Item!
     startDate: String!
     finishDate: String
-    number: Int
+    readingNumber: Int!
     active: Boolean
     statusId: String
     statusName: String
+}
+
+
+# Reading Progress schemas
+input GetReadingProgressInput {
+    readingId: String!
+}
+
+type GetReadingProgressOutput {
+    quantity: Int!
+    item: Item!
+    itemTitle: String
+    pagesRead: String
+    progress: [ReadingProgress]!
+}
+
+input CreateReadingProgressInput {
+    readingId: String!
+    page: Int
+    percentage: Int
+    date: String
+    rate: Int
+    comment: String
+}
+
+type CreateReadingProgressOutput {
+    item: Item!
+    itemTitle: String!
+    pagesRead: String
+    progress: ReadingProgress!
 }
 
 type ReadingProgress {
@@ -38,67 +89,26 @@ type ReadingProgress {
     comment: String
 }
 
-# Input types (parameters)
-input CreateReadingInput {
-    itemId: Int!
-    startDate: String!
-    finishDate: String
-    isDropped: Boolean = false
-}
-
-input GetReadingProgressInput {
-    readingId: String!
-}
-
-input CreateReadingProgressInput {
-    readingId: String!
-    page: Int
-    percentage: Int
-    date: String
-    rate: Int
-    comment: String
-}
-
-input GetReadingStatsInput {
-    itemId: Int!
-}
-
-
-# Output types (responses)
-type GetReadingOutput {
-    itemTitle: String!
-    quantity: Int!
-    readings: [Reading!]
-}
-
-type CreateReadingOutput {
-    reading: Reading!
-}
-
-type GetReadingProgressOutput {
-    quantity: Int!
-    item: Item!
-    itemTitle: String
-    pagesRead: String
-    progress: [ReadingProgress]!
-}
-
-type CreateReadingProgressOutput {
-    item: Item!
-    itemTitle: String!
-    pagesRead: String
-    progress: ReadingProgress!
-}
-
+# Active Readings schemas
 type GetActiveReadingsOutput {
     quantity: Int!
     readings: [Reading]!
 }
 
-type GetReadingStatsOutput {
-    item: Item!
-    itemTitle: String!
+# Reading status schemas
+input GetReadingStatsInput {
+    itemId: Int!
+}
+
+type GetReadingStatsResponse {
+    stats: ReadingStats!
+}
+
+type ReadingStats {
     readingsCount: Int!
-    currentReading: Reading
+    lastReadingDate: String
+    isCurrentlyReading: Boolean!
+    currentReadindId: String
     currentPage: Int
+    currentPercentage: Float
 }

@@ -44,6 +44,7 @@ class CreateProgressResponse(BaseModel):
 
         return self
 
+
 class GetProgressResponse(BaseModel):
     quantity: int = Field(..., description="The number of entries returned")
     item: ItemSchema | None = Field(None, exclude=True)
@@ -58,6 +59,7 @@ class GetProgressResponse(BaseModel):
             if self.progress and self.progress[0].page and self.item.pages:
                 self.pages_read = f'{self.progress[0].page}/{self.item.pages} - {self.progress[0].percentage}%'
         return self
+
 
 class GetReadingStatsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True, alias_generator=AliasGenerator(

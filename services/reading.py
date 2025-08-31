@@ -64,6 +64,7 @@ class ReadingService(BaseService):
         )
         return response
 
+
     async def get_readings(self, params: GetReadingRequest = None) -> GetReadingResponse:
         # TODO: put stmt logic in manager in existing get_readings
         stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user['user_id'])
@@ -92,6 +93,7 @@ class ReadingService(BaseService):
 
         return response
 
+
     async def get_reading_by_id(self, reading_id: uuid.UUID) -> GetReadingResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=reading_id)
 
@@ -102,6 +104,7 @@ class ReadingService(BaseService):
         )
 
         return response
+
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         # TODO: stmt should be in manager
@@ -116,6 +119,7 @@ class ReadingService(BaseService):
         )
 
         return response
+
 
     async def create_progress(self, progress: CreateProgressRequest) -> CreateProgressResponse:
 
@@ -249,6 +253,7 @@ class ReadingService(BaseService):
         )
 
         return response
+
 
     async def get_reading_stats(self, params: GetReadingStatsRequest) -> GetReadingStatsResponse:
         # item = await ItemManager(session=self.session).get_item_by_id(item_id=params.item_id)
