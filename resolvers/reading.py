@@ -19,7 +19,7 @@ async def create_reading_resolver(_, info, reading):
 
     new_reading = await ReadingService(session=info.context["session"], user=info.context["user"])\
         .create_reading(reading=new_reading)
-        
+
     return new_reading.model_dump(by_alias=True)
 
 
@@ -46,7 +46,7 @@ async def resolve_get_active_readings(_, info):
 
 async def get_reading_stats_resolver(_, info, params):
     params_ = GetReadingStatsRequest.model_validate(params)
-    
+
     stats = await ReadingService(session=info.context["session"], user=info.context["user"]).get_reading_stats(params=params_)
 
     return stats.model_dump(by_alias=True)
