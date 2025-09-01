@@ -92,7 +92,6 @@ class SerieService(BaseService):
         new_serie = await SerieManager(session=self.session).create_serie(SerieModel(**serie.model_dump()))
 
         response = CreateSerieResponse(
-            status_code=status.HTTP_201_CREATED,
             serie=SerieSchema.model_validate(new_serie)
         )
 

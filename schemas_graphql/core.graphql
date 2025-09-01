@@ -55,7 +55,7 @@ type Author {
 # Series schemas
 type GetSerieResponse {
     quantity: Int!
-    series: [Serie]
+    series: [Serie]!
 }
 
 input CreateSerieRequest {
@@ -69,7 +69,9 @@ type CreateSerieResponse {
 type Serie {
     serieId: String!
     serieName: String!
+    originalName: String
     description: String
+    countryName: String
     order: Int
     itemType: String
 }

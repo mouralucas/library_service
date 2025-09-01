@@ -23,7 +23,7 @@ class GetCountryResponse(SuccessResponseBase):
     countries: list[CountrySchema] = Field(..., serialization_alias='countries', description='The countries available')
 
 
-class CreateSerieResponse(SuccessResponseBase):
+class CreateSerieResponse(BaseModel):
     serie: SerieSchema = Field(..., serialization_alias='serie', description='The serie created')
 
 

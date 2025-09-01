@@ -39,6 +39,7 @@ class SerieSchema(BaseModel):
     original_name: str | None = Field(None, description='The original name of the serie')
     description: str | None = Field(None, description='The description of the serie')
     country_id: str | None = Field(None, description='The id of the country')
+    country_name: str | None = Field(None, description="The name of the country")
 
 
 class CollectionSchema(BaseModel):
