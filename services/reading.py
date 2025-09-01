@@ -39,6 +39,7 @@ class ReadingService(BaseService):
         self.user = user.model_dump()
         self.reading_manager = ReadingManager(session=self.session, user=self.user)
 
+
     async def create_reading(self, reading: CreateReadingRequest) -> CreateReadingResponse:
         previous_readings = await self.reading_manager.get_readings(item_id=reading.item_id)
         last_reading = previous_readings[0] if previous_readings else None
@@ -174,6 +175,7 @@ class ReadingService(BaseService):
 
         return response
 
+
     async def create_progress_v2(self, progress: CreateProgressRequestV2):
         page = progress.value if progress.progress_type == 'page' else None
         percentage = progress.value if progress.progress_type == 'percentage' else None
@@ -237,6 +239,7 @@ class ReadingService(BaseService):
 
         return response
 
+
     async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=params.reading_id)
         if not reading:
@@ -279,7 +282,8 @@ class ReadingService(BaseService):
                 is_currently_reading=is_currently_reading,
                 current_reading_id=current_reading_id,
                 current_page=current_page,
-                current_percentage=current_percentage
+                current_percentage=current_percentage,
+                last_readings=[ReadingSchema.model_validate(reading) for reading in item_readings] if item_readings else []
             )
         )
 

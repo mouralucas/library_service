@@ -29,7 +29,7 @@ class ItemModel(SQLModel):
     serie: Mapped['SerieModel'] = relationship(foreign_keys=[serie_id], lazy='noload')
     language_id: Mapped[str] = mapped_column(ForeignKey('language.id'), nullable=True)
     language: Mapped['LanguageModel'] = relationship(foreign_keys=[language_id], lazy='noload')
-    # # cover
+
     volume: Mapped[int] = mapped_column('volume', default=1)
     publisher_id: Mapped[int] = mapped_column(ForeignKey('publisher.id'), nullable=True)
     publisher: Mapped['PublisherModel'] = relationship(foreign_keys=[publisher_id], lazy='noload')
@@ -59,8 +59,6 @@ class ItemModel(SQLModel):
     origin: Mapped[str] = mapped_column('origin', default='SYSTEM')
 
     cover: Mapped[str] = mapped_column('cover', nullable=True)
-
-    # related_to_id: Mapped[int] = mapped_column(ForeignKey('item.id'), nullable=True, doc='Identify same book but different version')
 
     # Relations
     authors: Mapped[list['AuthorModel']] = relationship('AuthorModel', secondary='item_author', lazy='noload', viewonly=True)

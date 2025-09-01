@@ -1,4 +1,4 @@
-from schemas.request.reading import CreateProgressRequest, CreateReadingRequest, GetProgressRequest, GetReadingStatsRequest
+from schemas.request.reading import CreateProgressRequestV2, CreateReadingRequest, GetProgressRequest, GetReadingStatsRequest
 from services.reading import ReadingService
 
 
@@ -30,10 +30,10 @@ async def resolve_get_progress(_, info, params):
     return progress.model_dump(by_alias=True)
 
 
-async def create_progress_resolver(_, info, progress):
-    new_progress = CreateProgressRequest.model_validate(progress)
+async def create_reading_progress_resolver(_, info, progress):
+    new_progress_ = CreateProgressRequestV2.model_validate(progress)
 
-    new_progress = await ReadingService(session=info.context["session"], user=info.context["user"]).create_progress(progress=new_progress)
+    new_progress = await ReadingService(session=info.context["session"], user=info.context["user"]).create_progress_v2(progress=new_progress_)
 
     return new_progress.model_dump(by_alias=True)
 
@@ -60,4 +60,4 @@ def bind_reading_resolvers(query, mutation):
     query.set_field('getReadingStats', resolver=get_reading_stats_resolver)
 
     mutation.set_field("createReading", resolver=create_reading_resolver)
-    mutation.set_field("createReadingProgress", resolver=create_progress_resolver)
+    mutation.set_field("createReadingProgress", resolver=create_reading_progress_resolver)

@@ -53,6 +53,7 @@ class ReadingStats(BaseModel):
     current_reading_id: uuid.UUID | None = Field(None, serialization_alias='currentReadingId', description='The id of the current reading')
     current_page: int | None = Field(None, serialization_alias='currentPage', description='The current page of the reading')
     current_percentage: float | None = Field(None, serialization_alias='currentPercentage', description='The current percentage of the reading')
+    last_readings: list[ReadingSchema] | None = Field(None, serialization_alias='lastReadings', description='The last readings')
 
     @model_validator(mode='after')
     def validate_response(self):
