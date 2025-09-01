@@ -1,5 +1,6 @@
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
+from datetime import date
 
 
 class GetAuthorsRequest(BaseModel):
@@ -16,7 +17,8 @@ class CreateAuthorRequest(BaseModel):
     ))
 
     name: str = Field(..., alias='authorName', description='The name of the author')
-    country_id: str = Field(None, description='The country of the author')
-    language_id: str = Field(None, description='The language of writing')
-    description: str = Field(None, description='The description of the author')
+    country_id: str | None = Field(None, description='The country of the author')
+    language_id: str | None = Field(None, description='The language of writing')
+    description: str | None = Field(None, description='The description of the author')
+    birth_date: date | None = Field(None)
     is_translator: bool = Field(False, description='Whether the author should be translated')

@@ -8,7 +8,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    createAuthor(author: CreateAuthorRequest): CreateAuthorResponse!
+    createAuthor(author: CreateAuthorInput): CreateAuthorResponse!
     createSerie(serie: CreateSerieRequest): CreateSerieResponse!
     createCollection(collection: CreateCollectionRequest): CreateCollectionResponse!
     createPublisher(publihser: CreatePublisherRequest): CreatePublisherResponse!
@@ -27,10 +27,12 @@ type GetAuthorsResponse {
     authors: [Author]!
 }
 
-input CreateAuthorRequest {
-    name: String!
+input CreateAuthorInput {
+    authorId: Int
+    authorName: String!
     countryId: String
     languageId: String
+    birthDate: String
     description: String
     isTranslator: Boolean = False
 }
