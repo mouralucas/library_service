@@ -9,24 +9,23 @@ from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
 from schemas.response.author import CreateAuthorResponse, GetAuthorResponse
 from services.author import AuthorService
 
-router = APIRouter(prefix="/author", tags=['Author'])
+router = APIRouter(prefix="/author", tags=["Author"])
 
 
-@router.post('', status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_author(
-        author: CreateAuthorRequest,
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    author: CreateAuthorRequest,
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> CreateAuthorResponse:
     response = await AuthorService(session).create_author(author=author)
 
     return response
 
 
-@router.get('')
+@router.get("")
 async def get_authors(
-        session: AsyncSession = Depends(get_session),
-        params: GetAuthorsRequest = Depends()
+    session: AsyncSession = Depends(get_session), params: GetAuthorsRequest = Depends()
 ) -> GetAuthorResponse:
     response = await AuthorService(session).get_author(params)
 

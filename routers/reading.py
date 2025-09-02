@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, Security
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
@@ -23,72 +22,108 @@ from schemas.response.reading import (
 )
 from services.reading import ReadingService
 
-router = APIRouter(prefix="/reading", tags=['Readings'])
+router = APIRouter(prefix="/reading", tags=["Readings"])
 
 
-@router.post('', summary='Create a reading', description='Create a new reading for selected item',
-             status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    summary="Create a reading",
+    description="Create a new reading for selected item",
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_reading(
-        reading: CreateReadingRequest,
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    reading: CreateReadingRequest,
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> CreateReadingResponse:
-    response = await ReadingService(session=session, user=user).create_reading(reading=reading)
+    response = await ReadingService(session=session, user=user).create_reading(
+        reading=reading
+    )
 
     return response
 
 
-@router.get('', summary='Get readings', description='Get all readings for a item', response_model_exclude_none=True)
+@router.get(
+    "",
+    summary="Get readings",
+    description="Get all readings for a item",
+    response_model_exclude_none=True,
+)
 async def get_reading(
-        params: GetReadingRequest = Depends(),
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    params: GetReadingRequest = Depends(),
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> GetReadingResponse:
-    response = await ReadingService(session=session, user=user).get_readings(params=params)
+    response = await ReadingService(session=session, user=user).get_readings(
+        params=params
+    )
 
     return response
 
 
-@router.get('/active', summary='Get active readings', description='Get active readings for a item')
+@router.get(
+    "/active",
+    summary="Get active readings",
+    description="Get active readings for a item",
+)
 async def get_active_reading(
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> GetActiveReadingsResponse:
     # TODO: it need to add user param/filter
     response = await ReadingService(session=session, user=user).get_active_readings()
 
     return response
 
-@router.get('/stats', summary='Get reading stats', description='Get reading stats for a user')
+
+@router.get(
+    "/stats", summary="Get reading stats", description="Get reading stats for a user"
+)
 async def get_reading_stats(
-        params: GetReadingStatsRequest = Depends(),
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    params: GetReadingStatsRequest = Depends(),
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> GetReadingStatsResponse:
-    return await ReadingService(session=session, user=user).get_reading_stats(params=params)
+    return await ReadingService(session=session, user=user).get_reading_stats(
+        params=params
+    )
 
 
-@router.post('/progress', summary='Add progress', description='Add a new progress for a reading',
-             status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/progress",
+    summary="Add progress",
+    description="Add a new progress for a reading",
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_reading_progress(
-        progress: CreateProgressRequestV2,
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    progress: CreateProgressRequestV2,
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> CreateProgressResponse:
-    # TODO: Bring more information about the item, maybe the title, pages and/or, add the pages read/total pages in progress schema
-    response = await ReadingService(session=session, user=user).create_progress_v2(progress=progress)
+    # TODO: Bring more information about the item, maybe the title,
+    #   pages and/or, add the pages read/total pages in progress schema
+    response = await ReadingService(session=session, user=user).create_progress_v2(
+        progress=progress
+    )
 
     return response
 
 
-@router.get('/progress', summary='Get progress', description='Get the progress for a reading',
-            response_model_exclude_none=True)
+@router.get(
+    "/progress",
+    summary="Get progress",
+    description="Get the progress for a reading",
+    response_model_exclude_none=True,
+)
 async def get_reading_progress(
-        params: GetProgressRequest = Depends(),
-        session: AsyncSession = Depends(get_session),
-        user: RequiredUser = Security(get_user)
+    params: GetProgressRequest = Depends(),
+    session: AsyncSession = Depends(get_session),
+    user: RequiredUser = Security(get_user),
 ) -> GetProgressResponse:
-    # TODO: make accept item_id as param, than returns the progress for the last reading if more than one
-    response = await ReadingService(session=session, user=user).get_progress(params=params)
+    # TODO: make accept item_id as param, 
+    #   than returns the progress for the last reading if more than one
+    response = await ReadingService(session=session, user=user).get_progress(
+        params=params
+    )
 
     return response
