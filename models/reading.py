@@ -14,35 +14,43 @@ from models.item import ItemModel
 class ReadingModel(SQLModel):
     __tablename__ = "reading"
 
-    owner_id: Mapped[uuid.UUID] = mapped_column('owner_id')
-    active: Mapped[bool] = mapped_column('active', default=True)
-    item_id: Mapped[int] = mapped_column(ForeignKey('item.id'))
-    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy='subquery')
+    owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")
+    active: Mapped[bool] = mapped_column("active", default=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
     start_date: Mapped[datetime.date]
-    finish_date: Mapped[datetime.date] = mapped_column('finish_date', nullable=True)
-    number: Mapped[int] = mapped_column('number', default=1)
-    status_id: Mapped[str] = mapped_column(ForeignKey('status.id'))
-    status: Mapped[StatusModel] = relationship(foreign_keys=[status_id], lazy='subquery')
-    progress: Mapped[list[ReadingProgressModel]] = relationship(back_populates='reading', lazy='noload')
+    finish_date: Mapped[datetime.date] = mapped_column("finish_date", nullable=True)
+    number: Mapped[int] = mapped_column("number", default=1)
+    status_id: Mapped[str] = mapped_column(ForeignKey("status.id"))
+    status: Mapped[StatusModel] = relationship(
+        foreign_keys=[status_id], lazy="subquery"
+    )
+    progress: Mapped[list[ReadingProgressModel]] = relationship(
+        back_populates="reading", lazy="noload"
+    )
 
 
 class ReadingProgressModel(SQLModel):
     __tablename__ = "reading_progress"
 
-    reading_id: Mapped[uuid.UUID] = mapped_column("reading_id", ForeignKey("reading.id"))
-    reading: Mapped[ReadingModel] = relationship(back_populates='progress')
+    reading_id: Mapped[uuid.UUID] = mapped_column(
+        "reading_id", ForeignKey("reading.id")
+    )
+    reading: Mapped[ReadingModel] = relationship(back_populates="progress")
     # TODO: after update the table, change table in database to not null
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
-    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy='subquery')
-    progress_date: Mapped[datetime.date] = mapped_column('date')
-    page: Mapped[int] = mapped_column('page', nullable=True)
-    percentage: Mapped[float] = mapped_column('percentage', nullable=True)
-    rate: Mapped[int] = mapped_column('rate', nullable=True)
-    comment: Mapped[str] = mapped_column('comment', nullable=True)
+    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
+    progress_date: Mapped[datetime.date] = mapped_column("date")
+    page: Mapped[int] = mapped_column("page", nullable=True)
+    percentage: Mapped[float] = mapped_column("percentage", nullable=True)
+    rate: Mapped[int] = mapped_column("rate", nullable=True)
+    comment: Mapped[str] = mapped_column("comment", nullable=True)
+
 
 # class ReadingGoalModel(SQLModel):
 #     __tablename__ = "reading_goal"
 #
 #     year: Mapped[int] = mapped_column("year", SmallInteger)
 #     quantity: Mapped[int] = mapped_column("quantity", SmallInteger, default=1)
-# TODO: if it is a goal for the current year, check the reading table for finished books in the same year
+# TODO: if it is a goal for the current year,
+#   check the reading table for finished books in the same year
