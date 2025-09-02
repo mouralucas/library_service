@@ -19,18 +19,25 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingModel, new_reading)
 
-    async def update_reading(self, reading: SQLModel, fields: dict[str, Any]) -> ReadingModel:
-        query = (update(ReadingModel)
-                 .where(ReadingModel.id == reading.id)
-                 .values(**fields))
+    async def update_reading(
+        self, reading: SQLModel, fields: dict[str, Any]
+    ) -> ReadingModel:
+        query = (
+            update(ReadingModel).where(ReadingModel.id == reading.id).values(**fields)
+        )
 
-        reading: SQLModel = await self.update_one(sql_statement=query, sql_model=reading)
+        updated_reading: SQLModel = await self.update_one(
+            sql_statement=query, sql_model=reading
+        )
 
-        return cast(ReadingModel, reading)
+        return cast(ReadingModel, updated_reading)
 
-    async def get_reading_by_id(self, reading_id, get_item: bool = False) -> ReadingModel | None:
-        query = select(ReadingModel).where(ReadingModel.id == reading_id,
-                                           ReadingModel.owner_id == self.user['user_id'])
+    async def get_reading_by_id(
+        self, reading_id, get_item: bool = False
+    ) -> ReadingModel | None:
+        query = select(ReadingModel).where(
+            ReadingModel.id == reading_id, ReadingModel.owner_id == self.user["user_id"]
+        )
 
         if get_item:
             query = query.options(joinedload(ReadingModel.item))
@@ -43,18 +50,20 @@ class ReadingManager(BaseDataManager):
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
         query = select(ReadingModel).where(
-            ReadingModel.owner_id == self.user['user_id'],
-            ReadingModel.item_id == item_id
-            )
+            ReadingModel.owner_id == self.user["user_id"],
+            ReadingModel.item_id == item_id,
+        )
 
         query = query.order_by(ReadingModel.start_date.desc())
 
         readings = await self.get_all(query)
 
-        return [reading['ReadingModel'] for reading in readings] if readings else None
+        return [reading["ReadingModel"] for reading in readings] if readings else None
 
     async def get_item_active_reading(self, item_id: int) -> ReadingModel | None:
-        query = select(ReadingModel).where(ReadingModel.item_id == item_id, ReadingModel.active)
+        query = select(ReadingModel).where(
+            ReadingModel.item_id == item_id, ReadingModel.active
+        )
 
         reading: SQLModel = await self.get_only_one(query)
 
@@ -66,7 +75,9 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingProgressModel, new_progress)
 
-    async def update_progress(self, progress: SQLModel, fields: dict[str, Any]) -> ReadingProgressModel:
+    async def update_progress(
+        self, progress: SQLModel, fields: dict[str, Any]
+    ) -> ReadingProgressModel:
         query = (
             update(ReadingProgressModel)
             .where(ReadingProgressModel.id == progress.id)
@@ -78,18 +89,28 @@ class ReadingManager(BaseDataManager):
         return cast(ReadingProgressModel, progress)
 
     async def get_progress(self, reading_id) -> list[ReadingProgressModel] | None:
-        query = (select(ReadingProgressModel)
-                .where(ReadingProgressModel.reading_id == reading_id)
-                .order_by(ReadingProgressModel.progress_date.desc()))
+        query = (
+            select(ReadingProgressModel)
+            .where(ReadingProgressModel.reading_id == reading_id)
+            .order_by(ReadingProgressModel.progress_date.desc())
+        )
 
         progress_list = await self.get_all(query)
 
-        return [progress['ReadingProgressModel'] for progress in progress_list] if progress_list else None
+        return (
+            [progress["ReadingProgressModel"] for progress in progress_list]
+            if progress_list
+            else None
+        )
 
     async def get_latest_progress(self, reading_id) -> ReadingProgressModel | None:
-        query = select(ReadingProgressModel).where(ReadingProgressModel.reading_id == reading_id).order_by(ReadingProgressModel.progress_date.desc())
+        query = (
+            select(ReadingProgressModel)
+            .where(ReadingProgressModel.reading_id == reading_id)
+            .order_by(ReadingProgressModel.progress_date.desc())
+        )
 
         # TODO: get_first should return SQLModel!!
         latest_progress = await self.get_first(query)
 
-        return latest_progress
+        return cast(ReadingProgressModel, latest_progress)
