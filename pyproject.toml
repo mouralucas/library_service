@@ -1,7 +1,7 @@
 [tool.ruff]
 src = ["."]
-line-length = 150
-target-version = "py311"
+line-length = 88
+target-version = "py312"
 
 exclude = [
     ".venv",
@@ -18,14 +18,12 @@ select = [
     "W",    # pycodestyle warnings
     "I",    # isort (import order)
     "N",    # pep8-naming (functions/variables/classes names)
-    "UP",   # pyupgrade (syntaxe upgrades)
+    "UP",   # pyupgrade (syntax upgrades)
     "C90",  # mccabe (complexity)
 ]
 
 ignore = []
 
-# Not used yet, formats dicts in line
-# [tool.ruff.format]
-# Configuração do formatador Ruff
-# quote-style = "double"
-# indent-style = "space"
+[tool.black]
+line-length = 88
+target-version = ["py312"]
