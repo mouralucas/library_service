@@ -133,7 +133,8 @@ class ItemStatusModel(SQLModel):
 #     )
 #     # # cover
 #     volume: Mapped[int] = mapped_column("volume", default=1)
-#     publisher_id: Mapped[int] = mapped_column(ForeignKey("publisher.id"), nullable=True)
+#     publisher_id: Mapped[int] = mapped_column(
+# ForeignKey("publisher.id"), nullable=True)
 #     publisher: Mapped["PublisherModel"] = relationship(
 #         foreign_keys=[publisher_id], lazy="noload"
 #     )

@@ -68,7 +68,8 @@ def get_item_mock() -> list[dict[str, Any]]:
             "main_author_id": authors[1]["id"],
             "title": "Neon Genesis Evangelion #01",
             "title_original": "Neon Genesis Evangelion #01",
-            "subtitle": "Um dos melhores mangás de ficção científica retorna às bancas em novo formato",
+            "subtitle": "Um dos melhores mangás de ficção científica retorna \
+                às bancas em novo formato",
             "pages": 336,
             "publication_date": datetime(2011, 10, 1),
             "original_publication_date": datetime(1995, 8, 29),

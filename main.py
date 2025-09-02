@@ -47,9 +47,9 @@ app = FastAPI(
     version=settings.project_version,
     swagger_ui_parameters={"defaultModelsExpandDepth": -1},
     docs_url="/",
-    root_path='/api/' + settings.project_name,
+    root_path="/api/" + settings.project_name,
     lifespan=lifespan,
-    debug=True
+    debug=True,
 )
 
 app.add_middleware(

@@ -24,7 +24,7 @@ def event_loop(request):
     loop.close()
 
 
-@pytest_asyncio.fixture(scope='function')
+@pytest_asyncio.fixture(scope="function")
 async def create_test_session():
     async with test_sessionmanager.connect() as connection:
         await connection.run_sync(Base.metadata.drop_all)
@@ -34,7 +34,7 @@ async def create_test_session():
         yield session
 
 
-@pytest_asyncio.fixture(scope='function', autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 def override_db_session(create_test_session):
     """
     Overrides the database session, in this case using test_sessionmanager.
@@ -49,12 +49,12 @@ def get_mock_user():
     )
 
 
-@pytest_asyncio.fixture(scope='function', autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 def override_user_service():
     app.dependency_overrides[get_user] = get_mock_user
 
 
-@pytest_asyncio.fixture(scope='function', autouse=True)
+@pytest_asyncio.fixture(scope="function", autouse=True)
 async def client():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as client:

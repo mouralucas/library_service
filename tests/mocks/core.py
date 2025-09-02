@@ -1,6 +1,5 @@
 import pytest_asyncio
 from rolf_common.managers import BaseDataManager
-from rolf_common.models import SQLModel
 
 from data_mock.core import (
     get_author_mock,

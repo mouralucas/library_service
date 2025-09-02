@@ -1,4 +1,3 @@
-
 from managers.author import AuthorManager
 from models import AuthorModel
 from schemas.item import AuthorSchema
@@ -12,10 +11,12 @@ class AuthorService(BaseService):
         super().__init__(session=session)
 
     async def create_author(self, author: CreateAuthorRequest) -> CreateAuthorResponse:
-        new_author = await AuthorManager(session=self.session).create_author(AuthorModel(**author.model_dump()))
+        new_author = await AuthorManager(session=self.session).create_author(
+            AuthorModel(**author.model_dump())
+        )
 
         response = CreateAuthorResponse(
-            author=AuthorSchema.model_validate(new_author)
+            author=AuthorSchema.model_validate(new_author),
         )
 
         return response
@@ -25,7 +26,11 @@ class AuthorService(BaseService):
 
         response = GetAuthorResponse(
             quantity=len(authors) if authors else 0,
-            authors=[AuthorSchema.model_validate(author) for author in authors] if authors else []
+            authors=(
+                [AuthorSchema.model_validate(author) for author in authors]
+                if authors
+                else []
+            ),
         )
 
         return response

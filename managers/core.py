@@ -4,7 +4,15 @@ from rolf_common.managers import BaseDataManager
 from sqlalchemy import RowMapping, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import CollectionModel, CountryModel, LanguageModel, PublisherModel, SerieModel, SQLModel, StatusModel
+from models import (
+    CollectionModel,
+    CountryModel,
+    LanguageModel,
+    PublisherModel,
+    SerieModel,
+    SQLModel,
+    StatusModel,
+)
 
 
 class LanguageManager(BaseDataManager):
@@ -106,8 +114,8 @@ class PublisherManager(BaseDataManager):
                 PublisherModel.name,
                 PublisherModel.description,
                 PublisherModel.country_id,
-                CountryModel.name.label('country_name'),
-                PublisherModel.parent_id
+                CountryModel.name.label("country_name"),
+                PublisherModel.parent_id,
             )
             .select_from(PublisherModel)
             .outerjoin(CountryModel, PublisherModel.country_id == CountryModel.id)
@@ -115,7 +123,11 @@ class PublisherManager(BaseDataManager):
 
         publishers = await self.get_all(select_statement=query)
 
-        return [dict(publisher.items()) for publisher in publishers] if publishers else None
+        return (
+            [dict(publisher.items()) for publisher in publishers]
+            if publishers
+            else None
+        )
 
 
 class StatusManager(BaseDataManager):
@@ -128,6 +140,8 @@ class StatusManager(BaseDataManager):
         if status_type:
             query = query.where(StatusModel.type == status_type)
 
-        statuses: list[RowMapping] = await self.get_all(select_statement=query, unique_result=True)
+        statuses: list[RowMapping] | None = await self.get_all(
+            select_statement=query, unique_result=True
+        )
 
-        return [status['StatusModel'] for status in statuses]
+        return [status["StatusModel"] for status in statuses] if statuses else []

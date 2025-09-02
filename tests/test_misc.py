@@ -6,7 +6,11 @@ from fastapi import status
 async def test_create_language(client):
     language_id = "EN"
     name = "English"
-    payload = {"id": language_id, "name": name, "code": language_id}
+    payload = {
+        "languageId": language_id,
+        "languageName": name,
+        "code": language_id,
+    }
 
     response = await client.post("/language", json=payload)
 

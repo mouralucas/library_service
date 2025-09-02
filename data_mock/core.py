@@ -117,25 +117,39 @@ def get_serie_mock() -> list[dict[str, Any]]:
             "name": "A torre negra",
             "description": "A Torre Negra, no original, The Dark Tower, "
             "é uma série literária do escritor americano Stephen King. "
-            "Misturando alta fantasia, faroeste, ficção científica e terror numa narrativa que "
-            'forma um mosaico da cultura popular contemporânea, o enredo segue um "pistoleiro" '
-            "e sua busca em direção a uma torre, a Torre Negra, cuja natureza é tanto física quanto metafórica",
+            "Misturando alta fantasia, faroeste, ficção científica e terror"
+            " numa narrativa que "
+            "forma um mosaico da cultura popular contemporânea, o enredo segue "
+            "um pistoleiro "
+            "e sua busca em direção a uma torre, a Torre Negra, cuja natureza"
+            " é tanto física quanto metafórica",
         },
         {
             **default_model_dict,
             "id": 2,
             "name": "Neon Genesis Evangelion",
-            "description": "O enredo de Evangelion se passa em 2015, em um mundo que acabara de ser reconstruído após a dizimação "
-            "de metade da humanidade na catástrofe que ficou conhecida como “Segundo Impacto”. O Japão ganha uma capital "
-            "provisória, a Tokyo-2, cujo Governo promove a construção da futura capital denominada Tokyo-3. "
-            "Mas a construção da nova metrópole serve apenas de fachada para erguer uma cidade-fortaleza com tecnologia "
-            "altamente avançada para resistir à ofensiva dos Anjos, monstruosos seres, cujo ataque já havia sido previsto "
-            "pela humanidade. A organização especial paramilitar, denominada NERV, foi incumbida da missão de combater tais "
-            "ameaças usando mechas gigantes chamados de Evas, que são pilotados por jovens rigorosamente selecionados. "
-            "Um deles é Shinji Ikari, um tímido adolescente. Na realidade, há mais de dez anos ele foi abandonado pelo pai, "
-            "Gendo Ikari, atual comandante supremo da NERV. Aos 14 anos, Shinji é chamado por ele para pilotar o incrível EVA-01, "
-            "a última esperança da humanidade na batalha contra os Anjos. Assim dá-se início a uma aventura inigualável em que "
-            "ficção científica se mistura aos sentimentos mais complexos e profundos do ser humano.",
+            "description": "O enredo de Evangelion se passa em 2015, "
+            "em um mundo que acabara de ser reconstruído após a dizimação "
+            "de metade da humanidade na catástrofe que ficou conhecida como "
+            "“Segundo Impacto”. O Japão ganha uma capital "
+            "provisória, a Tokyo-2, cujo Governo promove a construção da "
+            "futura capital denominada Tokyo-3. "
+            "Mas a construção da nova metrópole serve apenas de fachada "
+            "para erguer uma cidade-fortaleza com tecnologia "
+            "altamente avançada para resistir à ofensiva dos Anjos, "
+            "monstruosos seres, cujo ataque já havia sido previsto "
+            "pela humanidade. A organização especial paramilitar, denominada"
+            " NERV, foi incumbida da missão de combater tais "
+            "ameaças usando mechas gigantes chamados de Evas, que são "
+            "pilotados por jovens rigorosamente selecionados. "
+            "Um deles é Shinji Ikari, um tímido adolescente. Na realidade, "
+            "há mais de dez anos ele foi abandonado pelo pai, "
+            "Gendo Ikari, atual comandante supremo da NERV. Aos 14 anos, Shinji"
+            " é chamado por ele para pilotar o incrível EVA-01, "
+            "a última esperança da humanidade na batalha contra os Anjos. "
+            "Assim dá-se início a uma aventura inigualável em que "
+            "ficção científica se mistura aos sentimentos mais complexos "
+            "e profundos do ser humano.",
         },
     ]
 

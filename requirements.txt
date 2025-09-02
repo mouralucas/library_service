@@ -21,8 +21,9 @@ aiosqlite==0.21.0
 pytest==8.4.1 # updated to the latest version
 pytest-asyncio==1.1.0 # updated to the latest version
 
-# Linter
+# Linter and formatter
 ruff==0.12.1
+black==25.1.0
 
 # Service registration
 py_eureka_client==0.11.10
