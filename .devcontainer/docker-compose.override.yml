@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  backend-library-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app:cached
+    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    environment:
+      library_database_url: postgresql+asyncpg://dev-user:password@localhost:5432/library_dev_db
+      auth_service_base_url: http://localhost:8000
+      eureka_host_name: localhost
+    ports:
+      - "8001:8000"
+
+  # Desativa nginx no dev para não precisar rodar
+  nginx:
+    profiles: [ "disabled" ]
+
+  pg_library_service:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dev-user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: library_dev_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
