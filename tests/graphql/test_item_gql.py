@@ -1,0 +1,79 @@
+import pytest
+from fastapi import status
+
+
+@pytest.mark.asyncio
+async def test_mutation_new_item_success(
+    client,
+    create_languages,
+    create_series,
+    create_item_status,
+    create_publisher,
+    create_collections,
+    create_authors,
+):
+    item_title = "Test item"
+    item_subtitle = "Test subtitle"
+    item_original_title = "Test item original title"
+    item_original_subtitle = "Test item original subtitle"
+    pages = 756
+    last_status_date = "2024-06-01"
+    cover_price = 110.15
+    paid_price = 57.90
+    itemTypeId = "book"
+    formatId = "hardcover"
+
+    languages = create_languages
+    series = create_series
+    publishers = create_publisher
+    collections = create_collections
+    authors = create_authors
+    list_item_status = create_item_status
+
+    query = """
+        mutation CreateItem($input: CreateItemInput!) {
+            createItem(item: $input) {
+                item {
+                    itemId
+                    title
+                    itemTypeId
+                    formatId
+                }
+            }
+        }
+    """
+
+    variables = {
+        "input": {
+            "mainAuthorId": authors[0].id,
+            "otherAuthorsId": [authors[1].id, authors[2].id],
+            "title": item_title,
+            "subtitle": item_subtitle,
+            "originalTitle": item_original_title,
+            "originalSubtitle": item_original_subtitle,
+            "pages": pages,
+            "languageId": languages[0].id,
+            "publisherId": publishers[0].id,
+            "serieId": series[0].id,
+            "collectionId": collections[0].id,
+            "lastStatusId": list_item_status[0].id,
+            "lastStatusDate": last_status_date,
+            "coverPrice": cover_price,
+            "paidPrice": paid_price,
+            "itemTypeId": itemTypeId,
+            "formatId": formatId
+        }
+    }
+
+    # Chamando o endpoint do GraphQL
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
+
+    # Validação da resposta
+    assert response.status_code == 200
+    data = response.json()
+    item = data["data"]["createItem"]["item"]
+    assert item["title"] == item_title
+    assert item["itemTypeId"] == itemTypeId
+    assert item["formatId"] == formatId

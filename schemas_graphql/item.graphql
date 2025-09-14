@@ -1,25 +1,62 @@
 extend type Query {
   # Item queries
   getItem(id: Int!): Item
-  getItems(params: GetItemRequest): GetItemResponse
+  getItems(params: GetItemInput): GetItemResponse
 }
 
 extend type Mutation {
-    createItem(name: String!): Item
+    createItem(item: CreateItemInput!): CreateItemResponse!
 }
 
 
-input GetItemRequest {
+# Item schemas
+input GetItemInput {
   itemId: Int
   title: String
   mainAuthorId: Int
   itemType: String
 }
 
-
 type GetItemResponse {
     quantity: Int,
     items: [Item]
+}
+
+input CreateItemInput {
+  lastStatusId: String!
+  lastStatusDate: String!
+  mainAuthorId: Int!
+  otherAuthorsId: [Int]
+  title: String!
+  subtitle: String
+  originalTitle: String
+  originalSubtitle: String
+  isbn: String
+  isbn10: String
+  itemTypeId: String
+  pages: Int
+  volume: Int
+  edition: Int
+  publicationDate: String
+  originalPublicationDate: String
+  serieId: Int
+  collectionId: Int
+  publisherId: Int
+  formatId: String
+  languageId: String
+  coverPrice: Float
+  paidPrice: Float
+  dimensions: String
+  hight: Int
+  width: Int
+  thickness: Int
+  summary: String
+  observation: String
+  cover: String
+}
+
+type CreateItemResponse {
+  item: Item
 }
 
 type Item {
@@ -32,7 +69,7 @@ type Item {
   subtitleOriginal: String
   isbn: String
   isbn10: String
-  type: String
+  itemTypeId: String
   pages: Int
   volume: Int
   edition: Int
@@ -44,7 +81,7 @@ type Item {
   collectionName: String
   publisherId: String
   publisherName: String
-  format: String
+  formatId: String
   languageId: String
   languageName: String
   coverPrice: Float

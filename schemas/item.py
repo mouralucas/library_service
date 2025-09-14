@@ -38,7 +38,7 @@ class ItemSchema(BaseModel):
     isbn: str | None = Field(None, description="ISBN number of the item")
     isbn10: str | None = Field(None, description="ISBN 10 number of the item")
     type: str | None = Field(
-        None, serialization_alias="itemType", description="The type of item"
+        None, serialization_alias="itemTypeId", description="The type of item"
     )
     pages: int | None = Field(None, description="The number of pages of the item")
     volume: int | None = Field(0, description="The volume of the item")
