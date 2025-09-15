@@ -2,7 +2,7 @@ from typing import Any, cast
 
 from fastapi import HTTPException
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import RowMapping, asc, desc, func, select, update
+from sqlalchemy import RowMapping, asc, desc, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -15,7 +15,6 @@ from models import (
     StatusModel,
 )
 from models.item import ItemModel, ItemStatusModel
-from schemas.request.item import GetItemRequest
 
 
 class ItemManager(BaseDataManager):
@@ -52,7 +51,7 @@ class ItemManager(BaseDataManager):
         title: str | None = None,
         main_author_id: int | None = None,
         type: str | None = None,
-        order_by: Any = None
+        order_by: Any = None,
     ) -> list[dict[Any, Any]] | None:
         query = (
             select(
@@ -101,16 +100,16 @@ class ItemManager(BaseDataManager):
 
         if item_id:
             query = query.where(ItemModel.id == item_id)
-            
+
         if title:
             query = query.where(ItemModel.title == title)
-            
+
         if main_author_id:
             query = query.where(ItemModel.main_author_id == main_author_id)
-            
+
         if type:
             query = query.where(ItemModel.type == type)
-            
+
         if order_by:
             for item in order_by:
                 column = getattr(ItemModel, item.field)

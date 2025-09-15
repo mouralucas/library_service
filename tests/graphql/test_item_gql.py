@@ -20,8 +20,8 @@ async def test_mutation_new_item_success(
     last_status_date = "2024-06-01"
     cover_price = 110.15
     paid_price = 57.90
-    itemTypeId = "book"
-    formatId = "hardcover"
+    item_type_id = "book"
+    format_id = "hardcover"
 
     languages = create_languages
     series = create_series
@@ -60,8 +60,8 @@ async def test_mutation_new_item_success(
             "lastStatusDate": last_status_date,
             "coverPrice": cover_price,
             "paidPrice": paid_price,
-            "itemTypeId": itemTypeId,
-            "formatId": formatId
+            "itemTypeId": item_type_id,
+            "formatId": format_id,
         }
     }
 
@@ -71,23 +71,23 @@ async def test_mutation_new_item_success(
     )
 
     # Validação da resposta
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert "data" in data
     assert "createItem" in data["data"]
     assert "item" in data["data"]["createItem"]
-    
+
     item = data["data"]["createItem"]["item"]
     assert item["title"] == item_title
-    assert item["itemTypeId"] == itemTypeId
-    assert item["formatId"] == formatId
+    assert item["itemTypeId"] == item_type_id
+    assert item["formatId"] == format_id
 
 
 @pytest.mark.asyncio
 async def test_query_books(client, create_item):
     items = create_item
     books = list(filter(lambda item: item.type == "book", items))
-    
+
     query = """
         query GetItems($params: GetItemInput) {
             getItems(params: $params) {
@@ -100,41 +100,37 @@ async def test_query_books(client, create_item):
             }
         }
     """
-    
-    variables = {
-        "params": {
-            "itemTypeId": "book"
-        }
-    }
-    
+
+    variables = {"params": {"itemTypeId": "book"}}
+
     response = await client.post(
         "/graphql/library", json={"query": query, "variables": variables}
     )
-    
-    assert response.status_code == 200
+
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    
-    assert "data" in data    
+
+    assert "data" in data
     assert "getItems" in data["data"]
     assert "quantity" in data["data"]["getItems"]
     assert data["data"]["getItems"]["quantity"] == len(books)
-    
+
     assert "items" in data["data"]["getItems"]
     items_data = data["data"]["getItems"]["items"]
-    
+
     for item in items_data:
         assert "itemId" in item
         assert "title" in item
-        
+
         assert "itemTypeId" in item
-        assert item["itemTypeId"] == "book"    
-    
-    
+        assert item["itemTypeId"] == "book"
+
+
 @pytest.mark.asyncio
 async def test_query_books_with_order_by(client, create_item):
     items = create_item
     books = list(filter(lambda item: item.type == "book", items))
-    
+
     query = """
         query GetItems($params: GetItemInput) {
             getItems(params: $params) {
@@ -147,19 +143,23 @@ async def test_query_books_with_order_by(client, create_item):
             }
         }
     """
-    
+
     variables = {
         "params": {
             "itemTypeId": "book",
-            "orderBy": [{
-                "field": "title",
-                "direction": "ASC"
-            }]
+            "orderBy": [{"field": "title", "direction": "ASC"}],
         }
     }
-    
+
     response = await client.post(
         "/graphql/library", json={"query": query, "variables": variables}
     )
-    
-    assert True
+
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+
+    assert "data" in data
+    assert "getItems" in data["data"]
+    assert "quantity" in data["data"]["getItems"]
+    assert data["data"]["getItems"]["quantity"] == len(books)

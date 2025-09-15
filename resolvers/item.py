@@ -26,12 +26,12 @@ async def create_item_resolver(_, info, item):
     new_item = await ItemService(
         session=info.context["session"], user=info.context["user"]
     ).create_item(item=item_)
-    
+
     return new_item.model_dump(by_alias=True)
 
 
 def bind_item_resolvers(query, mutation):
     query.set_field("getItem", resolve_get_item)
     query.set_field("getItems", get_items_resolver)
-    
+
     mutation.set_field("createItem", create_item_resolver)

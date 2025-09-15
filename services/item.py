@@ -71,7 +71,7 @@ class ItemService(BaseService):
             title=params.title,
             main_author_id=params.main_author_id,
             type=params.type,
-            order_by=params.order_by
+            order_by=params.order_by,
         )
 
         response = GetItemResponse(
