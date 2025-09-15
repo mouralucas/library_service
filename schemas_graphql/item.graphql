@@ -15,6 +15,7 @@ input GetItemInput {
   title: String
   mainAuthorId: Int
   itemTypeId: String
+  orderBy: [OrderByInput]
 }
 
 type GetItemResponse {

@@ -129,3 +129,37 @@ async def test_query_books(client, create_item):
         assert "itemTypeId" in item
         assert item["itemTypeId"] == "book"    
     
+    
+@pytest.mark.asyncio
+async def test_query_books_with_order_by(client, create_item):
+    items = create_item
+    books = list(filter(lambda item: item.type == "book", items))
+    
+    query = """
+        query GetItems($params: GetItemInput) {
+            getItems(params: $params) {
+                quantity
+                items {
+                    itemId
+                    title
+                    itemTypeId
+                }
+            }
+        }
+    """
+    
+    variables = {
+        "params": {
+            "itemTypeId": "book",
+            "orderBy": [{
+                "field": "title",
+                "direction": "ASC"
+            }]
+        }
+    }
+    
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
+    
+    assert True

@@ -1,3 +1,4 @@
+from typing import Literal
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
@@ -10,4 +11,6 @@ class OrderBySchemaRequest(BaseModel):
     )
 
     field: str = Field(..., description="The field which to order by")
-    direction: str = Field("ASC", description='The direction for the order by, default: ASC')
+    direction: Literal["ASC", "DESC"] = Field(
+        "ASC", description="The direction for the order by, default: ASC"
+    )

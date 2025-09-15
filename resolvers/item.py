@@ -10,7 +10,7 @@ async def resolve_get_item(_, info, id):
     return item.model_dump(by_alias=True)
 
 
-async def resolver_get_items(_, info, params):
+async def get_items_resolver(_, info, params):
     params_ = GetItemRequest.model_validate(params)
 
     items = await ItemService(
@@ -32,6 +32,6 @@ async def create_item_resolver(_, info, item):
 
 def bind_item_resolvers(query, mutation):
     query.set_field("getItem", resolve_get_item)
-    query.set_field("getItems", resolver_get_items)
+    query.set_field("getItems", get_items_resolver)
     
     mutation.set_field("createItem", create_item_resolver)
