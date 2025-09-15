@@ -97,5 +97,5 @@ class GetItemRequest(BaseModel):
     id: int | None = Field(None, ge=1, alias="itemId")
     title: str | None = Field(None, min_length=3, alias="title")
     main_author_id: int | None = Field(None, alias="mainAuthorId")
-    type: str | None = Field(None, alias="itemType")
+    type: str | None = Field(None, alias="itemTypeId")
     order_by: list[OrderBySchemaRequest] | None = Field(None)

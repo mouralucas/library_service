@@ -14,7 +14,7 @@ input GetItemInput {
   itemId: Int
   title: String
   mainAuthorId: Int
-  itemType: String
+  itemTypeId: String
 }
 
 type GetItemResponse {

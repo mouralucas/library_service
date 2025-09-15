@@ -30,7 +30,7 @@ async def test_mutation_new_item_success(
     authors = create_authors
     list_item_status = create_item_status
 
-    query = """
+    mutation = """
         mutation CreateItem($input: CreateItemInput!) {
             createItem(item: $input) {
                 item {
@@ -67,13 +67,65 @@ async def test_mutation_new_item_success(
 
     # Chamando o endpoint do GraphQL
     response = await client.post(
-        "/graphql/library", json={"query": query, "variables": variables}
+        "/graphql/library", json={"query": mutation, "variables": variables}
     )
 
     # Validação da resposta
     assert response.status_code == 200
     data = response.json()
+    assert "data" in data
+    assert "createItem" in data["data"]
+    assert "item" in data["data"]["createItem"]
+    
     item = data["data"]["createItem"]["item"]
     assert item["title"] == item_title
     assert item["itemTypeId"] == itemTypeId
     assert item["formatId"] == formatId
+
+
+@pytest.mark.asyncio
+async def test_query_books(client, create_item):
+    items = create_item
+    books = list(filter(lambda item: item.type == "book", items))
+    
+    query = """
+        query GetItems($params: GetItemInput) {
+            getItems(params: $params) {
+                quantity
+                items {
+                    itemId
+                    title
+                    itemTypeId
+                }
+            }
+        }
+    """
+    
+    variables = {
+        "params": {
+            "itemTypeId": "book"
+        }
+    }
+    
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert "data" in data    
+    assert "getItems" in data["data"]
+    assert "quantity" in data["data"]["getItems"]
+    assert data["data"]["getItems"]["quantity"] == len(books)
+    
+    assert "items" in data["data"]["getItems"]
+    items_data = data["data"]["getItems"]["items"]
+    
+    for item in items_data:
+        assert "itemId" in item
+        assert "title" in item
+        
+        assert "itemTypeId" in item
+        assert item["itemTypeId"] == "book"    
+    
