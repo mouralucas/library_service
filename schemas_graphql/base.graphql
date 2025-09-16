@@ -1,2 +1,8 @@
 type Query
 type Mutation
+
+
+input OrderByInput {
+    field: String!
+    direction: String
+}

@@ -4,6 +4,8 @@ import uuid
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
+from schemas.request.base import OrderBySchemaRequest
+
 
 class CreateItemRequest(BaseModel):
     model_config = ConfigDict(
@@ -34,7 +36,9 @@ class CreateItemRequest(BaseModel):
     )
     isbn: str | None = Field(None, description="The ISBN of the item")
     isbn10: str | None = Field(None, description="The ISBN 10 of the item")
-    type: str | None = Field(None, description="The type of the item")  # maybe Id?
+    type: str | None = Field(
+        None, alias="itemTypeId", description="The type of the item"
+    )
     pages: int | None = Field(0, description="The number of pages of the item")
     volume: int | None = Field(0, description="The volume of the item")
     edition: int | None = Field(1, description="The edition of the item")
@@ -47,7 +51,9 @@ class CreateItemRequest(BaseModel):
     serie_id: int = Field(0, description="The id of the serie")
     collection_id: int = Field(0, description="The id of the collection")
     publisher_id: int | None = Field(None, description="The publisher of the item")
-    format: str | None = Field(None, description="The id of the format")
+    format: str | None = Field(
+        None, alias="formatId", description="The id of the format"
+    )
     language_id: str | None = Field(None, description="The id of the language")
     cover_price: float | None = Field(None, description="The price of the item")
     paid_price: float | None = Field(None, description="The price of the item")
@@ -91,4 +97,5 @@ class GetItemRequest(BaseModel):
     id: int | None = Field(None, ge=1, alias="itemId")
     title: str | None = Field(None, min_length=3, alias="title")
     main_author_id: int | None = Field(None, alias="mainAuthorId")
-    type: str | None = Field(None, alias="itemType")
+    type: str | None = Field(None, alias="itemTypeId")
+    order_by: list[OrderBySchemaRequest] | None = Field(None)

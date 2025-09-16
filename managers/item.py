@@ -2,7 +2,7 @@ from typing import Any, cast
 
 from fastapi import HTTPException
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import RowMapping, func, select, update
+from sqlalchemy import RowMapping, asc, desc, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -15,7 +15,6 @@ from models import (
     StatusModel,
 )
 from models.item import ItemModel, ItemStatusModel
-from schemas.request.item import GetItemRequest
 
 
 class ItemManager(BaseDataManager):
@@ -46,7 +45,14 @@ class ItemManager(BaseDataManager):
 
         return cast(ItemModel, item)
 
-    async def get_items(self, params: GetItemRequest) -> list[dict[Any, Any]] | None:
+    async def get_items(
+        self,
+        item_id: int | None = None,
+        title: str | None = None,
+        main_author_id: int | None = None,
+        type: str | None = None,
+        order_by: Any = None,
+    ) -> list[dict[Any, Any]] | None:
         query = (
             select(
                 ItemModel.id,
@@ -92,16 +98,25 @@ class ItemManager(BaseDataManager):
             .join(StatusModel, ItemModel.last_status_id == StatusModel.id)
         )
 
-        for key, value in params.model_dump().items() if params else []:
-            if value:
-                # TODO: Make this function better!!
-                attr = getattr(ItemModel, key)
-                if attr == ItemModel.title:
-                    query = query.where(func.lower(attr).like(f"%{value.lower()}%"))
-                else:
-                    query = query.where(attr == value)
+        if item_id:
+            query = query.where(ItemModel.id == item_id)
 
-        query = query.order_by(ItemModel.id)
+        if title:
+            query = query.where(ItemModel.title == title)
+
+        if main_author_id:
+            query = query.where(ItemModel.main_author_id == main_author_id)
+
+        if type:
+            query = query.where(ItemModel.type == type)
+
+        if order_by:
+            for item in order_by:
+                column = getattr(ItemModel, item.field)
+                if item.direction == "ASC":
+                    query = query.order_by(asc(column))
+                else:
+                    query = query.order_by(desc(column))
 
         items: list[RowMapping] | None = await self.get_all(query, unique_result=True)
 

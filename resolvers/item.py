@@ -1,4 +1,4 @@
-from schemas.request.item import GetItemRequest
+from schemas.request.item import CreateItemRequest, GetItemRequest
 from services.item import ItemService
 
 
@@ -10,7 +10,7 @@ async def resolve_get_item(_, info, id):
     return item.model_dump(by_alias=True)
 
 
-async def resolver_get_items(_, info, params):
+async def get_items_resolver(_, info, params):
     params_ = GetItemRequest.model_validate(params)
 
     items = await ItemService(
@@ -20,14 +20,18 @@ async def resolver_get_items(_, info, params):
     return items.model_dump(by_alias=True)
 
 
-async def resolve_create_item(_, info, name):
-    return {
-        "id": "2",
-        "name": name,
-    }
+async def create_item_resolver(_, info, item):
+    item_ = CreateItemRequest.model_validate(item)
+
+    new_item = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).create_item(item=item_)
+
+    return new_item.model_dump(by_alias=True)
 
 
 def bind_item_resolvers(query, mutation):
     query.set_field("getItem", resolve_get_item)
-    query.set_field("getItems", resolver_get_items)
-    mutation.set_field("createItem", resolve_create_item)
+    query.set_field("getItems", get_items_resolver)
+
+    mutation.set_field("createItem", create_item_resolver)
