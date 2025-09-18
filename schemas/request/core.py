@@ -66,4 +66,4 @@ class GetStatusRequest(BaseModel):
         from_attributes=True, alias_generator=AliasGenerator(alias=to_camel)
     )
 
-    item_type: str = Field(..., description="Type of the item")
+    status_type: str = Field(..., description="Type of the status")

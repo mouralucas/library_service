@@ -230,7 +230,7 @@ class StatusService(BaseService):
 
     async def get_status(self, params: GetStatusRequest) -> GetStatusResponse:
         statuses = await StatusManager(session=self.session).get_statuses(
-            status_type=params.item_type
+            status_type=params.status_type
         )
 
         response = GetStatusResponse(

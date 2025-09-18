@@ -5,6 +5,7 @@ extend type Query {
     getPublishers: GetPublishersResponse!
     getLanguages: GetLanguagesResponse!
     getCountries: GetCountryResponse!
+    getStatus(params: GetStatusInput): GetStatusResponse!
 }
 
 extend type Mutation {
@@ -42,7 +43,7 @@ type CreateAuthorResponse  {
 }
 
 type Author {
-    authorId: ID!
+    authorId: Int!
     authorName: String!
     birthDate: String
     description: String
@@ -92,7 +93,7 @@ type CreateCollectionResponse {
 }
 
 type Collection {
-    collectionId: ID!
+    collectionId: Int!
     collectionName: String!
     description: String
 }
@@ -115,7 +116,7 @@ type CreatePublisherResponse {
 }
 
 type Publisher{
-    publisherId: ID!
+    publisherId: Int!
     publisherName: String!
     description: String
     countryId: String
@@ -168,4 +169,23 @@ type Country {
     countryName: String!
     continent: String
     description: String
+}
+
+
+# Status schemas
+input GetStatusInput {
+    statusType: String
+}
+
+type GetStatusResponse {
+    quantity: Int!
+    statuses: [Status]!
+}
+
+type Status {
+    statusId: String!
+    name: String!
+    description: String
+    order: Int
+    statusType: String!
 }

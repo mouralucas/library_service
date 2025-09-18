@@ -177,7 +177,7 @@ async def test_get_item_status(client, create_item_status, create_reading_status
     item_status_list_len = len(item_status)
 
     params = {
-        "itemType": item_status[0].type,
+        "statusType": item_status[0].type,
     }
     response = await client.get("/status", params=params)
 
@@ -189,4 +189,4 @@ async def test_get_item_status(client, create_item_status, create_reading_status
     assert len(data["statuses"]) == item_status_list_len
 
     for s in data["statuses"]:
-        assert s["itemType"] == "ITEM.STATUS"
+        assert s["statusType"] == "ITEM.STATUS"

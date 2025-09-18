@@ -31,7 +31,7 @@ class StatusSchema(BaseModel):
     description: str | None = Field(None, description="The description of the status")
     order: int | None = Field(None, description="The order of the status")
     type: str = Field(
-        ..., serialization_alias="itemType", description="The type of the status"
+        ..., serialization_alias="statusType", description="The type of the status"
     )
 
 

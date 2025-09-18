@@ -7,6 +7,7 @@ from schemas.request.core import (
     CreateLanguageRequest,
     CreatePublisherRequest,
     CreateSerieRequest,
+    GetStatusRequest,
 )
 from services.author import AuthorService
 from services.core import (
@@ -15,6 +16,7 @@ from services.core import (
     LanguageService,
     PublisherService,
     SerieService,
+    StatusService,
 )
 
 
@@ -120,6 +122,16 @@ async def create_country_resolver(_, info, country):
     return new_country.model_dump(by_alias=True)
 
 
+async def get_status_resolver(_, info, params):
+    params_ = GetStatusRequest.model_validate(params)
+
+    statusses = await StatusService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_status(params=params_)
+
+    return statusses.model_dump(by_alias=True)
+
+
 def bind_core_resolvers(query: QueryType, mutation: MutationType):
     query.set_field("getAuthors", resolver=get_authors_resolver)
     query.set_field("getSeries", resolver=get_series_resolver)
@@ -127,6 +139,7 @@ def bind_core_resolvers(query: QueryType, mutation: MutationType):
     query.set_field("getPublishers", resolver=get_publishers_resolver)
     query.set_field("getLanguages", resolver=get_languages_resolver)
     query.set_field("getCountries", resolver=get_countries_resolver)
+    query.set_field("getStatus", resolver=get_status_resolver)
 
     mutation.set_field("createAuthor", resolver=create_author_resolver)
     mutation.set_field("createSerie", resolver=create_author_resolver)

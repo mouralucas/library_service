@@ -25,7 +25,7 @@ type GetItemResponse {
 }
 
 input CreateItemInput {
-  itemId: ID
+  itemId: Int
   lastStatusId: String!
   lastStatusDate: String!
   mainAuthorId: Int!
@@ -61,7 +61,7 @@ input CreateItemInput {
 }
 
 input UpdateItemInput {
-  itemId: ID
+  itemId: Int!
   lastStatusId: String
   lastStatusDate: String
   mainAuthorId: Int
@@ -101,7 +101,7 @@ type CreateItemResponse {
 }
 
 type Item {
-  itemId: ID!
+  itemId: Int!
   mainAuthorId: Int!
   mainAuthorName: String
   title: String!
