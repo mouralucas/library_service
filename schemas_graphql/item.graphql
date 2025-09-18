@@ -6,6 +6,7 @@ extend type Query {
 
 extend type Mutation {
     createItem(item: CreateItemInput): CreateItemResponse!
+    updateItem(item: UpdateItemInput): CreateItemResponse!
 }
 
 
@@ -32,6 +33,42 @@ input CreateItemInput {
   translatorId: Int
   otherAuthorsId: [Int]
   title: String!
+  subtitle: String
+  titleOriginal: String
+  subtitleOriginal: String
+  isbn: String
+  isbn10: String
+  itemTypeId: String
+  pages: Int
+  volume: Int
+  edition: Int
+  publicationDate: String
+  originalPublicationDate: String
+  serieId: Int
+  collectionId: Int
+  publisherId: Int
+  formatId: String
+  languageId: String
+  coverPrice: Float
+  paidPrice: Float
+  dimensions: String
+  height: Int
+  width: Int
+  thickness: Int
+  summary: String
+  observation: String
+  cover: String
+}
+
+input UpdateItemInput {
+  itemId: ID
+  lastStatusId: String
+  lastStatusDate: String
+  mainAuthorId: Int
+  authorsId: [Int]
+  translatorId: Int
+  otherAuthorsId: [Int]
+  title: String
   subtitle: String
   titleOriginal: String
   subtitleOriginal: String
@@ -90,7 +127,12 @@ type Item {
   languageName: String
   coverPrice: Float
   paidPrice: Float
-
+  dimensions: String
+  height: Int
+  width: Int
+  thickness: Int
+  summary: String
+  observation: String
   lastStatusId: String
   lastStatusName: String
   lastStatusDate: String
