@@ -68,7 +68,7 @@ type CreateSerieResponse {
 }
 
 type Serie {
-    serieId: String!
+    serieId: Int!
     serieName: String!
     originalName: String
     description: String
