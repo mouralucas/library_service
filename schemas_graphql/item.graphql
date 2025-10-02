@@ -116,11 +116,11 @@ type Item {
   edition: Int
   publicationDate: String
   originalPublicationDate: String
-  serieId: String
+  serieId: Int
   serieName: String
-  collectionId: String
+  collectionId: Int
   collectionName: String
-  publisherId: String
+  publisherId: Int
   publisherName: String
   formatId: String
   languageId: String
