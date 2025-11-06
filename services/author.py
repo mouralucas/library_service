@@ -21,7 +21,7 @@ class AuthorService(BaseService):
 
         return response
 
-    async def get_author(self, params: GetAuthorsRequest) -> GetAuthorResponse:
+    async def get_authors(self, params: GetAuthorsRequest) -> GetAuthorResponse:
         authors = await AuthorManager(session=self.session).get_authors()
 
         response = GetAuthorResponse(

@@ -42,6 +42,7 @@ class AuthorManager(BaseDataManager):
             .select_from(AuthorModel)
             .outerjoin(CountryModel, AuthorModel.country_id == CountryModel.id)
             .outerjoin(LanguageModel, AuthorModel.language_id == LanguageModel.id)
+            .order_by(AuthorModel.name)
         )
 
         if author_id:

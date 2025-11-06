@@ -27,6 +27,6 @@ async def create_author(
 async def get_authors(
     session: AsyncSession = Depends(get_session), params: GetAuthorsRequest = Depends()
 ) -> GetAuthorResponse:
-    response = await AuthorService(session).get_author(params)
+    response = await AuthorService(session).get_authors(params)
 
     return response

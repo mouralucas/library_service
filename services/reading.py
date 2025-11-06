@@ -369,8 +369,6 @@ class ReadingService(BaseService):
     async def get_reading_stats(
         self, params: GetReadingStatsRequest
     ) -> GetReadingStatsResponse:
-        # item = await ItemManager(session=self.session)
-        #   .get_item_by_id(item_id=params.item_id)
         item_readings = await self.reading_manager.get_readings(item_id=params.item_id)
 
         # Get information about the last reading

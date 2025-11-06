@@ -23,7 +23,7 @@ from services.core import (
 async def get_authors_resolver(_, info, params):
     params_ = GetAuthorsRequest.model_validate(params)
 
-    authors = await AuthorService(session=info.context["session"]).get_author(params_)
+    authors = await AuthorService(session=info.context["session"]).get_authors(params_)
 
     return authors.model_dump(by_alias=True)
 
