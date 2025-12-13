@@ -18,6 +18,11 @@ extend type Mutation {
 }
 
 
+input OrderByInput {
+    field: String!
+    direction: String
+}
+
 # Author schemas
 input GetAuthorsRequest {
     authorId: Int

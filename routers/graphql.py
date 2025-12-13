@@ -19,12 +19,7 @@ from resolvers.reading import bind_reading_resolvers
 
 router = APIRouter(tags=["GraphQL"], prefix="/graphql/library")
 
-type_defs = (
-    load_schema_from_path("schemas_graphql/base.graphql")
-    + load_schema_from_path("schemas_graphql/core.graphql")
-    + load_schema_from_path("schemas_graphql/reading.graphql")
-    + load_schema_from_path("schemas_graphql/item.graphql")
-)
+type_defs = load_schema_from_path("schemas/graphql/")
 
 query = QueryType()
 mutation = MutationType()

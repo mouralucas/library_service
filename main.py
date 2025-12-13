@@ -8,7 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 from backend.settings import settings
 from lifespan import shutdown_log_service, start_log_service
 from routers import author, core, health_check, item, reading
-from routers_graphql import main as graphql_library
+from routers import graphql as graphql_library
 
 # import py_eureka_client.eureka_client as eureka_client
 
