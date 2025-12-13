@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import HTMLResponse, JSONResponse
 
 from backend.database import get_session
+from backend.graphql_scalars import date_scalar, datetime_scalar
 from resolvers.core import bind_core_resolvers
 from resolvers.item import bind_item_resolvers
 from resolvers.reading import bind_reading_resolvers
@@ -24,13 +25,20 @@ type_defs = load_schema_from_path("schemas/graphql/")
 query = QueryType()
 mutation = MutationType()
 
-# Associa os resolvers
+# Associate the resolvers
 bind_core_resolvers(query, mutation)
 bind_item_resolvers(query, mutation)
 bind_reading_resolvers(query, mutation)
 
 
-schema = make_executable_schema(type_defs, query, mutation)
+schema = make_executable_schema(
+    type_defs,
+    query,
+    mutation,
+    date_scalar,
+    datetime_scalar,
+    # snake_case_fallback_resolvers,
+)
 
 
 @router.post("", description="The V2 maps all GraphQL endpoint")
