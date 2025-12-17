@@ -1,7 +1,7 @@
 import datetime
 
 from rolf_common.models import SQLModel
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -77,6 +77,8 @@ class AuthorModel(SQLModel):
     first_name: Mapped[str] = mapped_column("first_name", nullable=True)
     last_name: Mapped[str] = mapped_column("last_name", nullable=True)
     birth_date: Mapped[datetime.date] = mapped_column("birth_date", nullable=True)
+    birth_year: Mapped[int] = mapped_column("birth_year", nullable=True)
+    death_year: Mapped[int] = mapped_column("death_year", nullable=True)
     description: Mapped[str] = mapped_column("description", nullable=True)
     country_id: Mapped[str] = mapped_column(ForeignKey("country.id"), nullable=True)
     country: Mapped["CountryModel"] = relationship(
@@ -91,3 +93,16 @@ class AuthorModel(SQLModel):
     items: Mapped["ItemModel"] = relationship(  # noqa: F821
         "ItemModel", secondary="item_author", viewonly=True, lazy="noload"
     )
+    # TODO: Will need to add the relation to item_metadata
+
+class ItemType(SQLModel):
+    __tablename__ = "item_type"
+    
+    name: Mapped[str] = mapped_column("name")
+    description: Mapped[str] = mapped_column("description", type_=Text, nullable=True)
+    
+class ItemFormat(SQLModel):
+    __tablename__ = "item_format"
+    
+    name: Mapped[str] = mapped_column("name")
+    description: Mapped[str] = mapped_column("description", type_=Text, nullable=True)

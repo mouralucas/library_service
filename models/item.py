@@ -15,7 +15,6 @@ from models.core import (
 )
 
 
-# TODO: change possible float fields to decimal
 class ItemModel(SQLModel):
     __tablename__ = "item"
 
@@ -117,48 +116,71 @@ class ItemStatusModel(SQLModel):
     date: Mapped[datetime.date] = mapped_column("date")
 
 
-# class ItemUserModel(SQLModel):
-#     item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
-#     item: Mapped["ItemModel"] = relationship(foreign_keys=[item_id], lazy="subquery")
+####### Item V2 #######
+class ItemMetadata(SQLModel):
+    __tablename__ = "item_metadata"
 
-#     publication_date: Mapped[datetime.date] = mapped_column(
-#         "publication_date", nullable=True
-#     )
+    original_language_id: Mapped[str] = mapped_column(
+        ForeignKey("language.id"), nullable=True
+    )
+    original_language: Mapped["LanguageModel"] = relationship(
+        foreign_keys=[original_language_id], lazy="noload"
+    )
+    type: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("item_type.id"), doc="Book, manga, HQ"
+    )
+    main_author_id: Mapped[int] = mapped_column(ForeignKey("author.id"))
+    main_author: Mapped["AuthorModel"] = relationship(
+        foreign_keys=[main_author_id], lazy="noload"
+    )
+    
+    # Relations
+    authors: Mapped[list["AuthorModel"]] = relationship(
+        "AuthorModel", secondary="item_author", lazy="noload", viewonly=True
+    )
+    
 
-#     edition: Mapped[int] = mapped_column("edition", default=1)
 
-#     language_id: Mapped[str] = mapped_column(ForeignKey("language.id"), nullable=True)
-#     language: Mapped["LanguageModel"] = relationship(
-#         foreign_keys=[language_id], lazy="noload"
-#     )
-#     # # cover
-#     volume: Mapped[int] = mapped_column("volume", default=1)
-#     publisher_id: Mapped[int] = mapped_column(
-# ForeignKey("publisher.id"), nullable=True)
-#     publisher: Mapped["PublisherModel"] = relationship(
-#         foreign_keys=[publisher_id], lazy="noload"
-#     )
+class ItemMetadataAuthor(SQLModel):
+    __tablename__ = "item_metadata_author"
 
-#     serie_id: Mapped[int] = mapped_column(ForeignKey("serie.id"), nullable=True)
-#     serie: Mapped["SerieModel"] = relationship(foreign_keys=[serie_id], lazy="noload")
-#     collection_id: Mapped[int] = mapped_column(ForeignKey("collection.id"))
-#     collection: Mapped["CollectionModel"] = relationship(
-#         foreign_keys=[collection_id], lazy="noload"
-#     )
+    metadata_id: Mapped[int] = mapped_column(ForeignKey("item_metadata.id"))
+    author_id: Mapped[int] = mapped_column(ForeignKey("author.id"))
 
-#     format: Mapped[str] = mapped_column("format", nullable=True)
-#     type: Mapped[str] = mapped_column("type", nullable=True)
+    is_main: Mapped[bool] = mapped_column(default=False)
+    position: Mapped[int | None]
+    
 
-#     last_status_id: Mapped[str] = mapped_column(ForeignKey("status.id"))
-#     last_status: Mapped["StatusModel"] = relationship(
-#         foreign_keys=[last_status_id], lazy="noload"
-#     )
-#     last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
 
-#     cover_price: Mapped[float] = mapped_column("cover_price", default=0)
-#     paid_price: Mapped[float] = mapped_column("paid_price", default=0)
+class ItemEdition(SQLModel):
+    __tablename__ = "item_edition"
 
-#     dimensions: Mapped[str] = mapped_column("dimensions", nullable=True)
-#     height: Mapped[float] = mapped_column("height", nullable=True)
-#     width: Mapped[float] = mapped_column("width", nullable=True)
-#     thickness: Mapped[float] = mapped_column("thickness", nullable=True)
+    metadata_id: Mapped[int] = mapped_column(ForeignKey("item_metadata.id"))
+    title: Mapped[str] = mapped_column("title")
+    subtitle: Mapped[str] = mapped_column("subtitle")
+    isbn: Mapped[str] = mapped_column("isbn")
+    format: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_format.id"))
+    publisher_id: Mapped[int] = mapped_column(ForeignKey("publisher.id"), nullable=True)
+    published_date: Mapped[datetime.date] = mapped_column(
+        "published_date", nullable=True
+    )
+    summary: Mapped[str] = mapped_column("summary", nullable=True)
+    cover_price: Mapped[float] = mapped_column("cover_price", default=0)
+    
+    # series and collections here?
+    
+    
+class UserItemEdition(SQLModel):
+    item_edition_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_edition_id"))
+    user_id: Mapped[uuid.UUID] = mapped_column("user_id")
+    notes: Mapped[str] = mapped_column(
+        "notes", nullable=True
+    )
+    last_status_id: Mapped[str] = mapped_column(ForeignKey("status.id"))
+    last_status: Mapped["StatusModel"] = relationship(
+        foreign_keys=[last_status_id], lazy="noload"
+    )
+    last_status_date: Mapped[datetime.date] = mapped_column(nullable=True)
+    status: Mapped[list["StatusModel"]] = relationship(
+        "StatusModel", secondary="item_status", lazy="noload", viewonly=True
+    )
