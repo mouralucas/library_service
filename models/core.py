@@ -17,6 +17,9 @@ class StatusModel(SQLModel):
     items: Mapped["ItemModel"] = relationship(  # noqa: F821
         "ItemModel", secondary="item_status", lazy="noload", viewonly=True
     )
+    user_edition: Mapped["UserItemEditionModel"] = relationship(  # noqa: F821
+        "UserItemEditionModel", secondary="user_item_edition_status", lazy="noload", viewonly=True
+    )
 
 
 class LanguageModel(SQLModel):
@@ -92,6 +95,9 @@ class AuthorModel(SQLModel):
 
     items: Mapped["ItemModel"] = relationship(  # noqa: F821
         "ItemModel", secondary="item_author", viewonly=True, lazy="noload"
+    )
+    items_metadata: Mapped["ItemMetadataModel"] = relationship(  # noqa: F821
+        "ItemMetadataModel", secondary="item_metadata_author", viewonly=True, lazy="noload"
     )
     # TODO: Will need to add the relation to item_metadata
 
