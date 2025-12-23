@@ -10,23 +10,7 @@ from lifespan import shutdown_log_service, start_log_service
 from routers import author, core, health_check, item, reading
 from routers import graphql as graphql_library
 
-# import py_eureka_client.eureka_client as eureka_client
 
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Register the library in the Eureka
-#     await eureka_client.init_async(
-#         eureka_server=settings.eureka_host_name,
-#         app_name=settings.project_name,
-#         instance_port=settings.library_host_port,
-#         instance_host=settings.library_host_ip,
-#     )
-#
-#     try:
-#         yield
-#     finally:
-#         await eureka_client.stop_async()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await asyncio.gather(
