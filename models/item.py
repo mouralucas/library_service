@@ -203,7 +203,7 @@ class UserItemEditionStatusModel(SQLModel):
         foreign_keys=[status_id], lazy="selectin"
     )
 
-    edition_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user_item_edition.id"))
-    edition: Mapped["UserItemEditionModel"] = relationship(foreign_keys=[edition_id], lazy="selectin")
+    user_edition_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user_item_edition.id"))
+    user_edition: Mapped["UserItemEditionModel"] = relationship(foreign_keys=[user_edition_id], lazy="selectin")
 
     date: Mapped[datetime.date] = mapped_column("date")
