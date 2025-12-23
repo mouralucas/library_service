@@ -31,11 +31,5 @@ class LibrarySettings(Settings):
     library_host_ip: str = "192.168.0.29"
     library_host_port: int = 8001
 
-    log_database_name: str = "library_dev_log"
-    log_collection_name: str = "library_logs"
-    log_database_url: str = (
-        "mongodb://dev-user-logs:password@localhost:27017/library_dev_log?authSource=admin"
-    )
-
 
 settings = LibrarySettings()

@@ -138,8 +138,8 @@ class ItemMetadataModel(SQLModel):
 class ItemMetadataAuthorModel(SQLModel):
     __tablename__ = "item_metadata_author"
 
-    item_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_metadata.id"))
-    item: Mapped["ItemMetadataModel"] = relationship(foreign_keys=[item_id], lazy="selectin")
+    item_metadata_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_metadata.id"))
+    item_metadata: Mapped["ItemMetadataModel"] = relationship(foreign_keys=[item_metadata_id], lazy="selectin")
 
     author_id: Mapped[int] = mapped_column(ForeignKey("author.id"))
     author: Mapped["AuthorModel"] = relationship( # noqa: F821
@@ -154,14 +154,21 @@ class ItemMetadataAuthorModel(SQLModel):
 class ItemEditionModel(SQLModel):
     __tablename__ = "item_edition"
 
-    metadata_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_metadata.id"))
+    item_metadata_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_metadata.id"))
     title: Mapped[str] = mapped_column("title")
-    subtitle: Mapped[str] = mapped_column("subtitle")
-    isbn: Mapped[str] = mapped_column("isbn")
-    format: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_format.id"))
+    subtitle: Mapped[str | None] = mapped_column("subtitle", nullable=True)
+    isbn: Mapped[str | None] = mapped_column("isbn", nullable=True)
+    pages: Mapped[int | None] = mapped_column("pages", nullable=True)
+    format_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("item_format.id"), nullable=True)
     publisher_id: Mapped[int] = mapped_column(ForeignKey("publisher.id"), nullable=True)
     published_date: Mapped[datetime.date] = mapped_column(
         "published_date", nullable=True
+    )
+    language_id: Mapped[str] = mapped_column(
+        ForeignKey("language.id"), nullable=True
+    )
+    language: Mapped["LanguageModel"] = relationship(
+        foreign_keys=[language_id], lazy="noload"
     )
     summary: Mapped[str] = mapped_column("summary", nullable=True)
     cover_price: Mapped[float] = mapped_column("cover_price", default=0)
