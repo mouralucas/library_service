@@ -1,6 +1,7 @@
 import asyncio
-from managers.item import ItemManager
+
 from backend.database import sessionmanager
+from managers.item import ItemManager
 
 
 async def fetch_items():
