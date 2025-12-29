@@ -50,12 +50,11 @@ jobs:
 workflows:
   ci-pipeline:
     jobs:
-      # Removed lint test for now
-      # - lint-ruff:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
+      - lint-ruff:
+          filters:
+            branches:
+              only:
+                - develop
       - test-service:
           filters:
             branches:
