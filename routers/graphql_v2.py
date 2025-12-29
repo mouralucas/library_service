@@ -1,4 +1,5 @@
 import uuid
+
 from ariadne import (
     MutationType,
     QueryType,
@@ -8,9 +9,8 @@ from ariadne import (
     snake_case_fallback_resolvers,
 )
 from ariadne.explorer import ExplorerGraphiQL
-from fastapi import APIRouter, Depends, Request, Security
+from fastapi import APIRouter, Depends, Request
 from rolf_common.schemas.auth import RequiredUser
-from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import HTMLResponse, JSONResponse
 

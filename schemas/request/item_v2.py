@@ -1,4 +1,5 @@
 import uuid
+
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 

@@ -1,5 +1,6 @@
-from ariadne import MutationType, QueryType
 import uuid
+
+from ariadne import MutationType, QueryType
 from graphql import GraphQLResolveInfo
 from rolf_common.util.graphql_input_validation import validate_graphql_input
 
@@ -8,11 +9,13 @@ from services.item_v2 import ItemServiceV2
 
 
 @validate_graphql_input(GetItemsV2Request)
-async def get_iteme_editions_resolver(_, info: GraphQLResolveInfo, params: GetItemsV2Request):
-    editions = await ItemServiceV2(session=info.context["session"]).get_editions(
-        owner_id=uuid.UUID("4515f507-918b-445f-8a56-b9170f0d48e9")
+async def get_iteme_editions_resolver(
+    _, info: GraphQLResolveInfo, params: GetItemsV2Request
+):
+    editions = await ItemServiceV2(session=info.context["session"], user=info.context["user"]).get_editions(
+        owner_id=info.context["user"].user_id
     )
-    
+
     return editions
 
 
