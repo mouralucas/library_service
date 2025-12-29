@@ -177,7 +177,7 @@ class ItemEditionModel(SQLModel):
     # series and collections here?
 
 
-class UserItemEditionModel(SQLModel):
+class ItemEditionUserModel(SQLModel):
     __tablename__ = "user_item_edition"
 
     item_edition_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("item_edition.id"))
@@ -209,7 +209,7 @@ class UserItemEditionStatusModel(SQLModel):
     user_edition_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("user_item_edition.id")
     )
-    user_edition: Mapped["UserItemEditionModel"] = relationship(  # noqa: F821
+    user_edition: Mapped["ItemEditionUserModel"] = relationship(  # noqa: F821
         foreign_keys=[user_edition_id], lazy="selectin"
     )
 

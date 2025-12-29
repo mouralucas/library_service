@@ -17,8 +17,8 @@ class StatusModel(SQLModel):
     items: Mapped["ItemModel"] = relationship(  # noqa: F821
         "ItemModel", secondary="item_status", lazy="noload", viewonly=True
     )
-    user_edition: Mapped["UserItemEditionModel"] = relationship(  # noqa: F821
-        "UserItemEditionModel",
+    user_edition: Mapped["ItemEditionUserModel"] = relationship(  # noqa: F821
+        "ItemEditionUserModel",
         secondary="user_item_edition_status",
         lazy="noload",
         viewonly=True,
@@ -105,17 +105,16 @@ class AuthorModel(SQLModel):
         viewonly=True,
         lazy="noload",
     )
-    # TODO: Will need to add the relation to item_metadata
 
 
-class ItemType(SQLModel):
+class ItemTypeModel(SQLModel):
     __tablename__ = "item_type"
 
     name: Mapped[str] = mapped_column("name")
     description: Mapped[str] = mapped_column("description", type_=Text, nullable=True)
 
 
-class ItemFormat(SQLModel):
+class ItemFormatModel(SQLModel):
     __tablename__ = "item_format"
 
     name: Mapped[str] = mapped_column("name")

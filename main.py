@@ -9,7 +9,7 @@ from backend.settings import settings
 from lifespan import shutdown_log_service, start_log_service
 from routers import author, core, health_check, item, reading
 from routers import graphql as graphql_library
-
+from routers import graphql_v2 as graphql_library_v2
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,3 +52,5 @@ app.include_router(author.router)
 app.include_router(health_check.router)
 
 app.include_router(graphql_library.router)
+app.include_router(graphql_library_v2.router)
+

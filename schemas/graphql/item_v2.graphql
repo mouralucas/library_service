@@ -1,0 +1,17 @@
+
+
+extend type Query {
+    getItemEditions(params: GetItemsImputV2): Int
+}
+
+
+input GetItemsImputV2 {
+    metadataId: String
+    editionId: String
+    mainAuthorId: Int
+    authorsIds: [Int]
+}
+
+type itemV2 {
+    metadataId: String!
+}
