@@ -1,4 +1,4 @@
-import uuid
+from typing import Any
 
 from ariadne import MutationType, QueryType
 from graphql import GraphQLResolveInfo
@@ -11,10 +11,10 @@ from services.item_v2 import ItemServiceV2
 @validate_graphql_input(GetItemsV2Request)
 async def get_iteme_editions_resolver(
     _, info: GraphQLResolveInfo, params: GetItemsV2Request
-):
-    editions = await ItemServiceV2(session=info.context["session"], user=info.context["user"]).get_editions(
-        owner_id=info.context["user"].user_id
-    )
+) -> dict[str, Any]:
+    editions = await ItemServiceV2(
+        session=info.context["session"], user=info.context["user"]
+    ).get_editions(owner_id=info.context["user"].user_id)
 
     return editions
 

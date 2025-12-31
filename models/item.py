@@ -27,7 +27,7 @@ class ItemModel(SQLModel):
     serie_id: Mapped[int] = mapped_column(ForeignKey("serie.id"), nullable=True)
     serie: Mapped["SerieModel"] = relationship(  # noqa: F821
         foreign_keys=[serie_id], lazy="noload"
-    )  # noqa: F821
+    )
     language_id: Mapped[str] = mapped_column(ForeignKey("language.id"), nullable=True)
     language: Mapped["LanguageModel"] = relationship(  # noqa: F821
         foreign_keys=[language_id], lazy="noload"
@@ -128,6 +128,12 @@ class ItemMetadataModel(SQLModel):
     main_author: Mapped["AuthorModel"] = relationship(
         foreign_keys=[main_author_id], lazy="noload"
     )
+    serie_id: Mapped[int] = mapped_column(
+        ForeignKey("serie.id"), nullable=True
+    )  # remove true after migration, default is id "0"
+    serie: Mapped["SerieModel"] = relationship(  # noqa: F821
+        foreign_keys=[serie_id], lazy="noload"
+    )
 
     # Relations
     authors: Mapped[list["AuthorModel"]] = relationship(
@@ -171,10 +177,14 @@ class ItemEditionModel(SQLModel):
     language: Mapped["LanguageModel"] = relationship(  # noqa: F821
         foreign_keys=[language_id], lazy="noload"
     )
+    collection_id: Mapped[int] = mapped_column(
+        ForeignKey("collection.id"), nullable=True
+    )  # remove true after migration, default is id "0"
+    collection: Mapped["CollectionModel"] = relationship(  # noqa: F821
+        foreign_keys=[collection_id], lazy="noload"
+    )
     summary: Mapped[str] = mapped_column("summary", nullable=True)
     cover_price: Mapped[float] = mapped_column("cover_price", default=0)
-
-    # series and collections here?
 
 
 class ItemEditionUserModel(SQLModel):

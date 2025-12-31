@@ -1,15 +1,51 @@
 
 
 extend type Query {
-    getItemEditions(params: GetItemsImputV2): Int
+    getItemEditions(params: GetItemEditionsInput): GetItemEditionsResponse
 }
 
 
-input GetItemsImputV2 {
+input GetItemEditionsInput {
     metadataId: String
     editionId: String
     mainAuthorId: Int
     authorsIds: [Int]
+}
+
+type ItemMetadata {
+    metadataId: String!
+    title: String
+    main_author: String
+    original_language_id: String
+    original_language_name: String
+    item_type_id: String
+    item_type_name: String
+    serie_id: String
+    serie_name: String
+    editions: [ItemEdition]!
+}
+
+type ItemEdition {
+    metadataId: String!
+    title: String!
+    subtitle: String
+    isbn: String
+    pages: Int
+    publishedDate: Date
+    formatId: String
+    formatName: String
+    publisherId: Int
+    publisherName: String
+    languageId: String
+    languageName: String
+    collectionId: Int
+    collectionName: String
+    summary: String
+    coverPrice: Float
+}
+
+type GetItemEditionsResponse {
+    editions: [ItemMetadata]!
 }
 
 type itemV2 {
