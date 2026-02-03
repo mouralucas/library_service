@@ -1,7 +1,8 @@
 import uuid
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import AliasGenerator, BaseModel, ConfigDict, Field, model_validator
+from pydantic.alias_generators import to_camel
 
 from schemas.core import StatusSchema
 from schemas.item import ItemSchema
@@ -36,43 +37,31 @@ class ProgressSchema(BaseModel):
 
 
 class ReadingSchema(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=AliasGenerator(serialization_alias=to_camel),
+    )
 
-    id: uuid.UUID = Field(
-        ..., serialization_alias="readingId", description="The id of the reading"
-    )
+    id: uuid.UUID = Field(..., description="The id of the reading")
     item: ItemSchema = Field(..., description="The item of the reading")
-    item_id: int = Field(
-        ..., serialization_alias="itemId", description="The id of the item"
-    )
-    item_title: str | None = Field(
-        None, serialization_alias="itemTitle", description="The title of the item"
-    )
-    start_date: date = Field(
-        ..., serialization_alias="startDate", description="The date the reading start"
-    )
-    finish_date: date | None = Field(
-        None, serialization_alias="finishDate", description="The date the reading ends"
-    )
+    item_id: int = Field(..., description="The id of the item")
+    item_title: str | None = Field(None, description="The title of the item")
+    start_date: date = Field(..., description="The date the reading start")
+    finish_date: date | None = Field(None, description="The date the reading ends")
     number: int = Field(
         ...,
-        serialization_alias="readingNumber",
         description="The number of the reading, if it is first, second time, etc",
     )
     active: bool = Field(
         ...,
-        serialization_alias="active",
         description="If false reading could be finished or dropped, \
             if true is reading now, check status",
     )
     status: StatusSchema = Field(..., description="The status of the reading")
-    status_id: str = Field(
-        ..., serialization_alias="statusId", description="The id of the status"
-    )
+    status_id: str = Field(..., description="The id of the status")
     status_name: str | None = Field(None, description="The name of the status")
     progress: list[ProgressSchema] | None = Field(
         None,
-        serialization_alias="progress",
         description="The current progress of the reading",
     )
 

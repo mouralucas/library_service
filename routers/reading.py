@@ -47,7 +47,6 @@ async def create_reading(
     "",
     summary="Get readings",
     description="Get all readings for a item",
-    response_model_exclude_none=True,
 )
 async def get_reading(
     params: GetReadingRequest = Depends(),

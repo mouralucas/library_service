@@ -80,7 +80,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_readings(
-        self, params: GetReadingRequest = None
+        self, params: GetReadingRequest | None = None
     ) -> GetReadingResponse:
         # TODO: put stmt logic in manager in existing get_readings
         stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user["user_id"])
@@ -229,7 +229,12 @@ class ReadingService(BaseService):
         ):
             await self.session.refresh(reading)
             await self.reading_manager.update_reading(
-                reading=reading, fields={"active": False, "status_id": "read"}
+                reading=reading,
+                fields={
+                    "active": False,
+                    "status_id": "read",
+                    "finish_date": datetime.today,
+                },
             )
 
         await self.session.refresh(item)
@@ -238,6 +243,9 @@ class ReadingService(BaseService):
         response = CreateProgressResponse(
             item=ItemSchema.model_validate(item),
             progress=ProgressSchema.model_validate(new_entry),
+            # These fields are populated automatically after model validation
+            item_title=None,
+            pages_read=None,
         )
 
         return response
@@ -328,7 +336,12 @@ class ReadingService(BaseService):
         ):
             await self.session.refresh(reading)
             await self.reading_manager.update_reading(
-                reading=reading, fields={"active": False, "status_id": "read"}
+                reading=reading,
+                fields={
+                    "active": False,
+                    "status_id": "read",
+                    "finish_date": datetime.today(),
+                },
             )
 
         await self.session.refresh(item)
@@ -337,6 +350,9 @@ class ReadingService(BaseService):
         response = CreateProgressResponse(
             item=ItemSchema.model_validate(item),
             progress=ProgressSchema.model_validate(new_entry),
+            # These fields are populated automatically after model validation
+            item_title=None,
+            pages_read=None,
         )
 
         return response

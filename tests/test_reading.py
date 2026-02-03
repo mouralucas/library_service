@@ -15,8 +15,8 @@ async def test_create_reading(client, create_item, create_reading_status):
 
     assert "reading" in data
 
-    assert "readingId" in data["reading"]
-    assert data["reading"]["readingId"] is not None
+    assert "id" in data["reading"]
+    assert data["reading"]["id"] is not None
     # assert type(response_json['reading']['readingId']) is uuid.UUID
 
     assert "itemId" in data["reading"]
@@ -30,9 +30,9 @@ async def test_create_reading(client, create_item, create_reading_status):
     assert data["reading"]["startDate"] is not None
     assert data["reading"]["startDate"] == start_date
 
-    assert "readingNumber" in data["reading"]
-    assert data["reading"]["readingNumber"] is not None
-    assert data["reading"]["readingNumber"] == 1
+    assert "number" in data["reading"]
+    assert data["reading"]["number"] is not None
+    assert data["reading"]["number"] == 1
 
     assert "progress" in data["reading"]
     assert not data["reading"]["progress"]
@@ -91,7 +91,7 @@ async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     assert len(data["readings"]) > 0
 
     for reading in data["readings"]:
-        assert "readingId" in reading
+        assert "id" in reading
         assert "itemId" in reading
         assert reading["itemId"] == item_id
 
@@ -131,8 +131,8 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     assert len(data["readings"]) > 0
 
     for reading in data["readings"]:
-        assert "readingId" in reading
-        assert reading["readingId"] == str(reading_id)
+        assert "id" in reading
+        assert reading["id"] == str(reading_id)
 
         assert "itemId" in reading
         assert reading["itemId"] == item_id
@@ -303,6 +303,8 @@ async def test_create_progress_complete_reading_pages(
 
     assert updated_reading["active"] is False
     assert updated_reading["statusId"] == "read"
+    assert updated_reading["statusName"] == "Lido"
+    assert updated_reading["finishDate"] is not None
 
 
 @pytest.mark.asyncio

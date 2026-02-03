@@ -35,13 +35,11 @@ class CreateItemRequest(BaseModel):
         None, description="The original subtitle of the item"
     )
     isbn: str | None = Field(None, description="The ISBN of the item")
-    isbn10: str | None = Field(None, description="The ISBN 10 of the item")
     type: str | None = Field(
         None, alias="itemTypeId", description="The type of the item"
     )
     pages: int | None = Field(0, description="The number of pages of the item")
     volume: int | None = Field(0, description="The volume of the item")
-    edition: int | None = Field(1, description="The edition of the item")
     publication_date: datetime.date | None = Field(
         None, description="The date of the publish"
     )
@@ -57,10 +55,10 @@ class CreateItemRequest(BaseModel):
     language_id: str | None = Field(None, description="The id of the language")
     cover_price: float | None = Field(None, description="The price of the item")
     paid_price: float | None = Field(None, description="The price of the item")
-    dimensions: str | None = Field(None, description="The dimensions of the item")
-    height: int | None = Field(None, description="The height of the item")
-    width: int | None = Field(None, description="The width of the item")
-    thickness: int | None = Field(None, description="The thickness of the item")
+    # dimensions: str | None = Field(None, description="The dimensions of the item")
+    # height: int | None = Field(None, description="The height of the item")
+    # width: int | None = Field(None, description="The width of the item")
+    # thickness: int | None = Field(None, description="The thickness of the item")
     summary: str | None = Field(None, description="The summary of the item")
     observation: str | None = Field(None, description="The observation of the item")
 

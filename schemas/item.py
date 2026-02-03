@@ -36,13 +36,11 @@ class ItemSchema(BaseModel):
         None, description="The original title of the item"
     )
     isbn: str | None = Field(None, description="ISBN number of the item")
-    isbn10: str | None = Field(None, description="ISBN 10 number of the item")
     type: str | None = Field(
         None, serialization_alias="itemTypeId", description="The type of item"
     )
     pages: int | None = Field(None, description="The number of pages of the item")
     volume: int | None = Field(0, description="The volume of the item")
-    edition: int | None = Field(1, description="The edition of the item")
     publication_date: datetime.date | None = Field(
         None, description="The date of publication of the item"
     )
@@ -71,10 +69,10 @@ class ItemSchema(BaseModel):
     )
     cover_price: float | None = Field(None, description="The cover price of the item")
     paid_price: float | None = Field(None, description="The item paid price")
-    dimensions: str | None = Field(None, description="The item dimensions")
-    height: float | None = Field(None, description="The height of the item")
-    width: float | None = Field(None, description="The width of the item")
-    thickness: float | None = Field(None, description="The thickness of the item")
+    # dimensions: str | None = Field(None, description="The item dimensions")
+    # height: float | None = Field(None, description="The height of the item")
+    # width: float | None = Field(None, description="The width of the item")
+    # thickness: float | None = Field(None, description="The thickness of the item")
     observation: str | None = Field(None, description="The observation of the item")
     last_status_id: str = Field(
         ..., description="The id of the last status of the item"

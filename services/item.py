@@ -65,7 +65,7 @@ class ItemService(BaseService):
 
         return response
 
-    async def get_items(self, params: GetItemRequest = None) -> GetItemResponse:
+    async def get_items(self, params: GetItemRequest) -> GetItemResponse:
         items: list[dict[Any, Any]] | None = await ItemManager(self.session).get_items(
             item_id=params.id,
             title=params.title,
