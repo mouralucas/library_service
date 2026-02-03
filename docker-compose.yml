@@ -1,6 +1,7 @@
 services:
   backend-library-service:
     image: 'mouralucas/rolf-services:library'
+    platform: linux/amd64
     build: .
     environment:
       - library_database_url=$library_database_url
