@@ -171,11 +171,33 @@ async def test_create_progress_with_page(client, create_active_active_readings):
         "progressType": progress_type,
         "value": current_page,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    assert "data" in data
+    assert "createReadingProgress" in data["data"]
 
+    data = data["data"]["createReadingProgress"]
     assert "readingProgress" in data
     assert "page" in data["readingProgress"]
     assert "percentage" in data["readingProgress"]
@@ -200,11 +222,33 @@ async def test_create_progress_with_percentage(client, create_active_active_read
         "progressType": progress_type,
         "value": current_percentage,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    assert "data" in data
+    assert "createReadingProgress" in data["data"]
 
+    data = data["data"]["createReadingProgress"]
     assert "readingProgress" in data
     assert "page" in data["readingProgress"]
     assert "percentage" in data["readingProgress"]
@@ -228,9 +272,31 @@ async def test_create_progress_lt_last_progress(client, create_progress):
         "progressType": "page",
         "value": current_progress_page,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+    # TODO: graphql returns 200 even when an error is thrown
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "errors" in data
 
     # test with percentage
     payload = {
@@ -238,9 +304,31 @@ async def test_create_progress_lt_last_progress(client, create_progress):
         "progressType": "percentage",
         "value": current_progress_percentage,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+    # TODO: graphql returns 200 even when an error is thrown
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "errors" in data
 
 
 @pytest.mark.asyncio
@@ -257,17 +345,59 @@ async def test_create_progress_percentage_gt_100(client, create_active_active_re
         "progressType": "page",
         "value": current_page,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_428_PRECONDITION_REQUIRED
+    # TODO: graphql returns 200 even when an error is thrown
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "errors" in data
 
     # Test with more than 100%
     payload = {"readingId": str(reading_id), "progressType": "percentage", "value": 105}
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    # In this case is 422 because the validation is made
-    #   directly in the pydantic model, not in service
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    # TODO: graphql returns 200 even when an error is thrown
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "errors" in data
 
 
 @pytest.mark.asyncio
@@ -287,9 +417,33 @@ async def test_create_progress_complete_reading_pages(
         "progressType": "page",
         "value": current_page,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "data" in data
+    assert "createReadingProgress" in data["data"]
+
+    data = data["data"]["createReadingProgress"]
 
     payload = {
         "readingId": str(reading_id),
@@ -322,9 +476,31 @@ async def test_create_progress_complete_reading_percentage(
         "progressType": "percentage",
         "value": current_percentage,
     }
-    response = await client.post("/reading/progress", json=payload)
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                pagesRead
+                readingProgress {
+                    readingProgressId
+                    date
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "data" in data
+    assert "createReadingProgress" in data["data"]
 
     payload = {
         "readingId": str(reading_id),
@@ -338,6 +514,8 @@ async def test_create_progress_complete_reading_percentage(
 
     assert updated_reading["active"] is False
     assert updated_reading["statusId"] == "read"
+    assert updated_reading["statusName"] == "Lido"
+    assert updated_reading["finishDate"] is not None
 
 
 @pytest.mark.asyncio

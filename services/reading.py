@@ -14,7 +14,6 @@ from models.reading import ReadingModel, ReadingProgressModel
 from schemas.item import ItemSchema
 from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
 from schemas.request.reading import (
-    CreateProgressRequest,
     CreateProgressRequestV2,
     CreateReadingRequest,
     GetProgressRequest,
@@ -149,103 +148,6 @@ class ReadingService(BaseService):
                 if readings
                 else []
             ),
-        )
-
-        return response
-
-    async def create_progress(
-        self, progress: CreateProgressRequest
-    ) -> CreateProgressResponse:
-
-        reading = await self.reading_manager.get_reading_by_id(
-            progress.reading_id, get_item=True
-        )
-        if not reading:
-            raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Reading not found")
-
-        last_progress = await self.reading_manager.get_latest_progress(
-            progress.reading_id
-        )
-
-        item = reading.item
-        item_pages = item.pages
-
-        # Current page/percentage can not be greater than last progress entry
-        if (
-            last_progress
-            and last_progress.page
-            and progress.page
-            and progress.page <= last_progress.page
-        ) or (
-            last_progress
-            and last_progress.percentage
-            and progress.percentage
-            and progress.percentage <= last_progress.percentage
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_428_PRECONDITION_REQUIRED,
-                detail="The current page/percentage \
-                    could not be less than the last registered page",
-            )
-
-        # The Current page should not be greater than item pages
-        if (item_pages and progress.page) and (progress.page > item_pages):
-            error_txt = f"Current page ({progress.page}) cannot be greater \
-                than the total pages of the item ({item.pages})"
-            get_logger().error(error_txt)
-            raise HTTPException(
-                status_code=status.HTTP_428_PRECONDITION_REQUIRED, detail=error_txt
-            )
-
-        # Only one entry per day is allowed
-        if last_progress and last_progress.date == datetime.now().date():
-            seted_progress = self.__set_values(
-                progress_entry=last_progress,
-                item_pages=item_pages,
-                current_page=progress.page,
-                percentage=progress.percentage,
-            )
-            progress_updated = await self.reading_manager.update_progress(
-                seted_progress, {"page": seted_progress.page}
-            )
-            new_entry = progress_updated
-        else:
-            new_progress_entry = ReadingProgressModel(**progress.model_dump())
-            new_progress_entry.item_id = reading.item_id
-            new_entry = await self.reading_manager.create_progress(
-                progress=self.__set_values(
-                    progress_entry=new_progress_entry,
-                    item_pages=item_pages,
-                    current_page=progress.page,
-                    percentage=progress.percentage,
-                )
-            )
-
-        # Update reading as read if pages == item.pages or percentage is 100%
-        if (
-            (item_pages and progress.page and item_pages == progress.page)
-            or (progress.percentage and progress.percentage == 100)
-            or (new_entry.percentage == 100)
-        ):
-            await self.session.refresh(reading)
-            await self.reading_manager.update_reading(
-                reading=reading,
-                fields={
-                    "active": False,
-                    "status_id": "read",
-                    "finish_date": datetime.today,
-                },
-            )
-
-        await self.session.refresh(item)
-        await self.session.refresh(new_entry)
-
-        response = CreateProgressResponse(
-            item=ItemSchema.model_validate(item),
-            progress=ProgressSchema.model_validate(new_entry),
-            # These fields are populated automatically after model validation
-            item_title=None,
-            pages_read=None,
         )
 
         return response

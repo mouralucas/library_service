@@ -6,14 +6,12 @@ from starlette import status
 
 from backend.database import get_session
 from schemas.request.reading import (
-    CreateProgressRequestV2,
     CreateReadingRequest,
     GetProgressRequest,
     GetReadingRequest,
     GetReadingStatsRequest,
 )
 from schemas.response.reading import (
-    CreateProgressResponse,
     CreateReadingResponse,
     GetActiveReadingsResponse,
     GetProgressResponse,
@@ -86,26 +84,6 @@ async def get_reading_stats(
     return await ReadingService(session=session, user=user).get_reading_stats(
         params=params
     )
-
-
-@router.post(
-    "/progress",
-    summary="Add progress",
-    description="Add a new progress for a reading",
-    status_code=status.HTTP_201_CREATED,
-)
-async def create_reading_progress(
-    progress: CreateProgressRequestV2,
-    session: AsyncSession = Depends(get_session),
-    user: RequiredUser = Security(get_user),
-) -> CreateProgressResponse:
-    # TODO: Bring more information about the item, maybe the title,
-    #   pages and/or, add the pages read/total pages in progress schema
-    response = await ReadingService(session=session, user=user).create_progress_v2(
-        progress=progress
-    )
-
-    return response
 
 
 @router.get(

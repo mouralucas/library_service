@@ -37,7 +37,7 @@ type CreateReadingOutput {
 
 
 type Reading {
-    readingId: String!
+    id: String!
     itemId: Int!
     itemTitle: String
     item: Item!
