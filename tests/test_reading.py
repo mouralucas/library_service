@@ -13,30 +13,9 @@ async def test_create_reading(client, create_item, create_reading_status):
 
     data = response.json()
 
-    assert "reading" in data
-
-    assert "id" in data["reading"]
-    assert data["reading"]["id"] is not None
-    # assert type(response_json['reading']['readingId']) is uuid.UUID
-
-    assert "itemId" in data["reading"]
-    assert data["reading"]["itemId"] is not None
-    assert data["reading"]["itemId"] == items[0].id
-
-    assert "itemTitle" in data["reading"]
-    assert data["reading"]["itemTitle"] is not None
-
-    assert "startDate" in data["reading"]
-    assert data["reading"]["startDate"] is not None
-    assert data["reading"]["startDate"] == start_date
-
-    assert "number" in data["reading"]
-    assert data["reading"]["number"] is not None
-    assert data["reading"]["number"] == 1
-
-    assert "progress" in data["reading"]
-    assert not data["reading"]["progress"]
-    assert type(data["reading"]["progress"]) is list
+    assert "created" in data
+    assert data["created"] is True
+    assert "readingId" in data
 
 
 @pytest.mark.asyncio
@@ -62,7 +41,9 @@ async def test_create_reading_without_start_date(
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
 
-    assert "reading" in data
+    assert "created" in data
+    assert data["created"] is True
+    assert "readingId" in data
 
 
 @pytest.mark.asyncio

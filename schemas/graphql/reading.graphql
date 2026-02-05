@@ -2,7 +2,7 @@
 extend type Query {
     # Reading queries
     getReading(reading_id: String!): GetReadingsResponse!
-    getReadings: GetReadingsResponse!
+    getReadings(params: GetReadingsInput): GetReadingsResponse!
     getActiveReadings: GetActiveReadingsOutput!
     getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
     getReadingStats(params: GetReadingStatsInput): GetReadingStatsResponse!
@@ -16,8 +16,13 @@ extend type Mutation {
 
 
 # Reading schemas
+input GetReadingsInput {
+    itemId: String
+    readingId: String
+    getProgress: Boolean
+}
+
 type GetReadingsResponse {
-    itemTitle: String!
     quantity: Int!
     readings: [Reading!]
 }
@@ -43,7 +48,7 @@ type Reading {
     item: Item!
     startDate: String!
     finishDate: String
-    readingNumber: Int!
+    number: Int!
     active: Boolean
     statusId: String
     statusName: String

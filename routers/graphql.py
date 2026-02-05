@@ -4,6 +4,7 @@ from ariadne import (
     graphql,
     load_schema_from_path,
     make_executable_schema,
+    snake_case_fallback_resolvers,
 )
 from ariadne.explorer import ExplorerGraphiQL
 from fastapi import APIRouter, Depends, Request, Security
@@ -30,7 +31,7 @@ bind_item_resolvers(query, mutation)
 bind_reading_resolvers(query, mutation)
 
 
-schema = make_executable_schema(type_defs, query, mutation)
+schema = make_executable_schema(type_defs, query, mutation, snake_case_fallback_resolvers)
 
 
 @router.post("", description="The V2 maps all GraphQL endpoint")

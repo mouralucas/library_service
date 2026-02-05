@@ -1,4 +1,5 @@
 from typing import Any, cast
+import uuid
 
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
@@ -6,7 +7,10 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
+from models.core import StatusModel
+from models.item import ItemModel
 from models.reading import ReadingModel, ReadingProgressModel
+from sqlalchemy.orm import aliased, joinedload
 
 
 class ReadingManager(BaseDataManager):
@@ -46,19 +50,59 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingModel, reading)
 
-    async def get_readings(self, item_id) -> list[ReadingModel] | None:
+    async def get_readings(
+        self,
+        item_id: int | None,
+        reading_id: uuid.UUID | None = None,
+        get_progress: bool = False,
+    ) -> list[ReadingModel] | None:
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
         query = select(ReadingModel).where(
             ReadingModel.owner_id == self.user["user_id"],
-            ReadingModel.item_id == item_id,
         )
+
+        if item_id:
+            query = query.where(ReadingModel.item_id == item_id)
+
+        if reading_id:
+            query = query.where(ReadingModel.id == reading_id)
+
+        if get_progress:
+            progress_alias = aliased(ReadingProgressModel)
+            query = query.options(
+                joinedload(ReadingModel.progress.of_type(progress_alias))
+            ).order_by(progress_alias.progress_date.desc())
 
         query = query.order_by(ReadingModel.start_date.desc())
 
         readings = await self.get_all(query)
 
         return [reading["ReadingModel"] for reading in readings] if readings else None
+
+    async def get_active_readings(self) -> list[dict[Any, Any]] | None:
+        query = (
+            select(
+                ReadingModel.id,
+                ReadingModel.owner_id,
+                ReadingModel.active,
+                ReadingModel.item_id,
+                ItemModel.title.label("item_title"),
+                ReadingModel.start_date,
+                ReadingModel.finish_date,
+                ReadingModel.number,
+                ReadingModel.status_id,
+                StatusModel.name.label("status_name"),
+                ReadingModel.created_at,
+                ReadingModel.edited_at,
+            )
+            .join(ItemModel, ReadingModel.item_id == ItemModel.id)
+            .join(StatusModel, ReadingModel.status_id == StatusModel.id)
+            .where(ReadingModel.active, ReadingModel.owner_id == self.user["user_id"])
+        )
+        readings = await self.get_all(select_statement=query)
+
+        return [dict(reading.items()) for reading in readings] if readings else None
 
     async def get_item_active_reading(self, item_id: int) -> ReadingModel | None:
         query = select(ReadingModel).where(

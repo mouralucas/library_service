@@ -19,7 +19,7 @@ class ItemSchema(BaseModel):
         alias_generator=AliasGenerator(serialization_alias=to_camel),
     )
 
-    id: int = Field(..., serialization_alias="itemId", description="The id of the item")
+    id: int = Field(..., description="The id of the item")
     main_author_id: int = Field(..., description="The id of the main author")
     main_author_name: str | None = Field(
         None, description="The name of the main author"

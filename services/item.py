@@ -27,7 +27,7 @@ class ItemService(BaseService):
         await self.__update_status(new_item)
         await self.__add_author(
             item_id=new_item.id,
-            main_author_id=item.main_author_id,
+            main_author_id=new_item.main_author_id,
             other_authors_id=item.other_authors_id,
         )
 

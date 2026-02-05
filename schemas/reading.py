@@ -43,7 +43,6 @@ class ReadingSchema(BaseModel):
     )
 
     id: uuid.UUID = Field(..., description="The id of the reading")
-    item: ItemSchema = Field(..., description="The item of the reading")
     item_id: int = Field(..., description="The id of the item")
     item_title: str | None = Field(None, description="The title of the item")
     start_date: date = Field(..., description="The date the reading start")
@@ -57,21 +56,12 @@ class ReadingSchema(BaseModel):
         description="If false reading could be finished or dropped, \
             if true is reading now, check status",
     )
-    status: StatusSchema = Field(..., description="The status of the reading")
     status_id: str = Field(..., description="The id of the status")
     status_name: str | None = Field(None, description="The name of the status")
     progress: list[ProgressSchema] | None = Field(
         None,
         description="The current progress of the reading",
     )
-
-    @model_validator(mode="after")
-    def transform(self):
-        self.item_title = self.item.title
-        self.status_name = self.status.name
-
-        return self
-
 
 class ReadingStats(BaseModel):
     model_config = ConfigDict(from_attributes=True)

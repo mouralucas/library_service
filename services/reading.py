@@ -1,3 +1,4 @@
+from typing import Any
 import uuid
 from datetime import datetime
 
@@ -23,9 +24,10 @@ from schemas.request.reading import (
 from schemas.response.reading import (
     CreateProgressResponse,
     CreateReadingResponse,
+    CreateReadingResponseV2,
     GetActiveReadingsResponse,
     GetProgressResponse,
-    GetReadingResponse,
+    GetReadingsResponse,
     GetReadingStatsResponse,
 )
 from services.base import BaseService
@@ -40,7 +42,7 @@ class ReadingService(BaseService):
 
     async def create_reading(
         self, reading: CreateReadingRequest
-    ) -> CreateReadingResponse:
+    ) -> CreateReadingResponseV2:
         previous_readings = await self.reading_manager.get_readings(
             item_id=reading.item_id
         )
@@ -73,56 +75,41 @@ class ReadingService(BaseService):
         new_reading.active = False if reading.finish_date else True
 
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
-        response = CreateReadingResponse(
-            reading=ReadingSchema.model_validate(new_reading)
+        
+        response = CreateReadingResponseV2(
+            created=True,
+            reading_id=new_reading.id
         )
         return response
 
     async def get_readings(
-        self, params: GetReadingRequest | None = None
-    ) -> GetReadingResponse:
-        # TODO: put stmt logic in manager in existing get_readings
-        stmt = select(ReadingModel).where(ReadingModel.owner_id == self.user["user_id"])
-
-        if params and params.reading_id:
-            stmt = stmt.where(ReadingModel.id == params.reading_id)
-
-        if params and params.item_id:
-            stmt = stmt.where(ReadingModel.item_id == params.item_id)
-
-        if params and params.get_progress:
-            progress_alias = aliased(ReadingProgressModel)
-            stmt = stmt.options(
-                joinedload(ReadingModel.progress.of_type(progress_alias))
-            ).order_by(progress_alias.date.desc())
-
-        stmt = stmt.order_by(ReadingModel.start_date)
-
-        readings = await self.reading_manager.get_all(
-            stmt, unique_result=True, raise_exception=True
+        self,
+        item_id: int | None = None,
+        reading_id: uuid.UUID | None = None,
+        get_progress: bool = False,
+    ) -> dict[str, Any]:
+        readings = await self.reading_manager.get_readings(
+            item_id=item_id, reading_id=reading_id, get_progress=get_progress
         )
-
-        item = readings[0]["ReadingModel"].item if readings else None
-
-        response = GetReadingResponse(
-            item_title=item.title,
-            quantity=len(readings) if readings else 0,
-            readings=(
-                [
-                    ReadingSchema.model_validate(reading["ReadingModel"])
-                    for reading in readings
-                ]
-                if readings
-                else []
-            ),
-        )
+        
+        response = {
+            "quantity": len(readings) if readings else 0,
+            "readings": readings,
+        }
 
         return response
+    
+    async def get_readings_v2(self, params: GetReadingRequest | None = None):
+        pass
 
-    async def get_reading_by_id(self, reading_id: uuid.UUID) -> GetReadingResponse:
+    async def get_reading_by_id(self, reading_id: uuid.UUID) -> GetReadingsResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=reading_id)
+        if not reading:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Reading not found"
+            )
 
-        response = GetReadingResponse(
+        response = GetReadingsResponse(
             item_title=reading.item.title,
             quantity=1 if reading else 0,
             readings=[ReadingSchema.model_validate(reading)],
@@ -131,21 +118,16 @@ class ReadingService(BaseService):
         return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
-        # TODO: stmt should be in manager
-        stmt = select(ReadingModel).where(
-            ReadingModel.active, ReadingModel.owner_id == self.user["user_id"]
-        )
-
-        readings = await self.reading_manager.get_all(stmt)
-
+        active_readings = await self.reading_manager.get_active_readings()
+        
         response = GetActiveReadingsResponse(
-            quantity=len(readings) if readings else 0,
+            quantity=len(active_readings) if active_readings else 0,
             readings=(
                 [
-                    ReadingSchema.model_validate(reading["ReadingModel"])
-                    for reading in readings
+                    ReadingSchema.model_validate(reading)
+                    for reading in active_readings
                 ]
-                if readings
+                if active_readings
                 else []
             ),
         )

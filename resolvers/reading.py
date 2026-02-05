@@ -2,8 +2,10 @@ from schemas.request.reading import (
     CreateProgressRequestV2,
     CreateReadingRequest,
     GetProgressRequest,
+    GetReadingRequest,
     GetReadingStatsRequest,
 )
+from rolf_common.util.graphql_input_validation import validate_graphql_input
 from services.reading import ReadingService
 
 
@@ -15,12 +17,17 @@ async def resolve_get_reading(_, info, reading_id):
     return reading.model_dump(by_alias=True)
 
 
-async def resolve_get_readings(_, info):
+@validate_graphql_input(GetReadingRequest)
+async def resolve_get_readings(_, info, params: GetReadingRequest):
     readings = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).get_readings()
+    ).get_readings(
+        item_id=params.item_id,
+        reading_id=params.reading_id,
+        get_progress=params.get_progress
+    )
 
-    return readings.model_dump(by_alias=True)
+    return readings
 
 
 async def create_reading_resolver(_, info, reading):

@@ -34,7 +34,7 @@ async def test_mutation_new_item_success(
         mutation CreateItem($input: CreateItemInput!) {
             createItem(item: $input) {
                 item {
-                    itemId
+                    id
                     title
                     itemTypeId
                     formatId

@@ -101,7 +101,7 @@ type CreateItemResponse {
 }
 
 type Item {
-  itemId: Int!
+  id: Int!
   mainAuthorId: Int!
   mainAuthorName: String
   title: String!

@@ -13,9 +13,10 @@ from schemas.request.reading import (
 )
 from schemas.response.reading import (
     CreateReadingResponse,
+    CreateReadingResponseV2,
     GetActiveReadingsResponse,
     GetProgressResponse,
-    GetReadingResponse,
+    GetReadingsResponse,
     GetReadingStatsResponse,
 )
 from services.reading import ReadingService
@@ -33,29 +34,27 @@ async def create_reading(
     reading: CreateReadingRequest,
     session: AsyncSession = Depends(get_session),
     user: RequiredUser = Security(get_user),
-) -> CreateReadingResponse:
-    response = await ReadingService(session=session, user=user).create_reading(
+) -> CreateReadingResponseV2:
+    return await ReadingService(session=session, user=user).create_reading(
         reading=reading
     )
 
-    return response
 
+# @router.get(
+#     "",
+#     summary="Get readings",
+#     description="Get all readings for a item",
+# )
+# async def get_reading(
+#     params: GetReadingRequest = Depends(),
+#     session: AsyncSession = Depends(get_session),
+#     user: RequiredUser = Security(get_user),
+# ) -> GetReadingResponse:
+#     response = await ReadingService(session=session, user=user).get_readings(
+#         params=params
+#     )
 
-@router.get(
-    "",
-    summary="Get readings",
-    description="Get all readings for a item",
-)
-async def get_reading(
-    params: GetReadingRequest = Depends(),
-    session: AsyncSession = Depends(get_session),
-    user: RequiredUser = Security(get_user),
-) -> GetReadingResponse:
-    response = await ReadingService(session=session, user=user).get_readings(
-        params=params
-    )
-
-    return response
+#     return response
 
 
 @router.get(
