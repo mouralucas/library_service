@@ -97,7 +97,8 @@ input UpdateItemInput {
 }
 
 type CreateItemResponse {
-  item: Item
+  created: Boolean
+  itemId: Int
 }
 
 type Item {

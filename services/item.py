@@ -16,7 +16,7 @@ class ItemService(BaseService):
         super().__init__(session)
         self.user = user.model_dump()
 
-    async def create_item(self, item: CreateItemRequest) -> CreateItemResponse:
+    async def create_item(self, item: CreateItemRequest) -> dict[str, Any]:
         # TODO: I did not like this, improve
         item.owner_id = self.user["user_id"]
 
@@ -33,7 +33,10 @@ class ItemService(BaseService):
 
         await self.session.refresh(new_item)
 
-        response = CreateItemResponse(item=ItemSchema.model_validate(new_item))
+        response = {
+            "created": True,
+            "item_id": new_item.id,
+        }
 
         return response
 

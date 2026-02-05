@@ -19,7 +19,7 @@ async def create_item_resolver(_, info, item):
         session=info.context["session"], user=info.context["user"]
     ).create_item(item=item_)
 
-    return new_item.model_dump(by_alias=True)
+    return new_item
 
 
 async def update_item_resolver(_, info, item):
