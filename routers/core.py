@@ -124,12 +124,3 @@ async def get_publisher(
     response = await PublisherService(session).get_publishers()
 
     return response
-
-
-@router.get("/status", summary="Get available statuses")
-async def get_status(
-    params: GetStatusRequest = Depends(),
-    session: AsyncSession = Depends(get_session),
-    user: RequiredUser = Security(get_user),
-) -> GetStatusResponse:
-    return await StatusService(session=session, user=user).get_status(params=params)

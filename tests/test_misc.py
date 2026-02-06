@@ -179,10 +179,32 @@ async def test_get_item_status(client, create_item_status, create_reading_status
     params = {
         "statusType": item_status[0].type,
     }
-    response = await client.get("/status", params=params)
+    query = """
+        query GetStatus($params: GetStatusInput) {
+            getStatus(params: $params) {
+                quantity
+                statuses {
+                    id
+                    name
+                    description
+                    order
+                    statusType
+                }
+            }
+        }
+    """
+    variables = {"params": params}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    
+    assert "data" in data
+    assert "getStatus" in data["data"]
+    
+    data = data["data"]["getStatus"]
 
     assert "statuses" in data
     assert type(data["statuses"]) is list

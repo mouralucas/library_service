@@ -188,7 +188,7 @@ type GetStatusResponse {
 }
 
 type Status {
-    statusId: String!
+    id: String!
     name: String!
     description: String
     order: Int

@@ -122,14 +122,13 @@ async def create_country_resolver(_, info, country):
     return new_country.model_dump(by_alias=True)
 
 
-async def get_status_resolver(_, info, params):
-    params_ = GetStatusRequest.model_validate(params)
-
+@validate_graphql_input(GetStatusRequest)
+async def get_status_resolver(_, info, params: GetStatusRequest):
     statusses = await StatusService(
         session=info.context["session"], user=info.context["user"]
-    ).get_status(params=params_)
+    ).get_status(params=params)
 
-    return statusses.model_dump(by_alias=True)
+    return statusses
 
 
 def bind_core_resolvers(query: QueryType, mutation: MutationType):

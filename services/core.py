@@ -2,6 +2,7 @@ from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import BaseService
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Any
 
 from managers.core import (
     CollectionManager,
@@ -228,16 +229,14 @@ class StatusService(BaseService):
         super().__init__(session)
         self.user = user.model_dump()
 
-    async def get_status(self, params: GetStatusRequest) -> GetStatusResponse:
+    async def get_status(self, params: GetStatusRequest) -> dict[str, Any]:
         statuses = await StatusManager(session=self.session).get_statuses(
             status_type=params.status_type
         )
-
-        response = GetStatusResponse(
-            quantity=len(statuses) if statuses else 0,
-            statuses=(
-                [StatusSchema.model_validate(s) for s in statuses] if statuses else []
-            ),
-        )
+        
+        response = {
+            "quantity": len(statuses) if statuses else 0,
+            "statuses": statuses            
+        }
 
         return response

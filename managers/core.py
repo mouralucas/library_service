@@ -1,5 +1,5 @@
 from typing import cast
-
+from typing import Any
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import RowMapping, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -134,8 +134,14 @@ class StatusManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def get_statuses(self, status_type: str | None = None) -> list[SQLModel]:
-        query = select(StatusModel)
+    async def get_statuses(self, status_type: str | None = None) -> list[dict[Any, Any]]:
+        query = select(
+            StatusModel.id,
+            StatusModel.name,
+            StatusModel.description,
+            StatusModel.order,
+            StatusModel.type.label("status_type")
+        )
 
         if status_type:
             query = query.where(StatusModel.type == status_type)
@@ -144,4 +150,4 @@ class StatusManager(BaseDataManager):
             select_statement=query, unique_result=True
         )
 
-        return [status["StatusModel"] for status in statuses] if statuses else []
+        return [dict(status) for status in statuses] if statuses else []
