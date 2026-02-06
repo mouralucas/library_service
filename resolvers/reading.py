@@ -55,7 +55,7 @@ async def create_reading_progress_resolver(_, info, progress):
         session=info.context["session"], user=info.context["user"]
     ).create_progress_v2(progress=new_progress_)
 
-    return new_progress.model_dump(by_alias=True)
+    return new_progress
 
 
 async def resolve_get_active_readings(_, info):

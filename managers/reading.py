@@ -55,11 +55,27 @@ class ReadingManager(BaseDataManager):
         item_id: int | None,
         reading_id: uuid.UUID | None = None,
         get_progress: bool = False,
-    ) -> list[ReadingModel] | None:
+    ) -> list[dict] | None:
         # Only the owner can get the readings
         # Maybe in future this can be a param, to get reading for someone the user want
-        query = select(ReadingModel).where(
-            ReadingModel.owner_id == self.user["user_id"],
+        query = (
+            select(
+                ReadingModel.id,
+                ReadingModel.owner_id,
+                ReadingModel.active,
+                ReadingModel.item_id,
+                ItemModel.title.label("item_title"),
+                ReadingModel.start_date,
+                ReadingModel.finish_date,
+                ReadingModel.number,
+                ReadingModel.status_id,
+                StatusModel.name.label("status_name"),
+            )
+            .join(StatusModel, ReadingModel.status_id == StatusModel.id)
+            .join(ItemModel, ReadingModel.item_id == ItemModel.id)
+            .where(
+                ReadingModel.owner_id == self.user["user_id"],
+            )
         )
 
         if item_id:
@@ -78,7 +94,7 @@ class ReadingManager(BaseDataManager):
 
         readings = await self.get_all(query)
 
-        return [reading["ReadingModel"] for reading in readings] if readings else None
+        return [dict(reading) for reading in readings] if readings else None
 
     async def get_active_readings(self) -> list[dict[Any, Any]] | None:
         query = (

@@ -44,6 +44,7 @@ class ReadingSchema(BaseModel):
 
     id: uuid.UUID = Field(..., description="The id of the reading")
     item_id: int = Field(..., description="The id of the item")
+    item: ItemSchema | None = Field(None)
     item_title: str | None = Field(None, description="The title of the item")
     start_date: date = Field(..., description="The date the reading start")
     finish_date: date | None = Field(None, description="The date the reading ends")
@@ -57,6 +58,7 @@ class ReadingSchema(BaseModel):
             if true is reading now, check status",
     )
     status_id: str = Field(..., description="The id of the status")
+    status: StatusSchema | None = Field(None)
     status_name: str | None = Field(None, description="The name of the status")
     progress: list[ProgressSchema] | None = Field(
         None,

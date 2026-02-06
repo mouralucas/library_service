@@ -55,12 +55,37 @@ async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     param = {
         "itemId": item_id,
     }
-    response = await client.get("/reading", params=param)
+    query = """
+        query GetReadings($params: GetReadingsInput) {
+            getReadings(params: $params) {
+                quantity
+                readings {
+                    id
+                    itemId
+                    itemTitle
+                    startDate
+                    finishDate
+                    number
+                    active
+                    statusId
+                    statusName
+                }
+            }
+        }
+    """
+    variables = {"params": param}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-
-    assert "itemTitle" in data
+    assert "data" in data
+    assert "getReadings" in data["data"]
+    assert "quantity"in data["data"]["getReadings"]
+    assert "readings"in data["data"]["getReadings"]
+    
+    data = data["data"]["getReadings"]
     assert "quantity" in data
     assert "readings" in data
 
@@ -93,14 +118,39 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     item_id = readings[0].item_id
 
     param = {
-        "readingId": reading_id,
+        "readingId": str(reading_id),
     }
-    response = await client.get("/reading", params=param)
+    query = """
+        query GetReadings($params: GetReadingsInput) {
+            getReadings(params: $params) {
+                quantity
+                readings {
+                    id
+                    itemId
+                    itemTitle
+                    startDate
+                    finishDate
+                    number
+                    active
+                    statusId
+                    statusName
+                }
+            }
+        }
+    """
+    variables = {"params": param}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    assert "data" in data
+    assert "getReadings" in data["data"]
+    assert "quantity"in data["data"]["getReadings"]
+    assert "readings"in data["data"]["getReadings"]
 
-    assert "itemTitle" in data
+    data = data["data"]["getReadings"]
     assert "quantity" in data
     assert "readings" in data
 
@@ -108,10 +158,14 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     assert type(data["quantity"]) is int
     assert type(data["readings"]) is list
 
+    # When filter by reading Id only one have to be returned
     assert data["quantity"] == 1
-    assert len(data["readings"]) > 0
+    assert len(data["readings"]) == 1
 
     for reading in data["readings"]:
+        assert "id" in reading
+        assert "itemId" in reading
+        assert reading["itemId"] == item_id
         assert "id" in reading
         assert reading["id"] == str(reading_id)
 
@@ -144,6 +198,7 @@ async def test_create_progress_with_page(client, create_active_active_readings):
 
     item = reading.item
     total_pages = item.pages
+    item_title = item.title
     percentage = float(current_page / total_pages * 100)
     progress_type = "page"
 
@@ -156,15 +211,8 @@ async def test_create_progress_with_page(client, create_active_active_readings):
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -179,11 +227,12 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     assert "createReadingProgress" in data["data"]
 
     data = data["data"]["createReadingProgress"]
-    assert "readingProgress" in data
-    assert "page" in data["readingProgress"]
-    assert "percentage" in data["readingProgress"]
-    assert data["readingProgress"]["page"] == current_page
-    assert data["readingProgress"]["percentage"] == percentage
+    assert "created" in data
+    assert data["created"] is True
+    
+    assert "readingProgressId" in data
+    assert "itemTitle" in data
+    assert data["itemTitle"] == item_title
 
 
 @pytest.mark.asyncio
@@ -195,6 +244,7 @@ async def test_create_progress_with_percentage(client, create_active_active_read
 
     item = reading.item
     total_pages = item.pages
+    item_title = item.title
     page = int(current_percentage / 100 * total_pages)
     progress_type = "percentage"
 
@@ -207,15 +257,8 @@ async def test_create_progress_with_percentage(client, create_active_active_read
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -230,11 +273,12 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     assert "createReadingProgress" in data["data"]
 
     data = data["data"]["createReadingProgress"]
-    assert "readingProgress" in data
-    assert "page" in data["readingProgress"]
-    assert "percentage" in data["readingProgress"]
-    assert data["readingProgress"]["page"] == page
-    assert data["readingProgress"]["percentage"] == current_percentage
+    assert "created" in data
+    assert data["created"] is True
+    
+    assert "readingProgressId" in data
+    assert "itemTitle" in data
+    assert data["itemTitle"] == item_title
 
 
 @pytest.mark.asyncio
@@ -257,15 +301,8 @@ async def test_create_progress_lt_last_progress(client, create_progress):
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -289,15 +326,8 @@ async def test_create_progress_lt_last_progress(client, create_progress):
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -330,15 +360,8 @@ async def test_create_progress_percentage_gt_100(client, create_active_active_re
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -358,15 +381,8 @@ async def test_create_progress_percentage_gt_100(client, create_active_active_re
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -402,15 +418,8 @@ async def test_create_progress_complete_reading_pages(
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                created
+                readingProgressId
             }
         }
     """
@@ -429,10 +438,38 @@ async def test_create_progress_complete_reading_pages(
     payload = {
         "readingId": str(reading_id),
     }
-    response = await client.get("/reading", params=payload)
+    query = """
+        query GetReadings($params: GetReadingsInput) {
+            getReadings(params: $params) {
+                quantity
+                readings {
+                    id
+                    itemId
+                    itemTitle
+                    startDate
+                    finishDate
+                    number
+                    active
+                    statusId
+                    statusName
+                }
+            }
+        }
+    """
+    variables = {"params": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    data = response.json()
+    assert "data" in data
+    assert "getReadings" in data["data"]
+    assert "quantity"in data["data"]["getReadings"]
+    assert "readings"in data["data"]["getReadings"]
+
+    data = data["data"]["getReadings"]
 
     updated_reading = data["readings"][0]
 
@@ -461,15 +498,8 @@ async def test_create_progress_complete_reading_percentage(
         mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
             createReadingProgress(progress: $progress) {
                 itemTitle
-                pagesRead
-                readingProgress {
-                    readingProgressId
-                    date
-                    page
-                    percentage
-                    rate
-                    comment
-                }
+                itemTitle
+                created
             }
         }
     """
@@ -486,10 +516,38 @@ async def test_create_progress_complete_reading_percentage(
     payload = {
         "readingId": str(reading_id),
     }
-    response = await client.get("/reading", params=payload)
+    query = """
+        query GetReadings($params: GetReadingsInput) {
+            getReadings(params: $params) {
+                quantity
+                readings {
+                    id
+                    itemId
+                    itemTitle
+                    startDate
+                    finishDate
+                    number
+                    active
+                    statusId
+                    statusName
+                }
+            }
+        }
+    """
+    variables = {"params": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    data = response.json()
+    assert "data" in data
+    assert "getReadings" in data["data"]
+    assert "quantity"in data["data"]["getReadings"]
+    assert "readings"in data["data"]["getReadings"]
+
+    data = data["data"]["getReadings"]
 
     updated_reading = data["readings"][0]
 
@@ -497,6 +555,7 @@ async def test_create_progress_complete_reading_percentage(
     assert updated_reading["statusId"] == "read"
     assert updated_reading["statusName"] == "Lido"
     assert updated_reading["finishDate"] is not None
+
 
 
 @pytest.mark.asyncio

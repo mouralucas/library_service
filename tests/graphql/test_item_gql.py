@@ -87,7 +87,7 @@ async def test_query_books(client, create_item):
             getItems(params: $params) {
                 quantity
                 items {
-                    itemId
+                    id
                     title
                     itemTypeId
                 }
@@ -113,7 +113,7 @@ async def test_query_books(client, create_item):
     items_data = data["data"]["getItems"]["items"]
 
     for item in items_data:
-        assert "itemId" in item
+        assert "id" in item
         assert "title" in item
 
         assert "itemTypeId" in item
@@ -130,7 +130,7 @@ async def test_query_books_with_order_by(client, create_item):
             getItems(params: $params) {
                 quantity
                 items {
-                    itemId
+                    id
                     title
                     itemTypeId
                 }

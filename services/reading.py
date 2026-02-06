@@ -98,9 +98,6 @@ class ReadingService(BaseService):
         }
 
         return response
-    
-    async def get_readings_v2(self, params: GetReadingRequest | None = None):
-        pass
 
     async def get_reading_by_id(self, reading_id: uuid.UUID) -> GetReadingsResponse:
         reading = await self.reading_manager.get_reading_by_id(reading_id=reading_id)
@@ -110,7 +107,6 @@ class ReadingService(BaseService):
             )
 
         response = GetReadingsResponse(
-            item_title=reading.item.title,
             quantity=1 if reading else 0,
             readings=[ReadingSchema.model_validate(reading)],
         )
@@ -231,13 +227,19 @@ class ReadingService(BaseService):
         await self.session.refresh(item)
         await self.session.refresh(new_entry)
 
-        response = CreateProgressResponse(
-            item=ItemSchema.model_validate(item),
-            progress=ProgressSchema.model_validate(new_entry),
-            # These fields are populated automatically after model validation
-            item_title=None,
-            pages_read=None,
-        )
+        # response = CreateProgressResponse(
+        #     item=ItemSchema.model_validate(item),
+        #     progress=ProgressSchema.model_validate(new_entry),
+        #     # These fields are populated automatically after model validation
+        #     item_title=None,
+        #     pages_read=None,
+        # )
+        
+        response = {
+            "created": True,
+            "item_title": new_entry.item.title,
+            "reading_progress_id": new_entry.id
+        }
 
         return response
 

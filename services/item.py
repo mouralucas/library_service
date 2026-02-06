@@ -68,7 +68,7 @@ class ItemService(BaseService):
 
         return response
 
-    async def get_items(self, params: GetItemRequest) -> GetItemResponse:
+    async def get_items(self, params: GetItemRequest) -> dict[str, Any]:
         items: list[dict[Any, Any]] | None = await ItemManager(self.session).get_items(
             item_id=params.id,
             title=params.title,
@@ -77,13 +77,17 @@ class ItemService(BaseService):
             order_by=params.order_by,
         )
 
-        response = GetItemResponse(
-            quantity=len(items) if items else 0,
-            items=(
-                [ItemSchema.model_validate(item) for item in items] if items else None
-            ),
-        )
-
+        # response = GetItemResponse(
+        #     quantity=len(items) if items else 0,
+        #     items=(
+        #         [ItemSchema.model_validate(item) for item in items] if items else None
+        #     ),
+        # )
+        response = {
+            "quantity": len(items) if items else 0,
+            "items": items,
+        }
+    
         return response
 
     async def get_item_by_id(self, item_id: int) -> ItemSchema:

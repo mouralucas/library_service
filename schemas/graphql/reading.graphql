@@ -17,7 +17,7 @@ extend type Mutation {
 
 # Reading schemas
 input GetReadingsInput {
-    itemId: String
+    itemId: Int
     readingId: String
     getProgress: Boolean
 }
@@ -78,14 +78,13 @@ input CreateReadingProgressInput {
 }
 
 type CreateReadingProgressOutput {
-    item: Item!
+    created: Boolean!
+    readingProgressId: String!
     itemTitle: String!
-    pagesRead: String
-    readingProgress: ReadingProgress!
 }
 
 type ReadingProgress {
-    readingProgressId: String!
+    id: String!
     reading: Reading!
     date: String!
     page: Int

@@ -9,7 +9,7 @@ async def get_items_resolver(_, info, params):
         session=info.context["session"], user=info.context["user"]
     ).get_items(params=params_)
 
-    return items.model_dump(by_alias=True)
+    return items
 
 
 async def create_item_resolver(_, info, item):
