@@ -1,13 +1,11 @@
-from typing import Any
 from fastapi import APIRouter, Depends, Security
 from fastapi.security import OAuth2PasswordBearer
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from backend.database import get_session
-from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
+from schemas.request.item import GetItemRequest, UpdateItemRequest
 from schemas.response.item import CreateItemResponse, GetItemResponse
 from services.item import ItemService
 

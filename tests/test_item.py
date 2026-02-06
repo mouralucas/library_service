@@ -52,18 +52,18 @@ async def test_create_item_success(
             }
         }
     """
-    response = await client.post("/graphql/library", json={"query": mutation, "variables": {"item": payload}})
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": {"item": payload}}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert "data" in data
     assert "createItem" in data["data"]
-    
+
     data = data["data"]["createItem"]
     assert "created" in data
     assert "itemId" in data
-
-    
 
 
 @pytest.mark.asyncio
@@ -99,13 +99,15 @@ async def test_create_item_without_non_required(
             }
         }
     """
-    response = await client.post("/graphql/library", json={"query": mutation, "variables": {"item": payload}})
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": {"item": payload}}
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert "data" in data
     assert "createItem" in data["data"]
-    
+
     data = data["data"]["createItem"]
     assert "created" in data
     assert "itemId" in data
@@ -213,7 +215,9 @@ async def test_get_item_with_title_exist_filter(client, create_item):
         }
 
     """
-    response = await client.post("/graphql/library", json={"query": query, "variables": {"params": param}})
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": {"params": param}}
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
@@ -230,8 +234,6 @@ async def test_get_item_with_title_exist_filter(client, create_item):
 
 @pytest.mark.asyncio
 async def test_get_item_with_title_not_exist_filter(client, create_item):
-    items = create_item
-    
     # test if title does not exist
     param = {
         "title": "title not exists",
@@ -275,7 +277,9 @@ async def test_get_item_with_title_not_exist_filter(client, create_item):
         }
 
     """
-    response = await client.post("/graphql/library", json={"query": query, "variables": {"params": param}})
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": {"params": param}}
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
@@ -287,12 +291,12 @@ async def test_get_item_with_title_not_exist_filter(client, create_item):
     assert "quantity" in data
     assert data["quantity"] == 0
     assert data["items"] is None
-  
 
-@pytest.mark.asyncio  
+
+@pytest.mark.asyncio
 async def test_get_item_with_id_exist_filter(client, create_item):
     items = create_item
-    
+
     # Test with id fiter
     param = {
         "itemId": items[0].id,
@@ -336,7 +340,9 @@ async def test_get_item_with_id_exist_filter(client, create_item):
         }
 
     """
-    response = await client.post("/graphql/library", json={"query": query, "variables": {"params": param}})
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": {"params": param}}
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
@@ -349,7 +355,8 @@ async def test_get_item_with_id_exist_filter(client, create_item):
 
     assert data["items"][0]["title"] == items[0].title
     assert data["items"][0]["pages"] == items[0].pages
-    
+
+
 @pytest.mark.asyncio
 async def test_get_item_id_out_range(client, create_item):
     # Test with id off the range
@@ -395,10 +402,11 @@ async def test_get_item_id_out_range(client, create_item):
         }
 
     """
-    response = await client.post("/graphql/library", json={"query": query, "variables": {"params": param}})
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": {"params": param}}
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
     assert "data" in data
     assert "errors" in data
-    

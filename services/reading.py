@@ -1,29 +1,23 @@
-from typing import Any
 import uuid
 from datetime import datetime
+from typing import Any
 
 from fastapi import HTTPException, status
 from rolf_common.backend.logger import get_logger
 from rolf_common.models import SQLModel
 from rolf_common.schemas.auth import RequiredUser
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import aliased, joinedload
 
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
-from schemas.item import ItemSchema
 from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
 from schemas.request.reading import (
     CreateProgressRequestV2,
     CreateReadingRequest,
     GetProgressRequest,
-    GetReadingRequest,
     GetReadingStatsRequest,
 )
 from schemas.response.reading import (
-    CreateProgressResponse,
-    CreateReadingResponse,
     CreateReadingResponseV2,
     GetActiveReadingsResponse,
     GetProgressResponse,
@@ -75,11 +69,8 @@ class ReadingService(BaseService):
         new_reading.active = False if reading.finish_date else True
 
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
-        
-        response = CreateReadingResponseV2(
-            created=True,
-            reading_id=new_reading.id
-        )
+
+        response = CreateReadingResponseV2(created=True, reading_id=new_reading.id)
         return response
 
     async def get_readings(
@@ -91,7 +82,7 @@ class ReadingService(BaseService):
         readings = await self.reading_manager.get_readings(
             item_id=item_id, reading_id=reading_id, get_progress=get_progress
         )
-        
+
         response = {
             "quantity": len(readings) if readings else 0,
             "readings": readings,
@@ -115,14 +106,11 @@ class ReadingService(BaseService):
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
         active_readings = await self.reading_manager.get_active_readings()
-        
+
         response = GetActiveReadingsResponse(
             quantity=len(active_readings) if active_readings else 0,
             readings=(
-                [
-                    ReadingSchema.model_validate(reading)
-                    for reading in active_readings
-                ]
+                [ReadingSchema.model_validate(reading) for reading in active_readings]
                 if active_readings
                 else []
             ),
@@ -234,11 +222,11 @@ class ReadingService(BaseService):
         #     item_title=None,
         #     pages_read=None,
         # )
-        
+
         response = {
             "created": True,
             "item_title": new_entry.item.title,
-            "reading_progress_id": new_entry.id
+            "reading_progress_id": new_entry.id,
         }
 
         return response

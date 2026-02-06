@@ -82,9 +82,9 @@ async def test_get_reading_by_item_id(client, create_more_than_one_reading):
     data = response.json()
     assert "data" in data
     assert "getReadings" in data["data"]
-    assert "quantity"in data["data"]["getReadings"]
-    assert "readings"in data["data"]["getReadings"]
-    
+    assert "quantity" in data["data"]["getReadings"]
+    assert "readings" in data["data"]["getReadings"]
+
     data = data["data"]["getReadings"]
     assert "quantity" in data
     assert "readings" in data
@@ -147,8 +147,8 @@ async def test_get_reading_by_reading_id(client, create_more_than_one_reading):
     data = response.json()
     assert "data" in data
     assert "getReadings" in data["data"]
-    assert "quantity"in data["data"]["getReadings"]
-    assert "readings"in data["data"]["getReadings"]
+    assert "quantity" in data["data"]["getReadings"]
+    assert "readings" in data["data"]["getReadings"]
 
     data = data["data"]["getReadings"]
     assert "quantity" in data
@@ -197,9 +197,7 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     current_page = 42
 
     item = reading.item
-    total_pages = item.pages
     item_title = item.title
-    percentage = float(current_page / total_pages * 100)
     progress_type = "page"
 
     payload = {
@@ -229,7 +227,7 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     data = data["data"]["createReadingProgress"]
     assert "created" in data
     assert data["created"] is True
-    
+
     assert "readingProgressId" in data
     assert "itemTitle" in data
     assert data["itemTitle"] == item_title
@@ -243,9 +241,7 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     current_percentage = 32
 
     item = reading.item
-    total_pages = item.pages
     item_title = item.title
-    page = int(current_percentage / 100 * total_pages)
     progress_type = "percentage"
 
     payload = {
@@ -275,7 +271,7 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     data = data["data"]["createReadingProgress"]
     assert "created" in data
     assert data["created"] is True
-    
+
     assert "readingProgressId" in data
     assert "itemTitle" in data
     assert data["itemTitle"] == item_title
@@ -466,8 +462,8 @@ async def test_create_progress_complete_reading_pages(
     data = response.json()
     assert "data" in data
     assert "getReadings" in data["data"]
-    assert "quantity"in data["data"]["getReadings"]
-    assert "readings"in data["data"]["getReadings"]
+    assert "quantity" in data["data"]["getReadings"]
+    assert "readings" in data["data"]["getReadings"]
 
     data = data["data"]["getReadings"]
 
@@ -544,8 +540,8 @@ async def test_create_progress_complete_reading_percentage(
     data = response.json()
     assert "data" in data
     assert "getReadings" in data["data"]
-    assert "quantity"in data["data"]["getReadings"]
-    assert "readings"in data["data"]["getReadings"]
+    assert "quantity" in data["data"]["getReadings"]
+    assert "readings" in data["data"]["getReadings"]
 
     data = data["data"]["getReadings"]
 
@@ -555,7 +551,6 @@ async def test_create_progress_complete_reading_percentage(
     assert updated_reading["statusId"] == "read"
     assert updated_reading["statusName"] == "Lido"
     assert updated_reading["finishDate"] is not None
-
 
 
 @pytest.mark.asyncio

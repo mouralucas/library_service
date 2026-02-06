@@ -8,15 +8,12 @@ from backend.database import get_session
 from schemas.request.reading import (
     CreateReadingRequest,
     GetProgressRequest,
-    GetReadingRequest,
     GetReadingStatsRequest,
 )
 from schemas.response.reading import (
-    CreateReadingResponse,
     CreateReadingResponseV2,
     GetActiveReadingsResponse,
     GetProgressResponse,
-    GetReadingsResponse,
     GetReadingStatsResponse,
 )
 from services.reading import ReadingService

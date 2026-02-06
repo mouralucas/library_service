@@ -1,16 +1,15 @@
-from typing import Any, cast
 import uuid
+from typing import Any, cast
 
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import aliased, joinedload
 
 from models.core import StatusModel
 from models.item import ItemModel
 from models.reading import ReadingModel, ReadingProgressModel
-from sqlalchemy.orm import aliased, joinedload
 
 
 class ReadingManager(BaseDataManager):

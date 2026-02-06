@@ -44,7 +44,7 @@ async def create_active_active_readings(
     data_ = await BaseDataManager(create_test_session).add_or_ignore_all(
         ReadingModel, get_active_reading_mock()
     )
-    
+
     readings = (
         [ReadingSchema.model_validate(data["ReadingModel"]) for data in data_]
         if data_

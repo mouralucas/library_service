@@ -31,7 +31,9 @@ bind_item_resolvers(query, mutation)
 bind_reading_resolvers(query, mutation)
 
 
-schema = make_executable_schema(type_defs, query, mutation, snake_case_fallback_resolvers)
+schema = make_executable_schema(
+    type_defs, query, mutation, snake_case_fallback_resolvers
+)
 
 
 @router.post("", description="The V2 maps all GraphQL endpoint")

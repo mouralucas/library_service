@@ -1,4 +1,5 @@
 import uuid
+
 from pydantic import AliasGenerator, BaseModel, ConfigDict, Field, model_validator
 from pydantic.alias_generators import to_camel
 
@@ -8,16 +9,17 @@ from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
 
 class CreateReadingResponse(BaseModel):
     reading: ReadingSchema = Field(..., description="The reading information")
-    
+
 
 class CreateReadingResponseV2(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
         alias_generator=AliasGenerator(serialization_alias=to_camel),
     )
-        
+
     created: bool = Field(..., description="Indicates if the reading was created")
     reading_id: uuid.UUID = Field(..., description="The id of the created reading")
+
 
 class GetReadingsResponse(BaseModel):
     model_config = ConfigDict(

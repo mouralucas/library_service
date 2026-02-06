@@ -65,6 +65,7 @@ class ReadingSchema(BaseModel):
         description="The current progress of the reading",
     )
 
+
 class ReadingStats(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

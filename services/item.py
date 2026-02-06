@@ -7,7 +7,7 @@ from managers.item import ItemManager
 from models import ItemAuthorModel, ItemModel, ItemStatusModel
 from schemas.item import ItemSchema
 from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
-from schemas.response.item import CreateItemResponse, GetItemResponse
+from schemas.response.item import CreateItemResponse
 from services.base import BaseService
 
 
@@ -87,7 +87,7 @@ class ItemService(BaseService):
             "quantity": len(items) if items else 0,
             "items": items,
         }
-    
+
         return response
 
     async def get_item_by_id(self, item_id: int) -> ItemSchema:
