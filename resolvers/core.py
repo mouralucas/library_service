@@ -1,4 +1,5 @@
 from ariadne import MutationType, QueryType
+from rolf_common.util.graphql_input_validation import validate_graphql_input
 
 from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
 from schemas.request.core import (
@@ -20,12 +21,11 @@ from services.core import (
 )
 
 
-async def get_authors_resolver(_, info, params):
-    params_ = GetAuthorsRequest.model_validate(params)
+@validate_graphql_input(GetAuthorsRequest)
+async def get_authors_resolver(_, info, params: GetAuthorsRequest):
+    authors = await AuthorService(session=info.context["session"]).get_authors(params)
 
-    authors = await AuthorService(session=info.context["session"]).get_authors(params_)
-
-    return authors.model_dump(by_alias=True)
+    return authors
 
 
 async def create_author_resolver(_, info, author: dict):

@@ -34,8 +34,8 @@ type GetAuthorsResponse {
 }
 
 input CreateAuthorInput {
-    authorId: Int
-    authorName: String!
+    id: Int
+    name: String!
     countryId: String
     languageId: String
     birthDate: String
@@ -48,8 +48,8 @@ type CreateAuthorResponse  {
 }
 
 type Author {
-    authorId: Int!
-    authorName: String!
+    id: Int!
+    name: String!
     birthDate: String
     description: String
     countryId: String

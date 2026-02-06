@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from backend.database import get_session
-from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
-from schemas.response.author import CreateAuthorResponse, GetAuthorResponse
+from schemas.request.author import CreateAuthorRequest
+from schemas.response.author import CreateAuthorResponse
 from services.author import AuthorService
 
 router = APIRouter(prefix="/author", tags=["Author"])
@@ -19,14 +19,5 @@ async def create_author(
     user: RequiredUser = Security(get_user),
 ) -> CreateAuthorResponse:
     response = await AuthorService(session).create_author(author=author)
-
-    return response
-
-
-@router.get("")
-async def get_authors(
-    session: AsyncSession = Depends(get_session), params: GetAuthorsRequest = Depends()
-) -> GetAuthorResponse:
-    response = await AuthorService(session).get_authors(params)
 
     return response

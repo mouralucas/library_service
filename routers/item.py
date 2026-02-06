@@ -13,22 +13,6 @@ router = APIRouter(prefix="/item", tags=["Items"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-# @router.post(
-#     "",
-#     summary="Create item",
-#     status_code=status.HTTP_201_CREATED,
-#     response_model_exclude_none=True,
-# )
-# async def create_item(
-#     item: CreateItemRequest,
-#     session: AsyncSession = Depends(get_session),
-#     user: RequiredUser = Security(get_user),
-# ) -> dict[str, Any]:
-#     response = await ItemService(session=session, user=user).create_item(item)
-
-#     return response
-
-
 @router.patch("", description="Update item")
 async def update_item(
     item: UpdateItemRequest,
