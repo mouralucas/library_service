@@ -99,6 +99,21 @@ class CollectionManager(BaseDataManager):
 
         return cast(CollectionModel, new_collection)
 
+    async def get_collections(self) -> list[dict[Any, Any]] | None:
+        query = select(
+            CollectionModel.id,
+            CollectionModel.name,
+            CollectionModel.description,
+        )
+
+        collections = await self.get_all(query)
+
+        return (
+            [dict(collection.items()) for collection in collections]
+            if collections
+            else None
+        )
+
 
 class PublisherManager(BaseDataManager):
     def __init__(self, session: AsyncSession):

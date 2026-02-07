@@ -141,11 +141,8 @@ class SerieService(BaseService):
 
     async def get_series(self) -> dict[str, Any]:
         series = await SerieManager(session=self.session).get_series()
-        
-        response = {
-            "quantity": len(series) if series else 0,
-            "series": series
-        }
+
+        response = {"quantity": len(series) if series else 0, "series": series}
 
         return response
 
@@ -167,22 +164,13 @@ class CollectionService(BaseService):
 
         return response
 
-    async def get_collections(self) -> GetCollectionResponse:
-        collections = await SerieManager(session=self.session).get_all(
-            select(CollectionModel)
-        )
+    async def get_collections(self) -> dict[str, Any]:
+        collections = await CollectionManager(session=self.session).get_collections()
 
-        response = GetCollectionResponse(
-            quantity=len(collections) if collections else 0,
-            collections=(
-                [
-                    CollectionSchema.model_validate(collection["CollectionModel"])
-                    for collection in collections
-                ]
-                if collections
-                else []
-            ),
-        )
+        response = {
+            "quantity": len(collections) if collections else 0,
+            "collections": collections,
+        }
 
         return response
 
@@ -228,10 +216,7 @@ class StatusService(BaseService):
         statuses = await StatusManager(session=self.session).get_statuses(
             status_type=params.status_type
         )
-        
-        response = {
-            "quantity": len(statuses) if statuses else 0,
-            "statuses": statuses            
-        }
+
+        response = {"quantity": len(statuses) if statuses else 0, "statuses": statuses}
 
         return response

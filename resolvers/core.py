@@ -55,12 +55,12 @@ async def create_serie_resolver(_, info, serie):
     return new_serie.model_dump(by_alias=True)
 
 
-async def get_collections_resolver(_, info):
+async def get_collections_resolver(_, info) -> dict[str, Any]:
     response = await CollectionService(
         session=info.context["session"]
     ).get_collections()
 
-    return response.model_dump(by_alias=True)
+    return response
 
 
 async def create_collection_resolver(_, info, collection):

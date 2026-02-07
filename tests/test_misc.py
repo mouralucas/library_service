@@ -143,19 +143,37 @@ async def test_get_collection(client, create_collections):
     collections = create_collections
     collections_list_len = len(collections)
 
-    response = await client.get("/collection")
-
-    data = response.json()
+    query = """
+        query GetCollections {
+            getCollections {
+                quantity
+                collections {
+                    id
+                    name
+                    description
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
+    
     assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    
+    assert "data" in data
+    assert "getCollections" in data["data"]
+    
+    data = data["data"]["getCollections"]
+    
     assert "collections" in data
     assert type(data["collections"]) is list
     assert len(data["collections"]) == collections_list_len
 
     # Test default collection
-    assert data["collections"][0]["collectionName"] == collections[0].name
+    assert data["collections"][0]["name"] == collections[0].name
 
     # Test other created collection
-    assert data["collections"][1]["collectionName"] == collections[1].name
+    assert data["collections"][1]["name"] == collections[1].name
 
 
 @pytest.mark.asyncio

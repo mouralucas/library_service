@@ -92,15 +92,6 @@ async def create_collection(
     return response
 
 
-@router.get("/collection")
-async def get_collection(
-    session: AsyncSession = Depends(get_session),
-) -> GetCollectionResponse:
-    response = await CollectionService(session=session).get_collections()
-
-    return response
-
-
 @router.post("/publisher", status_code=status.HTTP_201_CREATED)
 async def create_publisher(
     publisher: CreatePublisherRequest, session: AsyncSession = Depends(get_session)
