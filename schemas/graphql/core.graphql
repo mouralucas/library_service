@@ -73,8 +73,8 @@ type CreateSerieResponse {
 }
 
 type Serie {
-    serieId: Int!
-    serieName: String!
+    id: Int!
+    name: String!
     originalName: String
     description: String
     countryName: String
@@ -98,8 +98,8 @@ type CreateCollectionResponse {
 }
 
 type Collection {
-    collectionId: Int!
-    collectionName: String!
+    id: Int!
+    name: String!
     description: String
 }
 

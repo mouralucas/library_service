@@ -139,18 +139,13 @@ class SerieService(BaseService):
 
         return response
 
-    async def get_series(self) -> GetSeriesResponse:
-        # TODO:create manager, service should not contain db queries
-        series = await SerieManager(session=self.session).get_all(select(SerieModel))
-
-        response = GetSeriesResponse(
-            quantity=len(series) if series else 0,
-            series=(
-                [SerieSchema.model_validate(serie["SerieModel"]) for serie in series]
-                if series
-                else []
-            ),
-        )
+    async def get_series(self) -> dict[str, Any]:
+        series = await SerieManager(session=self.session).get_series()
+        
+        response = {
+            "quantity": len(series) if series else 0,
+            "series": series
+        }
 
         return response
 

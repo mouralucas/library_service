@@ -84,19 +84,38 @@ async def test_get_serie(client, create_series):
     series = create_series
     series_list_len = len(series)
 
-    response = await client.get("/serie")
-
-    data = response.json()
+    query = """
+        query GetSeries {
+            getSeries {
+                quantity
+                series {
+                    id
+                    name
+                    description
+                    order
+                    itemType
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
     assert response.status_code == status.HTTP_200_OK
+    
+    data = response.json()
+    assert "data" in data
+    assert "getSeries" in data["data"]
+    
+    data = data["data"]["getSeries"]
+    
     assert "series" in data
     assert type(data["series"]) is list
     assert len(data["series"]) == series_list_len
 
     # Test Default serie
-    assert data["series"][0]["serieName"] == series[0].name
+    assert data["series"][0]["name"] == series[0].name
 
     # Test other created serie
-    assert data["series"][1]["serieName"] == series[1].name
+    assert data["series"][1]["name"] == series[1].name
 
 
 @pytest.mark.asyncio

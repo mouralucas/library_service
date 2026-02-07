@@ -68,8 +68,18 @@ class SerieManager(BaseDataManager):
 
         return cast(SerieModel, new_serie)
 
-    async def get_series(self):
-        pass
+    async def get_series(self) -> list[dict[Any, Any]] | None:
+        query = select(
+            SerieModel.id,
+            SerieModel.name,
+            SerieModel.original_name,
+            SerieModel.description,
+            SerieModel.country_id,
+        )
+
+        series = await self.get_all(query)
+
+        return [dict(serie.items()) for serie in series] if series else None
 
 
 class CollectionManager(BaseDataManager):
@@ -134,13 +144,15 @@ class StatusManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def get_statuses(self, status_type: str | None = None) -> list[dict[Any, Any]]:
+    async def get_statuses(
+        self, status_type: str | None = None
+    ) -> list[dict[Any, Any]]:
         query = select(
             StatusModel.id,
             StatusModel.name,
             StatusModel.description,
             StatusModel.order,
-            StatusModel.type.label("status_type")
+            StatusModel.type.label("status_type"),
         )
 
         if status_type:

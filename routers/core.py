@@ -83,13 +83,6 @@ async def create_serie(
     return response
 
 
-@router.get("/serie")
-async def get_serie(session: AsyncSession = Depends(get_session)) -> GetSeriesResponse:
-    response = await SerieService(session=session).get_series()
-
-    return response
-
-
 @router.post("/collection", status_code=status.HTTP_201_CREATED)
 async def create_collection(
     collection: CreateCollectionRequest, session: AsyncSession = Depends(get_session)

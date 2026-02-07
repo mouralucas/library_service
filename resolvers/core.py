@@ -1,3 +1,4 @@
+from typing import Any
 from ariadne import MutationType, QueryType
 from rolf_common.util.graphql_input_validation import validate_graphql_input
 
@@ -38,10 +39,10 @@ async def create_author_resolver(_, info, author: dict):
     return new_author.model_dump(by_alias=True)
 
 
-async def get_series_resolver(_, info):
+async def get_series_resolver(_, info) -> dict[str, Any]:
     series = await SerieService(session=info.context["session"]).get_series()
 
-    return series.model_dump(by_alias=True)
+    return series
 
 
 async def create_serie_resolver(_, info, serie):
