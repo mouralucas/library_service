@@ -99,12 +99,3 @@ async def create_publisher(
     response = await PublisherService(session).create_publisher(publisher)
 
     return response
-
-
-@router.get("/publisher")
-async def get_publisher(
-    session: AsyncSession = Depends(get_session),
-) -> GetPublisherResponse:
-    response = await PublisherService(session).get_publishers()
-
-    return response

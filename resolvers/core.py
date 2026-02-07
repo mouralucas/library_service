@@ -73,12 +73,12 @@ async def create_collection_resolver(_, info, collection):
     return new_collection.model_dump(by_alias=True)
 
 
-async def get_publishers_resolver(_, info):
+async def get_publishers_resolver(_, info) -> dict[str, Any]:
     publishers = await PublisherService(
         session=info.context["session"]
     ).get_publishers()
 
-    return publishers.model_dump(by_alias=True)
+    return publishers
 
 
 async def create_publisher_resolver(_, info, publisher):

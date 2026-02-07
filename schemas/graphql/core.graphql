@@ -121,8 +121,8 @@ type CreatePublisherResponse {
 }
 
 type Publisher{
-    publisherId: Int!
-    publisherName: String!
+    id: Int!
+    name: String!
     description: String
     countryId: String
     countryName: String

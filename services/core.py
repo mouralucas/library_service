@@ -192,17 +192,23 @@ class PublisherService(BaseService):
 
         return response
 
-    async def get_publishers(self) -> GetPublisherResponse:
+    async def get_publishers(self) -> dict[str, Any]:
         publishers = await PublisherManager(session=self.session).get_publishers()
 
-        response = GetPublisherResponse(
-            quantity=len(publishers) if publishers else 0,
-            publishers=(
-                [PublisherSchema.model_validate(publisher) for publisher in publishers]
-                if publishers
-                else []
-            ),
-        )
+        # response = GetPublisherResponse(
+        #     quantity=len(publishers) if publishers else 0,
+        #     publishers=(
+        #         [PublisherSchema.model_validate(publisher) for publisher in publishers]
+        #         if publishers
+        #         else []
+        #     ),
+        # )
+        
+        response = {
+            "quantity": len(publishers) if publishers else 0,
+            "publishers": publishers,
+        }
+
 
         return response
 

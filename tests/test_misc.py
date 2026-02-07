@@ -196,15 +196,34 @@ async def test_get_publisher(client, create_publisher):
     publishers = create_publisher
     publishers_list_len = len(publishers)
 
-    response = await client.get("/publisher")
+    query = """
+        query GetPublishers {
+            getPublishers {
+                quantity
+                publishers {
+                    id
+                    name
+                    description
+                    countryId
+                    countryName
+                    parentId
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
+    assert "data" in data
+    assert "getPublishers" in data["data"]
+    
+    data = data["data"]["getPublishers"]
 
     assert "publishers" in data
     assert type(data["publishers"]) is list
     assert len(data["publishers"]) == publishers_list_len
-    assert data["publishers"][0]["publisherName"] == publishers[0].name
+    assert data["publishers"][0]["name"] == publishers[0].name
     assert data["publishers"][0]["description"] == publishers[0].description
 
 
