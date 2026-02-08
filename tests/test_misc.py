@@ -26,9 +26,26 @@ async def test_create_language(client):
 async def test_get_language(client, create_languages):
     language_len = len(create_languages)
 
-    response = await client.get("/language")
+    query = """
+        query GetLanguages {
+            getLanguages {
+                quantity
+                languages {
+                    id
+                    name
+                    code
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
 
     data = response.json()
+    assert "data" in data
+    assert "getLanguages" in data["data"]
+    
+    data = data["data"]["getLanguages"]
+    
     assert response.status_code == status.HTTP_200_OK
     assert "languages" in data
     assert type(data["languages"]) is list

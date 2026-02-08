@@ -146,9 +146,9 @@ type CreateLanguageResponse {
 }
 
 type Language {
-    languageId: String!
-    languageName: String!
-    languageCode: String
+    id: String!
+    name: String!
+    code: String
 }
 
 # Country schemas

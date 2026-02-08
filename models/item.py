@@ -39,7 +39,7 @@ class ItemModel(SQLModel):
     original_publication_date: Mapped[datetime.date] = mapped_column(
         nullable=True
     )  # remove
-    # edition: Mapped[int] = mapped_column("edition", default=1)
+    edition: Mapped[int] = mapped_column("edition", default=1)
     serie_id: Mapped[int] = mapped_column(ForeignKey("serie.id"), nullable=True)
     serie: Mapped["SerieModel"] = relationship(foreign_keys=[serie_id], lazy="noload")
     language_id: Mapped[str] = mapped_column(ForeignKey("language.id"), nullable=True)

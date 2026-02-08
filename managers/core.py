@@ -32,6 +32,19 @@ class LanguageManager(BaseDataManager):
 
         return cast(LanguageModel, new_language)
 
+    async def get_languages(self) -> list[dict[Any, Any]] | None:
+        stmt = select(
+            LanguageModel.id,
+            LanguageModel.name,
+            LanguageModel.code,
+        )
+
+        languages = await LanguageManager(session=self.session).get_all(
+            select_statement=stmt
+        )
+
+        return [dict(language.items()) for language in languages] if languages else None
+
 
 class CountryManager(BaseDataManager):
     def __init__(self, session: AsyncSession):
@@ -41,7 +54,7 @@ class CountryManager(BaseDataManager):
         """
         :Name: create_country
         :Created by: Lucas Penha de Moura - 21/05/2024
-            Create a new language
+            Create a new country
 
         :Params:
             country: an instance of CountryModel

@@ -215,14 +215,6 @@ class ReadingService(BaseService):
         await self.session.refresh(item)
         await self.session.refresh(new_entry)
 
-        # response = CreateProgressResponse(
-        #     item=ItemSchema.model_validate(item),
-        #     progress=ProgressSchema.model_validate(new_entry),
-        #     # These fields are populated automatically after model validation
-        #     item_title=None,
-        #     pages_read=None,
-        # )
-
         response = {
             "created": True,
             "item_title": new_entry.item.title,
@@ -258,13 +250,13 @@ class ReadingService(BaseService):
 
     async def get_reading_stats(
         self, params: GetReadingStatsRequest
-    ) -> GetReadingStatsResponse:
+    ) -> dict[str, Any]:
         item_readings = await self.reading_manager.get_readings(item_id=params.item_id)
 
         # Get information about the last reading
         readings_count = len(item_readings) if item_readings else 0
         last_reading = item_readings[0] if item_readings else None
-        last_reading_date = last_reading.start_date if last_reading else None
+        last_reading_date = last_reading["start_date"] if last_reading else None
 
         # Get information about the current reading
         current_reading = await self.reading_manager.get_item_active_reading(
@@ -285,22 +277,22 @@ class ReadingService(BaseService):
         current_percentage = (
             current_reading_progress.percentage if current_reading_progress else None
         )
-
-        response = GetReadingStatsResponse(
-            stats=ReadingStats(
-                readings_count=readings_count,
-                last_reading_date=last_reading_date,
-                is_currently_reading=is_currently_reading,
-                current_reading_id=current_reading_id,
-                current_page=current_page,
-                current_percentage=current_percentage,
-                last_readings=(
+        
+        response = {
+            "stats": {
+                "readings_count": readings_count,
+                "last_reading_date": last_reading_date,
+                "is_currently_reading": is_currently_reading,
+                "current_reading_id": current_reading_id,
+                "current_page": current_page,
+                "current_percentage": current_percentage,
+                "last_readings": (
                     [ReadingSchema.model_validate(reading) for reading in item_readings]
                     if item_readings
                     else []
                 ),
-            )
-        )
+            }
+        }
 
         return response
 

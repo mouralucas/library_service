@@ -11,7 +11,9 @@ class CreateItemResponse(DefaultModel):
         alias_generator=AliasGenerator(serialization_alias=to_camel),
     )
 
-    item: ItemSchema = Field(..., description="The item created")
+    created: bool
+    id: int
+    title: str
 
 
 class GetItemResponse(BaseModel):

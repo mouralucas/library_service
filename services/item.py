@@ -35,7 +35,8 @@ class ItemService(BaseService):
 
         response = {
             "created": True,
-            "item_id": new_item.id,
+            "id": new_item.id,
+            "title": new_item.title,
         }
 
         return response
@@ -63,7 +64,9 @@ class ItemService(BaseService):
         # TODO: add validation if author(s) were changed, if so add correspondent method
 
         response = CreateItemResponse(
-            item=ItemSchema.model_validate(updated_item),
+            created=True,
+            id=updated_item.id,
+            title=updated_item.title
         )
 
         return response

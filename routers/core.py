@@ -47,15 +47,6 @@ async def create_language(
     return response
 
 
-@router.get("/language")
-async def get_language(
-    session: AsyncSession = Depends(get_session),
-) -> GetLanguageResponse:
-    response = await LanguageService(session=session).get_languages()
-
-    return response
-
-
 @router.post("/country", status_code=status.HTTP_201_CREATED)
 async def create_country(
     country: CreateCountryRequest, session: AsyncSession = Depends(get_session)

@@ -67,24 +67,14 @@ class LanguageService(BaseService):
 
         return response
 
-    async def get_languages(self) -> GetLanguageResponse:
-        stmt = select(LanguageModel)
-
-        languages = await LanguageManager(session=self.session).get_all(
-            select_statement=stmt
-        )
-
-        response = GetLanguageResponse(
-            quantity=len(languages) if languages else 0,
-            languages=(
-                [
-                    LanguageSchema.model_validate(language["LanguageModel"])
-                    for language in languages
-                ]
-                if languages
-                else []
-            ),
-        )
+    async def get_languages(self) -> dict[str, Any]:
+        
+        languages = await LanguageManager(session=self.session).get_languages()
+        
+        response = {
+            "quantity": len(languages) if languages else 0,
+            "languages": languages,
+        }
 
         return response
 
@@ -203,12 +193,11 @@ class PublisherService(BaseService):
         #         else []
         #     ),
         # )
-        
+
         response = {
             "quantity": len(publishers) if publishers else 0,
             "publishers": publishers,
         }
-
 
         return response
 

@@ -91,10 +91,10 @@ async def create_publisher_resolver(_, info, publisher):
     return new_publisher.model_dump(by_alias=True)
 
 
-async def get_languages_resolver(_, info):
+async def get_languages_resolver(_, info) -> dict[str, Any]:
     languages = await LanguageService(session=info.context["session"]).get_languages()
 
-    return languages.model_dump(by_alias=True)
+    return languages
 
 
 async def crate_language_resolver(_, info, language):

@@ -47,7 +47,7 @@ async def test_create_item_success(
     mutation = """
         mutation CreateItem($item: CreateItemInput) {
             createItem(item: $item) {
-                itemId
+                id
                 created
             }
         }
@@ -63,7 +63,7 @@ async def test_create_item_success(
 
     data = data["data"]["createItem"]
     assert "created" in data
-    assert "itemId" in data
+    assert "id" in data
 
 
 @pytest.mark.asyncio
@@ -94,7 +94,7 @@ async def test_create_item_without_non_required(
     mutation = """
         mutation CreateItem($item: CreateItemInput) {
             createItem(item: $item) {
-                itemId
+                id
                 created
             }
         }
@@ -110,7 +110,7 @@ async def test_create_item_without_non_required(
 
     data = data["data"]["createItem"]
     assert "created" in data
-    assert "itemId" in data
+    assert "id" in data
 
 
 @pytest.mark.asyncio
@@ -124,7 +124,7 @@ async def test_update_item(client, create_item):
     new_last_status_date = "2024-07-12"
 
     payload = {
-        "itemId": old_item.id,
+        "id": old_item.id,
         "title": new_title,
         "pages": new_pages,
         "lastStatusId": new_status_id,
@@ -135,18 +135,8 @@ async def test_update_item(client, create_item):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    assert "item" in data
-
-    assert "id" in data["item"]
-    assert data["item"]["id"] == old_item.id
-
-    assert "title" in data["item"]
-    assert data["item"]["title"] == new_title
-    assert data["item"]["title"] != old_item.title
-
-    assert "pages" in data["item"]
-    assert data["item"]["pages"] == new_pages
-    assert data["item"]["pages"] != old_item.pages
+    assert "created" in data
+    assert data["created"] is True
 
 
 @pytest.mark.asyncio

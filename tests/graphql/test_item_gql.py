@@ -34,7 +34,7 @@ async def test_mutation_new_item_success(
         mutation CreateItem($input: CreateItemInput!) {
             createItem(item: $input) {
                 created
-                itemId
+                id
             }
         }
     """
@@ -73,8 +73,8 @@ async def test_mutation_new_item_success(
     assert "createItem" in data["data"]
     assert "created" in data["data"]["createItem"]
     assert data["data"]["createItem"]["created"] is True
-    assert "itemId" in data["data"]["createItem"]
-    assert isinstance(data["data"]["createItem"]["itemId"], int)
+    assert "id" in data["data"]["createItem"]
+    assert isinstance(data["data"]["createItem"]["id"], int)
 
 
 @pytest.mark.asyncio

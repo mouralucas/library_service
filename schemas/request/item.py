@@ -12,7 +12,7 @@ class CreateItemRequest(BaseModel):
         from_attributes=True, alias_generator=AliasGenerator(alias=to_camel)
     )
 
-    id: int | None = Field(None, alias="itemId", description="Id of the item")
+    id: int | None = Field(None, description="Id of the item")
     owner_id: uuid.UUID | None = Field(None, description="Id of the owner")
     last_status_id: str | None = Field(
         None, description="Id of the last status of the item"
@@ -74,7 +74,7 @@ class UpdateItemRequest(CreateItemRequest):
 
     # Is basically the same as "Create Item", but without default and required = true
     # and id is required
-    id: int = Field(..., alias="itemId", description="Id of the item")
+    id: int = Field(..., description="Id of the item")
     title: str | None = Field(None, description="The name of the item")
     last_status_date: datetime.date | None = Field(
         None, description="Date of the last status of the item"

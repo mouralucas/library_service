@@ -1,3 +1,4 @@
+from typing import Any
 from rolf_common.util.graphql_input_validation import validate_graphql_input
 
 from schemas.request.reading import (
@@ -67,14 +68,14 @@ async def resolve_get_active_readings(_, info):
     return readings.model_dump(by_alias=True)
 
 
-async def get_reading_stats_resolver(_, info, params):
+async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:
     params_ = GetReadingStatsRequest.model_validate(params)
 
     stats = await ReadingService(
         session=info.context["session"], user=info.context["user"]
     ).get_reading_stats(params=params_)
 
-    return stats.model_dump(by_alias=True)
+    return stats
 
 
 def bind_reading_resolvers(query, mutation):
