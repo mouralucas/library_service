@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
-from schemas.reading import ProgressSchema, ReadingSchema, ReadingStats
+from schemas.reading import ProgressSchema, ReadingSchema
 from schemas.request.reading import (
     CreateProgressRequestV2,
     CreateReadingRequest,
@@ -22,7 +22,6 @@ from schemas.response.reading import (
     GetActiveReadingsResponse,
     GetProgressResponse,
     GetReadingsResponse,
-    GetReadingStatsResponse,
 )
 from services.base import BaseService
 
@@ -248,9 +247,7 @@ class ReadingService(BaseService):
 
         return response
 
-    async def get_reading_stats(
-        self, params: GetReadingStatsRequest
-    ) -> dict[str, Any]:
+    async def get_reading_stats(self, params: GetReadingStatsRequest) -> dict[str, Any]:
         item_readings = await self.reading_manager.get_readings(item_id=params.item_id)
 
         # Get information about the last reading
@@ -277,7 +274,7 @@ class ReadingService(BaseService):
         current_percentage = (
             current_reading_progress.percentage if current_reading_progress else None
         )
-        
+
         response = {
             "stats": {
                 "readings_count": readings_count,

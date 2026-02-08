@@ -1,4 +1,5 @@
 from typing import Any
+
 from ariadne import MutationType, QueryType
 from rolf_common.util.graphql_input_validation import validate_graphql_input
 

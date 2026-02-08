@@ -64,9 +64,7 @@ class ItemService(BaseService):
         # TODO: add validation if author(s) were changed, if so add correspondent method
 
         response = CreateItemResponse(
-            created=True,
-            id=updated_item.id,
-            title=updated_item.title
+            created=True, id=updated_item.id, title=updated_item.title
         )
 
         return response

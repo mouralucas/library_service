@@ -1,4 +1,5 @@
 from typing import Any
+
 from rolf_common.util.graphql_input_validation import validate_graphql_input
 
 from schemas.request.reading import (

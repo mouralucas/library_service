@@ -1,6 +1,4 @@
-from fastapi import APIRouter, Depends, Security
-from rolf_common.schemas.auth import RequiredUser
-from rolf_common.services import get_user
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -11,7 +9,6 @@ from schemas.request.core import (
     CreateLanguageRequest,
     CreatePublisherRequest,
     CreateSerieRequest,
-    GetStatusRequest,
 )
 from schemas.response.core import (
     CreateCollectionResponse,
@@ -19,12 +16,7 @@ from schemas.response.core import (
     CreateLanguageResponse,
     CreatePublisherResponse,
     CreateSerieResponse,
-    GetCollectionResponse,
     GetCountryResponse,
-    GetLanguageResponse,
-    GetPublisherResponse,
-    GetSeriesResponse,
-    GetStatusResponse,
 )
 from services.core import (
     CollectionService,
@@ -32,7 +24,6 @@ from services.core import (
     LanguageService,
     PublisherService,
     SerieService,
-    StatusService,
 )
 
 router = APIRouter(prefix="", tags=["Base"])

@@ -1,5 +1,5 @@
-from typing import cast
-from typing import Any
+from typing import Any, cast
+
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import RowMapping, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,6 @@ from models import (
     LanguageModel,
     PublisherModel,
     SerieModel,
-    SQLModel,
     StatusModel,
 )
 

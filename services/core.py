@@ -1,8 +1,9 @@
+from typing import Any
+
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import BaseService
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Any
 
 from managers.core import (
     CollectionManager,
@@ -25,7 +26,6 @@ from schemas.core import (
     LanguageSchema,
     PublisherSchema,
     SerieSchema,
-    StatusSchema,
 )
 from schemas.request.core import (
     CreateCollectionRequest,
@@ -41,12 +41,7 @@ from schemas.response.core import (
     CreateLanguageResponse,
     CreatePublisherResponse,
     CreateSerieResponse,
-    GetCollectionResponse,
     GetCountryResponse,
-    GetLanguageResponse,
-    GetPublisherResponse,
-    GetSeriesResponse,
-    GetStatusResponse,
 )
 
 
@@ -68,9 +63,9 @@ class LanguageService(BaseService):
         return response
 
     async def get_languages(self) -> dict[str, Any]:
-        
+
         languages = await LanguageManager(session=self.session).get_languages()
-        
+
         response = {
             "quantity": len(languages) if languages else 0,
             "languages": languages,
@@ -184,15 +179,6 @@ class PublisherService(BaseService):
 
     async def get_publishers(self) -> dict[str, Any]:
         publishers = await PublisherManager(session=self.session).get_publishers()
-
-        # response = GetPublisherResponse(
-        #     quantity=len(publishers) if publishers else 0,
-        #     publishers=(
-        #         [PublisherSchema.model_validate(publisher) for publisher in publishers]
-        #         if publishers
-        #         else []
-        #     ),
-        # )
 
         response = {
             "quantity": len(publishers) if publishers else 0,

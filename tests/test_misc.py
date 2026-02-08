@@ -43,9 +43,9 @@ async def test_get_language(client, create_languages):
     data = response.json()
     assert "data" in data
     assert "getLanguages" in data["data"]
-    
+
     data = data["data"]["getLanguages"]
-    
+
     assert response.status_code == status.HTTP_200_OK
     assert "languages" in data
     assert type(data["languages"]) is list
@@ -117,13 +117,13 @@ async def test_get_serie(client, create_series):
     """
     response = await client.post("/graphql/library", json={"query": query})
     assert response.status_code == status.HTTP_200_OK
-    
+
     data = response.json()
     assert "data" in data
     assert "getSeries" in data["data"]
-    
+
     data = data["data"]["getSeries"]
-    
+
     assert "series" in data
     assert type(data["series"]) is list
     assert len(data["series"]) == series_list_len
@@ -173,15 +173,15 @@ async def test_get_collection(client, create_collections):
         }
     """
     response = await client.post("/graphql/library", json={"query": query})
-    
+
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    
+
     assert "data" in data
     assert "getCollections" in data["data"]
-    
+
     data = data["data"]["getCollections"]
-    
+
     assert "collections" in data
     assert type(data["collections"]) is list
     assert len(data["collections"]) == collections_list_len
@@ -234,7 +234,7 @@ async def test_get_publisher(client, create_publisher):
     data = response.json()
     assert "data" in data
     assert "getPublishers" in data["data"]
-    
+
     data = data["data"]["getPublishers"]
 
     assert "publishers" in data
@@ -273,10 +273,10 @@ async def test_get_item_status(client, create_item_status, create_reading_status
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    
+
     assert "data" in data
     assert "getStatus" in data["data"]
-    
+
     data = data["data"]["getStatus"]
 
     assert "statuses" in data

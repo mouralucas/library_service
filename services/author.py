@@ -1,9 +1,10 @@
 from typing import Any
+
 from managers.author import AuthorManager
 from models import AuthorModel
 from schemas.item import AuthorSchema
 from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
-from schemas.response.author import CreateAuthorResponse, GetAuthorResponse
+from schemas.response.author import CreateAuthorResponse
 from services.base import BaseService
 
 
@@ -24,10 +25,7 @@ class AuthorService(BaseService):
 
     async def get_authors(self, params: GetAuthorsRequest) -> dict[str, Any]:
         authors = await AuthorManager(session=self.session).get_authors()
-        
-        response = {
-            "quantity": len(authors) if authors else 0,
-            "authors": authors
-        }
+
+        response = {"quantity": len(authors) if authors else 0, "authors": authors}
 
         return response
