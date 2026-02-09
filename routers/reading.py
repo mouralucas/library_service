@@ -37,23 +37,6 @@ async def create_reading(
     )
 
 
-# @router.get(
-#     "",
-#     summary="Get readings",
-#     description="Get all readings for a item",
-# )
-# async def get_reading(
-#     params: GetReadingRequest = Depends(),
-#     session: AsyncSession = Depends(get_session),
-#     user: RequiredUser = Security(get_user),
-# ) -> GetReadingResponse:
-#     response = await ReadingService(session=session, user=user).get_readings(
-#         params=params
-#     )
-
-#     return response
-
-
 @router.get(
     "/active",
     summary="Get active readings",
