@@ -18,9 +18,20 @@ check_venv:
 	fi
 
 
-run_database_migrations:
+# Run the Alembic upgrade command
+apply-migrations:
 	$(PYTHON) -m $(ALEMBIC) $(COMMAND_UPGRADE)
 
+create-migration:
+	@read -p "Type the migration message: " msg; \
+	python3 -m alembic.config revision --autogenerate -m "$$msg"
 
-insert_data:
-	$(PYTHON) populate-database.py
+
+# Create basic data in docker database
+insert-data:
+	source venv/bin/activate && $(PYTHON) populate-database.py
+
+
+# Lint GraphQL schema files (requires node/npm). Uses npx so installation isn't mandatory
+lint-graphql:
+	npx graphql-schema-linter 'schemas_graphql/**/*.graphql'

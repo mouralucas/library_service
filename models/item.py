@@ -95,6 +95,10 @@ class ItemModel(SQLModel):
         "StatusModel", secondary="item_status", lazy="noload", viewonly=True
     )  # go to user item
 
+    location_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("item_location.id"), nullable=True
+    )
+
 
 class ItemAuthorModel(SQLModel):
     __tablename__ = "item_author"
@@ -123,3 +127,15 @@ class ItemStatusModel(SQLModel):
     item: Mapped["ItemModel"] = relationship(foreign_keys=[item_id], lazy="selectin")
 
     date: Mapped[datetime.date] = mapped_column("date")
+
+
+class ItemLocationModel(SQLModel):
+    __tablename__ = "item_location"
+
+    name: Mapped[str] = mapped_column("name", doc="Location name")
+    physical_location: Mapped[str] = mapped_column(
+        "physical_location", doc="Physical location of the item"
+    )
+    description: Mapped[str] = mapped_column(
+        "description", doc="Additional details about the location", nullable=True
+    )
