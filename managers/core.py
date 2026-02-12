@@ -180,7 +180,7 @@ class StatusManager(BaseDataManager):
             StatusModel.description,
             StatusModel.order,
             StatusModel.type.label("status_type"),
-        )
+        ).where(StatusModel.active)
 
         if status_type:
             query = query.where(StatusModel.type == status_type)

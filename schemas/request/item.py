@@ -55,12 +55,9 @@ class CreateItemRequest(BaseModel):
     language_id: str | None = Field(None, description="The id of the language")
     cover_price: float | None = Field(None, description="The price of the item")
     paid_price: float | None = Field(None, description="The price of the item")
-    # dimensions: str | None = Field(None, description="The dimensions of the item")
-    # height: int | None = Field(None, description="The height of the item")
-    # width: int | None = Field(None, description="The width of the item")
-    # thickness: int | None = Field(None, description="The thickness of the item")
     summary: str | None = Field(None, description="The summary of the item")
     observation: str | None = Field(None, description="The observation of the item")
+    location_id: uuid.UUID | None = Field(None, description="The id of the location")
 
     cover: str = Field(
         "library/item/cover/no_cover.png", description="Cover of the item"

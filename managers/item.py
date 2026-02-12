@@ -84,6 +84,7 @@ class ItemManager(BaseDataManager):
                 ItemModel.paid_price,
                 ItemModel.summary,
                 ItemModel.observation,
+                ItemModel.location_id,
             )
             .join(AuthorModel, ItemModel.main_author_id == AuthorModel.id)
             .join(SerieModel, ItemModel.serie_id == SerieModel.id)

@@ -51,13 +51,10 @@ input CreateItemInput {
   languageId: String
   coverPrice: Float
   paidPrice: Float
-  dimensions: String
-  height: Int
-  width: Int
-  thickness: Int
   summary: String
   observation: String
   cover: String
+  location_id: String
 }
 
 input UpdateItemInput {
