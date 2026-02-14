@@ -77,13 +77,7 @@ class ItemService(BaseService):
             type=params.type,
             order_by=params.order_by,
         )
-
-        # response = GetItemResponse(
-        #     quantity=len(items) if items else 0,
-        #     items=(
-        #         [ItemSchema.model_validate(item) for item in items] if items else None
-        #     ),
-        # )
+        
         response = {
             "quantity": len(items) if items else 0,
             "items": items,

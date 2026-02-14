@@ -75,7 +75,7 @@ class ItemManager(BaseDataManager):
                 AuthorModel.name.label("main_author_name"),
                 ItemModel.collection_id,
                 CollectionModel.name.label("collection_name"),
-                ItemModel.format,
+                ItemModel.format.label("format_id"),
                 ItemModel.type.label("item_type_id"),
                 ItemModel.last_status_id,
                 StatusModel.name.label("last_status_name"),
