@@ -2,6 +2,7 @@ extend type Query {
   # Item queries
   getItem(id: Int!): Item
   getItems(params: GetItemInput): GetItemResponse
+  getItemLocations: GetItemLocationResponse
 }
 
 extend type Mutation {
@@ -91,6 +92,7 @@ input UpdateItemInput {
   summary: String
   observation: String
   cover: String
+  location_id: String!
 }
 
 type CreateItemResponse {
@@ -137,4 +139,17 @@ type Item {
   lastStatusDate: String
 
   reading: Reading
+}
+
+# Item location
+type GetItemLocationResponse {
+  quantity: Int!
+  locations: [ItemLocation]!
+}
+
+type ItemLocation {
+  id: Int!
+  name: String!
+  physicalphysical_location: String
+  description: String
 }

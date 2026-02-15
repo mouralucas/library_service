@@ -90,6 +90,16 @@ class ItemService(BaseService):
 
         return ItemSchema.model_validate(item)
 
+    async def get_item_locations(self) -> dict[str, Any]:
+        locations = await ItemManager(self.session).get_item_locations()
+
+        response = {
+            "quantity": len(locations) if locations else 0,
+            "locations": locations,
+        }
+
+        return response
+
     async def __update_status(self, item: ItemModel, is_update: bool = False):
         """
         :Name: __update_status

@@ -14,7 +14,7 @@ from models import (
     SQLModel,
     StatusModel,
 )
-from models.item import ItemModel, ItemStatusModel
+from models.item import ItemLocationModel, ItemModel, ItemStatusModel
 
 
 class ItemManager(BaseDataManager):
@@ -131,3 +131,17 @@ class ItemManager(BaseDataManager):
         return (
             [item["ItemStatusModel"] for item in item_status] if item_status else None
         )
+
+    async def get_item_locations(self) -> list[dict[Any, Any]] | None:
+        query = select(
+            ItemLocationModel.id,
+            ItemLocationModel.name,
+            ItemLocationModel.physical_location,
+            ItemLocationModel.description,
+        )
+
+        locations: list[RowMapping] | None = await self.get_all(
+            query, unique_result=True
+        )
+
+        return [dict(location.items()) for location in locations] if locations else None

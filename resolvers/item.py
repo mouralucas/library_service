@@ -1,3 +1,5 @@
+from typing import Any
+
 from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
 from services.item import ItemService
 
@@ -32,8 +34,17 @@ async def update_item_resolver(_, info, item):
     return updated_item.model_dump(by_alias=True)
 
 
+async def get_item_locations_resolver(_, info) -> dict[str, Any]:
+    locations = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_item_locations()
+
+    return locations
+
+
 def bind_item_resolvers(query, mutation):
     query.set_field("getItems", get_items_resolver)
+    query.set_field("getItemLocations", get_item_locations_resolver)
 
     mutation.set_field("createItem", create_item_resolver)
     mutation.set_field("updateItem", update_item_resolver)
