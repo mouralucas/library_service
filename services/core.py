@@ -2,7 +2,6 @@ from typing import Any
 
 from rolf_common.schemas.auth import RequiredUser
 from rolf_common.services import BaseService
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.core import (
@@ -41,7 +40,6 @@ from schemas.response.core import (
     CreateLanguageResponse,
     CreatePublisherResponse,
     CreateSerieResponse,
-    GetCountryResponse,
 )
 
 
@@ -91,22 +89,13 @@ class CountryService(BaseService):
 
         return response
 
-    async def get_countries(self) -> GetCountryResponse:
-        countries = await CountryManager(session=self.session).get_all(
-            select_statement=select(CountryModel)
-        )
+    async def get_countries(self) -> dict[str, Any]:
+        countries = await CountryManager(session=self.session).get_countries()
 
-        response = GetCountryResponse(
-            quantity=len(countries) if countries else 0,
-            countries=(
-                [
-                    CountrySchema.model_validate(country["CountryModel"])
-                    for country in countries
-                ]
-                if countries
-                else []
-            ),
-        )
+        response = {
+            "quantity": len(countries) if countries else 0,
+            "countries": countries,
+        }
 
         return response
 

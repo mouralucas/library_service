@@ -62,6 +62,20 @@ class CountryManager(BaseDataManager):
 
         return cast(CountryModel, new_country)
 
+    async def get_countries(self) -> list[dict[Any, Any]] | None:
+        stmt = select(
+            CountryModel.id,
+            CountryModel.name,
+            CountryModel.continent,
+            CountryModel.description,
+        )
+
+        countries = await CountryManager(session=self.session).get_all(
+            select_statement=stmt
+        )
+
+        return [dict(country.items()) for country in countries] if countries else None
+
 
 class SerieManager(BaseDataManager):
     def __init__(self, session: AsyncSession):

@@ -132,6 +132,7 @@ class ItemStatusModel(SQLModel):
 class ItemLocationModel(SQLModel):
     __tablename__ = "item_location"
 
+    id: Mapped[int] = mapped_column("id", primary_key=True)
     name: Mapped[str] = mapped_column("name", doc="Location name")
     physical_location: Mapped[str] = mapped_column(
         "physical_location", doc="Physical location of the item"

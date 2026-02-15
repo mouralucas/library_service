@@ -77,7 +77,7 @@ class ItemService(BaseService):
             type=params.type,
             order_by=params.order_by,
         )
-        
+
         response = {
             "quantity": len(items) if items else 0,
             "items": items,
