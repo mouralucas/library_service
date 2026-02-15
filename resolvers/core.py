@@ -108,10 +108,10 @@ async def crate_language_resolver(_, info, language):
     return new_language.model_dump(by_alias=True)
 
 
-async def get_countries_resolver(_, info):
+async def get_countries_resolver(_, info) -> dict[str, Any]:
     countries = await CountryService(session=info.context["session"]).get_countries()
 
-    return countries.model_dump(by_alias=True)
+    return countries
 
 
 async def create_country_resolver(_, info, country):

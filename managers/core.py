@@ -68,7 +68,7 @@ class CountryManager(BaseDataManager):
             CountryModel.name,
             CountryModel.continent,
             CountryModel.description,
-        )
+        ).order_by(CountryModel.name)
 
         countries = await CountryManager(session=self.session).get_all(
             select_statement=stmt

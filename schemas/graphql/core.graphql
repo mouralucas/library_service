@@ -170,8 +170,8 @@ type CreateCountryResponse {
 
 
 type Country {
-    countryId: String!
-    countryName: String!
+    id: String!
+    name: String!
     continent: String
     description: String
 }
