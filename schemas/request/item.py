@@ -57,7 +57,7 @@ class CreateItemRequest(BaseModel):
     paid_price: float | None = Field(None, description="The price of the item")
     summary: str | None = Field(None, description="The summary of the item")
     observation: str | None = Field(None, description="The observation of the item")
-    location_id: uuid.UUID | None = Field(None, description="The id of the location")
+    location_id: int = Field(..., description="The id of the location")
 
     cover: str = Field(
         "library/item/cover/no_cover.png", description="Cover of the item"

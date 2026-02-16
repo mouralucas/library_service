@@ -55,7 +55,7 @@ input CreateItemInput {
   summary: String
   observation: String
   cover: String
-  locationId: String
+  locationId: Int!
 }
 
 input UpdateItemInput {
@@ -92,7 +92,7 @@ input UpdateItemInput {
   summary: String
   observation: String
   cover: String
-  locationId: String!
+  locationId: Int!
 }
 
 type CreateItemResponse {
