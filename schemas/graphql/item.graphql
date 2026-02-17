@@ -17,6 +17,7 @@ input GetItemInput {
   title: String
   mainAuthorId: Int
   itemTypeId: String
+  statusId: String
   orderBy: [OrderByInput]
 }
 
@@ -127,14 +128,12 @@ type Item {
   languageId: String
   languageName: String
   coverPrice: Float
+  cover: String!
   paidPrice: Float
-  dimensions: String
-  height: Int
-  width: Int
-  thickness: Int
   summary: String
   observation: String
   lastStatusId: String
+  locationId: Int
   lastStatusName: String
   lastStatusDate: String
 

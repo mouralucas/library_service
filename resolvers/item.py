@@ -1,15 +1,13 @@
 from typing import Any
-
+from rolf_common.util.graphql_input_validation import validate_graphql_input
 from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
 from services.item import ItemService
 
-
-async def get_items_resolver(_, info, params):
-    params_ = GetItemRequest.model_validate(params)
-
+@validate_graphql_input(GetItemRequest)
+async def get_items_resolver(_, info, params: GetItemRequest):
     items = await ItemService(
         session=info.context["session"], user=info.context["user"]
-    ).get_items(params=params_)
+    ).get_items(params=params)
 
     return items
 

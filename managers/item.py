@@ -51,6 +51,7 @@ class ItemManager(BaseDataManager):
         title: str | None = None,
         main_author_id: int | None = None,
         type: str | None = None,
+        status_id: str | None = None,
         order_by: Any = None,
     ) -> list[dict[Any, Any]] | None:
         query = (
@@ -82,6 +83,7 @@ class ItemManager(BaseDataManager):
                 ItemModel.last_status_date,
                 ItemModel.cover_price,
                 ItemModel.paid_price,
+                ItemModel.cover,
                 ItemModel.summary,
                 ItemModel.observation,
                 ItemModel.location_id,
@@ -101,6 +103,9 @@ class ItemManager(BaseDataManager):
 
         if main_author_id:
             query = query.where(ItemModel.main_author_id == main_author_id)
+            
+        if status_id:
+            query = query.where(ItemModel.last_status_id == status_id)
 
         if type:
             query = query.where(ItemModel.type == type)

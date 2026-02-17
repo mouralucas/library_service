@@ -75,6 +75,7 @@ class ItemService(BaseService):
             title=params.title,
             main_author_id=params.main_author_id,
             type=params.type,
+            status_id=params.status_id,
             order_by=params.order_by,
         )
 
