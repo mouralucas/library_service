@@ -17,7 +17,6 @@ class ItemService(BaseService):
         self.user = user.model_dump()
 
     async def create_item(self, item: CreateItemRequest) -> dict[str, Any]:
-        # TODO: I did not like this, improve
         item.owner_id = self.user["user_id"]
 
         new_item = await ItemManager(session=self.session).create_item(
@@ -64,7 +63,9 @@ class ItemService(BaseService):
         # TODO: add validation if author(s) were changed, if so add correspondent method
 
         response = CreateItemResponse(
-            created=True, id=updated_item.id, title=updated_item.title
+            created=True,
+            id=updated_item.id,
+            title=updated_item.title,
         )
 
         return response

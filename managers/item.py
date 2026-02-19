@@ -103,7 +103,7 @@ class ItemManager(BaseDataManager):
 
         if main_author_id:
             query = query.where(ItemModel.main_author_id == main_author_id)
-            
+
         if status_id:
             query = query.where(ItemModel.last_status_id == status_id)
 
