@@ -11,6 +11,7 @@ async def test_mutation_new_item_success(
     create_publisher,
     create_collections,
     create_authors,
+    create_item_locations,
 ):
     item_title = "Test item"
     item_subtitle = "Test subtitle"
@@ -31,7 +32,7 @@ async def test_mutation_new_item_success(
     list_item_status = create_item_status
 
     mutation = """
-        mutation CreateItem($input: CreateItemInput!) {
+        mutation CreateItem($input: CreateItemInput) {
             createItem(item: $input) {
                 created
                 id
@@ -58,6 +59,7 @@ async def test_mutation_new_item_success(
             "paidPrice": paid_price,
             "itemTypeId": item_type_id,
             "formatId": format_id,
+            "locationId": create_item_locations[0].id,
         }
     }
 

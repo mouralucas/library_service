@@ -153,3 +153,34 @@ def get_item_author_relation_mock() -> list[dict[str, Any]]:
     ]
 
     return item_author
+
+
+def get_item_locations_mock() -> list[dict[str, Any]]:
+    locations: list[dict[str, Any]] = [
+        {
+            **default_model_dict,
+            "id": 0,
+            "name": "Não consta",
+            "physical_location": "Não consta",
+        },
+        {
+            **default_model_dict,
+            "id": 1,
+            "name": "Estante 1",
+            "physical_location": "Estante 1",
+        },
+        {
+            **default_model_dict,
+            "id": 2,
+            "name": "Estante 2",
+            "physical_location": "Estante 2",
+        },
+        {
+            **default_model_dict,
+            "id": 3,
+            "name": "Estante 3",
+            "physical_location": "Estante 3",
+        },
+    ]
+
+    return locations

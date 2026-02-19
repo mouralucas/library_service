@@ -13,6 +13,7 @@ async def test_create_item_success(
     create_publisher,
     create_collections,
     create_authors,
+    create_item_locations,
 ):
     item_title = "Test item"
     item_subtitle = "Test subtitle"
@@ -42,6 +43,7 @@ async def test_create_item_success(
         "lastStatusDate": last_status_date,
         "coverPrice": cover_price,
         "paidPrice": paid_price,
+        "locationId": create_item_locations[0].id,
     }
 
     mutation = """
@@ -74,6 +76,7 @@ async def test_create_item_without_non_required(
     create_authors,
     create_series,
     create_collections,
+    create_item_locations
 ):
     item_title = "Test item"
     item_subtitle = "Test subtitle"
@@ -90,6 +93,7 @@ async def test_create_item_without_non_required(
         "languageId": languages[0].id,
         "lastStatusId": list_item_status[0].id,
         "lastStatusDate": last_status_date,
+        "locationId": create_item_locations[0].id,
     }
     mutation = """
         mutation CreateItem($item: CreateItemInput) {
@@ -114,7 +118,7 @@ async def test_create_item_without_non_required(
 
 
 @pytest.mark.asyncio
-async def test_update_item(client, create_item):
+async def test_update_item(client, create_item, create_item_locations):
     items = create_item
 
     old_item = copy.deepcopy(items[0])
@@ -129,6 +133,7 @@ async def test_update_item(client, create_item):
         "pages": new_pages,
         "lastStatusId": new_status_id,
         "lastStatusDate": new_last_status_date,
+        "locationId": create_item_locations[0].id,
     }
     response = await client.patch("/item", json=payload)
 

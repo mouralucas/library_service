@@ -91,3 +91,21 @@ class ItemSchema(BaseModel):
 
     def transform(self, item):
         pass
+
+class ItemLocationSchema(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        alias_generator=AliasGenerator(serialization_alias=to_camel),
+    )
+
+    id: int = Field(
+        ..., description="Unique id of the location"
+    )
+    name: str = Field(
+        ..., description="The name of the location"
+    )
+    physical_location: str | None = Field(
+        None,
+        description="The physical location of the item",
+    )
+    description: str | None = Field(None, description="The description of the location")
