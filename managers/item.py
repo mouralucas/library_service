@@ -150,3 +150,24 @@ class ItemManager(BaseDataManager):
         )
 
         return [dict(location.items()) for location in locations] if locations else None
+
+    async def get_items_by_location(
+        self, location_ids: list[int] | None = None
+    ) -> list[dict[Any, Any]] | None:
+        query = select(
+            ItemModel.id,
+            ItemModel.title,
+            ItemModel.main_author_id,
+            ItemModel.cover,
+            ItemLocationModel.id.label("location_id"),
+            ItemLocationModel.name.label("location_name"),
+            ItemLocationModel.physical_location,
+            ItemLocationModel.description.label("location_description"),
+        ).join(ItemLocationModel, ItemModel.location_id == ItemLocationModel.id)
+
+        if location_ids:
+            query = query.where(ItemModel.location_id.in_(location_ids))
+
+        items: list[RowMapping] | None = await self.get_all(query, unique_result=True)
+
+        return [dict(item.items()) for item in items] if items else None

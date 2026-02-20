@@ -157,3 +157,25 @@ class ItemService(BaseService):
             await ItemManager(self.session).add_all(other_authors)
 
         return
+
+    async def get_items_by_location(self, location_ids: list[int] | None):
+        items = await ItemManager(self.session).get_items_by_location(
+            location_ids=location_ids
+        )
+
+        response_items = {}
+        for item in items or []:
+            location_id = item.get("location_id")
+            location_name = item.get("location_name")
+            item["location_id"] = location_id
+            item["location_name"] = location_name
+
+            if location_id not in response_items:
+                response_items[location_id] = {
+                    "location_id": location_id,
+                    "location_name": location_name,
+                    "items": [],
+                }
+            response_items[location_id]["items"].append(item)
+
+        return list(response_items.values())

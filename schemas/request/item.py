@@ -95,3 +95,13 @@ class GetItemRequest(BaseModel):
     type: str | None = Field(None, alias="itemTypeId")
     status_id: str | None = Field(None, alias="statusId")
     order_by: list[OrderBySchemaRequest] | None = Field(None)
+
+
+class GetItemsByLocationRequest(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True, alias_generator=AliasGenerator(alias=to_camel)
+    )
+
+    location_ids: list[int] | None = Field(
+        None, description="The list of location ids to filter the items"
+    )

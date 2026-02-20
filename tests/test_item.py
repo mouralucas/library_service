@@ -76,7 +76,7 @@ async def test_create_item_without_non_required(
     create_authors,
     create_series,
     create_collections,
-    create_item_locations
+    create_item_locations,
 ):
     item_title = "Test item"
     item_subtitle = "Test subtitle"

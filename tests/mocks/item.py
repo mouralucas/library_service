@@ -3,7 +3,11 @@ from typing import Any
 import pytest_asyncio
 from rolf_common.managers import BaseDataManager
 
-from data_mock.item import get_item_locations_mock, get_item_mock, get_item_status_relation_mock
+from data_mock.item import (
+    get_item_locations_mock,
+    get_item_mock,
+    get_item_status_relation_mock,
+)
 from models import ItemModel, ItemStatusModel
 from models.item import ItemLocationModel
 from schemas.item import ItemSchema

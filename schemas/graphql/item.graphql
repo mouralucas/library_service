@@ -3,6 +3,7 @@ extend type Query {
   getItem(id: Int!): Item
   getItems(params: GetItemInput): GetItemResponse
   getItemLocations: GetItemLocationResponse
+  getItemsByLocation(params: GetItemsByLocationInput): [ItemsByLocation]!
 }
 
 extend type Mutation {
@@ -151,4 +152,14 @@ type ItemLocation {
   name: String!
   physicalphysical_location: String
   description: String
+}
+
+input GetItemsByLocationInput {
+  locationsIds: [Int]
+}
+
+type ItemsByLocation {
+    locationId: Int!
+    locationName: String!
+    items: [Item]!
 }
