@@ -94,7 +94,7 @@ input UpdateItemInput {
   summary: String
   observation: String
   cover: String
-  locationId: Int!
+  locationId: Int
 }
 
 type CreateItemResponse {

@@ -30,12 +30,11 @@ async def create_item_resolver(_, info, item):
     return new_item
 
 
-async def update_item_resolver(_, info, item):
-    item_ = UpdateItemRequest.model_validate(item)
-
+@validate_graphql_input(UpdateItemRequest)
+async def update_item_resolver(_, info, item: UpdateItemRequest):
     updated_item = await ItemService(
         session=info.context["session"], user=info.context["user"]
-    ).update_item(item=item_)
+    ).update_item(item=item)
 
     return updated_item.model_dump(by_alias=True)
 

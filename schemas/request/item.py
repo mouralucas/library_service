@@ -82,6 +82,7 @@ class UpdateItemRequest(CreateItemRequest):
     serie_id: int | None = Field(None, description="The id of the serie")
     collection_id: int | None = Field(None, description="The id of the collection")
     cover: str | None = Field(None, description="Cover of the item")
+    location_id: int | None = Field(None, description="The id of the location")
 
 
 class GetItemRequest(BaseModel):
