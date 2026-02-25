@@ -97,7 +97,7 @@ class ItemService(BaseService):
 
         response = {
             "quantity": len(locations) if locations else 0,
-            "locations": locations,
+            "locations": locations if locations else [],
         }
 
         return response

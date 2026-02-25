@@ -66,7 +66,7 @@ class LanguageService(BaseService):
 
         response = {
             "quantity": len(languages) if languages else 0,
-            "languages": languages,
+            "languages": languages if languages else [],
         }
 
         return response
@@ -94,7 +94,7 @@ class CountryService(BaseService):
 
         response = {
             "quantity": len(countries) if countries else 0,
-            "countries": countries,
+            "countries": countries if countries else [],
         }
 
         return response
@@ -116,7 +116,10 @@ class SerieService(BaseService):
     async def get_series(self) -> dict[str, Any]:
         series = await SerieManager(session=self.session).get_series()
 
-        response = {"quantity": len(series) if series else 0, "series": series}
+        response = {
+            "quantity": len(series) if series else 0,
+            "series": series if series else [],
+        }
 
         return response
 
@@ -143,7 +146,7 @@ class CollectionService(BaseService):
 
         response = {
             "quantity": len(collections) if collections else 0,
-            "collections": collections,
+            "collections": collections if collections else [],
         }
 
         return response
@@ -171,7 +174,7 @@ class PublisherService(BaseService):
 
         response = {
             "quantity": len(publishers) if publishers else 0,
-            "publishers": publishers,
+            "publishers": publishers if publishers else [],
         }
 
         return response
@@ -187,6 +190,9 @@ class StatusService(BaseService):
             status_type=params.status_type
         )
 
-        response = {"quantity": len(statuses) if statuses else 0, "statuses": statuses}
+        response = {
+            "quantity": len(statuses) if statuses else 0,
+            "statuses": statuses if statuses else [],
+        }
 
         return response

@@ -26,6 +26,9 @@ class AuthorService(BaseService):
     async def get_authors(self, params: GetAuthorsRequest) -> dict[str, Any]:
         authors = await AuthorManager(session=self.session).get_authors()
 
-        response = {"quantity": len(authors) if authors else 0, "authors": authors}
+        response = {
+            "quantity": len(authors) if authors else 0,
+            "authors": authors if authors else [],
+        }
 
         return response

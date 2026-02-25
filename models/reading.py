@@ -45,3 +45,11 @@ class ReadingProgressModel(SQLModel):
     percentage: Mapped[float] = mapped_column("percentage", nullable=True)
     rate: Mapped[int] = mapped_column("rate", nullable=True)
     comment: Mapped[str] = mapped_column("comment", nullable=True)
+
+
+class ReadingGoal(SQLModel):
+    __tablename__ = "reading_goal"
+
+    owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")
+    item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
+    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
