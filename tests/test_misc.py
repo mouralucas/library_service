@@ -53,6 +53,34 @@ async def test_get_language(client, create_languages):
 
 
 @pytest.mark.asyncio
+async def test_get_language_empty(client):
+    query = """
+        query GetLanguages {
+            getLanguages {
+                quantity
+                languages {
+                    id
+                    name
+                    code
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
+
+    data = response.json()
+    assert "data" in data
+    assert "getLanguages" in data["data"]
+
+    data = data["data"]["getLanguages"]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert "languages" in data
+    assert type(data["languages"]) is list
+    assert len(data["languages"]) == 0
+
+
+@pytest.mark.asyncio
 async def test_create_country(client):
     country_id = "BR"
     name = "Brasil"
@@ -81,6 +109,17 @@ async def test_get_country(client, create_countries):
     assert "countries" in data
     assert type(data["countries"]) is list
     assert len(data["countries"]) == country_len
+
+
+@pytest.mark.asyncio
+async def test_get_country_empty(client):
+    response = await client.get("/country")
+
+    data = response.json()
+    assert response.status_code == status.HTTP_200_OK
+    assert "countries" in data
+    assert type(data["countries"]) is list
+    assert len(data["countries"]) == 0
 
 
 @pytest.mark.asyncio

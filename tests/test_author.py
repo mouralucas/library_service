@@ -104,3 +104,37 @@ async def test_get_author(client, create_authors):
         assert "countryName" in author
         assert "languageId" in author
         assert "languageName" in author
+
+
+@pytest.mark.asyncio
+async def test_get_author_empty(client):
+    query = """
+        query GetAuthors {
+            getAuthors {
+                quantity
+                authors {
+                    id
+                    name
+                    birthDate
+                    description
+                    countryId
+                    countryName
+                    languageId
+                    languageName
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert "data" in data
+    assert "getAuthors" in data["data"]
+
+    data = data["data"]["getAuthors"]
+
+    assert "authors" in data
+    assert len(data["authors"]) == 0
+    assert type(data["authors"]) is list
+    assert data["quantity"] == 0
