@@ -70,8 +70,6 @@ input UpdateItemInput {
   otherAuthorsId: [Int]
   title: String
   subtitle: String
-  titleOriginal: String
-  subtitleOriginal: String
   isbn: String
   isbn10: String
   itemTypeId: String
@@ -150,7 +148,7 @@ type GetItemLocationResponse {
 type ItemLocation {
   id: Int!
   name: String!
-  physicalphysical_location: String
+  physicalLocation: String
   description: String
 }
 

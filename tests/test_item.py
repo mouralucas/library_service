@@ -180,8 +180,6 @@ async def test_get_item_with_title_exist_filter(client, create_item):
                     mainAuthorName
                     title
                     subtitle
-                    titleOriginal
-                    subtitleOriginal
                     isbn
                     isbn10
                     itemTypeId

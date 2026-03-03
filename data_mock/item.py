@@ -32,7 +32,6 @@ def get_item_mock() -> list[dict[str, Any]]:
             "id": 1,
             "main_author_id": authors[0]["id"],
             "title": "O Pistoleiro",
-            "title_original": "The Gunslinger",
             "subtitle": "Primeiro livro da série A Torre Negra",
             "language_id": languages[1]["id"],
             "publisher_id": publishers[0]["id"],
@@ -49,7 +48,6 @@ def get_item_mock() -> list[dict[str, Any]]:
             "id": 2,
             "main_author_id": authors[3]["id"],
             "title": "Coraline",
-            "title_original": "Coraline",
             "language_id": languages[1]["id"],
             "publisher_id": publishers[3]["id"],
             "serie_id": series[0]["id"],
@@ -67,7 +65,6 @@ def get_item_mock() -> list[dict[str, Any]]:
             "id": 3,
             "main_author_id": authors[1]["id"],
             "title": "Neon Genesis Evangelion #01",
-            "title_original": "Neon Genesis Evangelion #01",
             "subtitle": "Um dos melhores mangás de ficção científica retorna \
                 às bancas em novo formato",
             "pages": 336,

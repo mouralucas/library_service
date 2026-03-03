@@ -60,8 +60,6 @@ class ItemManager(BaseDataManager):
                 ItemModel.owner_id,
                 ItemModel.title,
                 ItemModel.subtitle,
-                ItemModel.title_original,
-                ItemModel.subtitle_original,
                 ItemModel.pages,
                 ItemModel.publication_date,
                 ItemModel.original_publication_date,
@@ -143,7 +141,7 @@ class ItemManager(BaseDataManager):
             ItemLocationModel.name,
             ItemLocationModel.physical_location,
             ItemLocationModel.description,
-        )
+        ).order_by(ItemLocationModel.name.asc())
 
         locations: list[RowMapping] | None = await self.get_all(
             query, unique_result=True

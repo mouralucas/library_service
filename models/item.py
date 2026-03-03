@@ -26,19 +26,17 @@ class ItemModel(SQLModel):
 
     title: Mapped[str] = mapped_column(index=True)
     # Title/subtitle original may be in the metadata table
-    title_original: Mapped[str] = mapped_column(
-        "title_original", nullable=True
-    )  # remove
+    # title_original: Mapped[str] = mapped_column(
+    #     "title_original", nullable=True
+    # )  # remove
     subtitle: Mapped[str] = mapped_column("subtitle", nullable=True)
-    subtitle_original: Mapped[str] = mapped_column(
-        "subtitle_original", nullable=True
-    )  # remove
+    # subtitle_original: Mapped[str] = mapped_column(
+    #     "subtitle_original", nullable=True
+    # )  # remove
     pages: Mapped[int] = mapped_column("pages", default=0)
     publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     # Original publication date may be in the metadata table
-    original_publication_date: Mapped[datetime.date] = mapped_column(
-        nullable=True
-    )  # remove
+    original_publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     edition: Mapped[int] = mapped_column("edition", default=1)
     serie_id: Mapped[int] = mapped_column(ForeignKey("serie.id"), nullable=True)
     serie: Mapped["SerieModel"] = relationship(foreign_keys=[serie_id], lazy="noload")

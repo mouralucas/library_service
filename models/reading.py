@@ -52,4 +52,5 @@ class ReadingGoal(SQLModel):
 
     owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
-    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
+    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="noload")
+    year: Mapped[int] = mapped_column("year", doc="Year of the goal")

@@ -15,8 +15,6 @@ async def test_mutation_new_item_success(
 ):
     item_title = "Test item"
     item_subtitle = "Test subtitle"
-    item_original_title = "Test item original title"
-    item_original_subtitle = "Test item original subtitle"
     pages = 756
     last_status_date = "2024-06-01"
     cover_price = 110.15
@@ -46,8 +44,6 @@ async def test_mutation_new_item_success(
             "otherAuthorsId": [authors[1].id, authors[2].id],
             "title": item_title,
             "subtitle": item_subtitle,
-            "titleOriginal": item_original_title,
-            "subtitleOriginal": item_original_subtitle,
             "pages": pages,
             "languageId": languages[0].id,
             "publisherId": publishers[0].id,

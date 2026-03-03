@@ -28,12 +28,12 @@ class CreateItemRequest(BaseModel):
     )
     title: str = Field(..., description="The name of the item")
     subtitle: str | None = Field(None, description="The subtitle of the item")
-    title_original: str | None = Field(
-        None, description="The original title of the item"
-    )
-    subtitle_original: str | None = Field(
-        None, description="The original subtitle of the item"
-    )
+    # title_original: str | None = Field(
+    #     None, description="The original title of the item"
+    # )
+    # subtitle_original: str | None = Field(
+    #     None, description="The original subtitle of the item"
+    # )
     isbn: str | None = Field(None, description="The ISBN of the item")
     type: str | None = Field(
         None, alias="itemTypeId", description="The type of the item"

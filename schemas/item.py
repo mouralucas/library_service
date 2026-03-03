@@ -29,12 +29,12 @@ class ItemSchema(BaseModel):
     subtitle: str | None = Field(
         None, description="The subtitle of the item, if exists"
     )
-    title_original: str | None = Field(
-        None, description="The original title of the item"
-    )
-    subtitle_original: str | None = Field(
-        None, description="The original title of the item"
-    )
+    # title_original: str | None = Field(
+    #     None, description="The original title of the item"
+    # )
+    # subtitle_original: str | None = Field(
+    #     None, description="The original title of the item"
+    # )
     isbn: str | None = Field(None, description="ISBN number of the item")
     type: str | None = Field(
         None, serialization_alias="itemTypeId", description="The type of item"
