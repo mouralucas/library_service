@@ -105,6 +105,7 @@ type Item {
   id: Int!
   mainAuthorId: Int!
   mainAuthorName: String
+  authorsId: [Int]
   title: String!
   subtitle: String
   titleOriginal: String
