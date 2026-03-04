@@ -65,11 +65,17 @@ type GetSerieResponse {
 }
 
 input CreateSerieRequest {
-    serieName: String!
+    id: Int
+    name: String!
+    originalName: String
+    countryId: String
+    description: String
 }
 
 type CreateSerieResponse {
-    serie: Serie!
+    created: Boolean!
+    id: Int!
+    name: String!
 }
 
 type Serie {

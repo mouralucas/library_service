@@ -56,15 +56,6 @@ async def get_country(
     return response
 
 
-@router.post("/serie", status_code=status.HTTP_201_CREATED)
-async def create_serie(
-    serie: CreateSerieRequest, session: AsyncSession = Depends(get_session)
-) -> CreateSerieResponse:
-    response = await SerieService(session=session).create_serie(serie)
-
-    return response
-
-
 @router.post("/collection", status_code=status.HTTP_201_CREATED)
 async def create_collection(
     collection: CreateCollectionRequest, session: AsyncSession = Depends(get_session)

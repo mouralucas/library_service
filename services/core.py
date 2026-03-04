@@ -24,7 +24,6 @@ from schemas.core import (
     CountrySchema,
     LanguageSchema,
     PublisherSchema,
-    SerieSchema,
 )
 from schemas.request.core import (
     CreateCollectionRequest,
@@ -39,7 +38,6 @@ from schemas.response.core import (
     CreateCountryResponse,
     CreateLanguageResponse,
     CreatePublisherResponse,
-    CreateSerieResponse,
 )
 
 
@@ -104,12 +102,16 @@ class SerieService(BaseService):
     def __init__(self, session: AsyncSession):
         super().__init__(session)
 
-    async def create_serie(self, serie: CreateSerieRequest) -> CreateSerieResponse:
+    async def create_serie(self, serie: CreateSerieRequest) -> dict[str, Any]:
         new_serie = await SerieManager(session=self.session).create_serie(
             SerieModel(**serie.model_dump())
         )
 
-        response = CreateSerieResponse(serie=SerieSchema.model_validate(new_serie))
+        response = {
+            "created": True,
+            "id": new_serie.id,
+            "name": new_serie.name,
+        }
 
         return response
 

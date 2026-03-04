@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/author", tags=["Author"])

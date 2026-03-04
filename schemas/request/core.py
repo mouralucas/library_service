@@ -35,7 +35,7 @@ class CreateSerieRequest(BaseModel):
         from_attributes=True, alias_generator=AliasGenerator(alias=to_camel)
     )
 
-    name: str = Field(..., alias="serieName", description="Name of the serie")
+    name: str = Field(..., description="Name of the serie")
     original_name: str | None = Field(None, description="Original name of the serie")
     description: str | None = Field(None, description="Description of the serie")
     country_id: str | None = Field(None, description="Id of the country")

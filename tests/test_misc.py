@@ -126,13 +126,31 @@ async def test_get_country_empty(client):
 async def test_create_serie(client):
     serie_name = "Serie Test"
 
-    payload = {"serieName": serie_name}
-    response = await client.post("/serie", json=payload)
+    payload = {"name": serie_name}
+    mutation = """
+        mutation CreateSerie($input: CreateSerieRequest) {
+            createSerie(serie: $input) {
+            created
+            id
+            name
+            }
+        }
+    """
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": {"input": payload}}
+    )
 
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    assert response.status_code == status.HTTP_201_CREATED
-    assert "serie" in data
-    assert data["serie"]["serieName"] == serie_name
+
+    assert "data" in data
+    assert "createSerie" in data["data"]
+    data = data["data"]["createSerie"]
+
+    assert "created" in data
+    assert data["created"] is True
+    assert "id" in data
+    assert "name" in data
 
 
 @pytest.mark.asyncio

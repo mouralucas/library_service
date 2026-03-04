@@ -47,14 +47,13 @@ async def get_series_resolver(_, info) -> dict[str, Any]:
     return series
 
 
-async def create_serie_resolver(_, info, serie):
-    serie_ = CreateSerieRequest.model_validate(serie)
-
+@validate_graphql_input(CreateSerieRequest)
+async def create_serie_resolver(_, info, serie: CreateSerieRequest) -> dict[str, Any]:
     new_serie = await SerieService(session=info.context["session"]).create_serie(
-        serie=serie_
+        serie=serie
     )
 
-    return new_serie.model_dump(by_alias=True)
+    return new_serie
 
 
 async def get_collections_resolver(_, info) -> dict[str, Any]:
@@ -144,7 +143,7 @@ def bind_core_resolvers(query: QueryType, mutation: MutationType):
     query.set_field("getStatus", resolver=get_status_resolver)
 
     mutation.set_field("createAuthor", resolver=create_author_resolver)
-    mutation.set_field("createSerie", resolver=create_author_resolver)
+    mutation.set_field("createSerie", resolver=create_serie_resolver)
     mutation.set_field("createCollection", resolver=create_collection_resolver)
     mutation.set_field("createLanguage", resolver=crate_language_resolver)
     mutation.set_field("createCountry", resolver=create_country_resolver)
