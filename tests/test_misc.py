@@ -102,10 +102,29 @@ async def test_create_country(client):
 async def test_get_country(client, create_countries):
     country_len = len(create_countries)
 
-    response = await client.get("/country")
+    query = """
+        query GetCountries {
+            getCountries {
+                quantity
+                countries {
+                    id
+                    name
+                    continent
+                    description
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
 
-    data = response.json()
     assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert "data" in data
+    assert "getCountries" in data["data"]
+
+    data = data["data"]["getCountries"]
+
     assert "countries" in data
     assert type(data["countries"]) is list
     assert len(data["countries"]) == country_len
@@ -113,10 +132,28 @@ async def test_get_country(client, create_countries):
 
 @pytest.mark.asyncio
 async def test_get_country_empty(client):
-    response = await client.get("/country")
+    query = """
+        query GetCountries {
+            getCountries {
+                quantity
+                countries {
+                    id
+                    name
+                    continent
+                    description
+                }
+            }
+        }
+    """
+    response = await client.post("/graphql/library", json={"query": query})
 
-    data = response.json()
     assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+
+    assert "data" in data
+    assert "getCountries" in data["data"]
+
+    data = data["data"]["getCountries"]
     assert "countries" in data
     assert type(data["countries"]) is list
     assert len(data["countries"]) == 0

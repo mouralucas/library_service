@@ -8,22 +8,18 @@ from schemas.request.core import (
     CreateCountryRequest,
     CreateLanguageRequest,
     CreatePublisherRequest,
-    CreateSerieRequest,
 )
 from schemas.response.core import (
     CreateCollectionResponse,
     CreateCountryResponse,
     CreateLanguageResponse,
     CreatePublisherResponse,
-    CreateSerieResponse,
-    GetCountryResponse,
 )
 from services.core import (
     CollectionService,
     CountryService,
     LanguageService,
     PublisherService,
-    SerieService,
 )
 
 router = APIRouter(prefix="", tags=["Base"])
@@ -43,15 +39,6 @@ async def create_country(
     country: CreateCountryRequest, session: AsyncSession = Depends(get_session)
 ) -> CreateCountryResponse:
     response = await CountryService(session=session).create_country(country)
-
-    return response
-
-
-@router.get("/country")
-async def get_country(
-    session: AsyncSession = Depends(get_session),
-) -> GetCountryResponse:
-    response = await CountryService(session=session).get_countries()
 
     return response
 
