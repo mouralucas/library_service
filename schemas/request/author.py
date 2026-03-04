@@ -25,7 +25,7 @@ class CreateAuthorRequest(BaseModel):
     is_translator: bool = Field(
         False, description="Whether the author should be translated"
     )
-    
+
     @field_validator("country_id", "language_id", mode="before")
     @classmethod
     def empty_string_to_none(cls, value):

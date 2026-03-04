@@ -7,14 +7,37 @@ async def test_create_author_with_name_only(client):
     author_name = "Test da Silva"
 
     payload = {
-        "authorName": author_name,
+        "name": author_name,
     }
-    response = await client.post("/author", json=payload)
+    mutation = """
+        mutation CreateAuthor($input: CreateAuthorInput!) {
+            createAuthor(author: $input) {
+                author {
+                    id
+                    name
+                    birthDate
+                    description
+                    countryId
+                    countryName
+                    languageId
+                    languageName
+                }
+            }
+        }
+    """
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": {"input": payload}}
+    )
+
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert "data" in data
+    assert "createAuthor" in data["data"]
+    data = data["data"]["createAuthor"]
+
     assert "author" in data
-    assert data["author"]["authorName"] == author_name
+    assert data["author"]["name"] == author_name
 
     assert "countryId" in data["author"]
     assert data["author"]["countryId"] is None
@@ -30,32 +53,44 @@ async def test_create_author_success(client, create_languages, create_countries)
     countries = create_countries
 
     payload = {
-        "authorName": author_name,
+        "name": author_name,
         "languageId": languages[0].id,
         "countryId": countries[0].id,
     }
-    response = await client.post("/author", json=payload)
+    mutation = """
+        mutation CreateAuthor($input: CreateAuthorInput!) {
+            createAuthor(author: $input) {
+                author {
+                    id
+                    name
+                    birthDate
+                    description
+                    countryId
+                    countryName
+                    languageId
+                    languageName
+                }
+            }
+        }
+    """
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": {"input": payload}}
+    )
+
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    assert response.status_code == status.HTTP_201_CREATED
+    assert "data" in data
+    assert "createAuthor" in data["data"]
+    data = data["data"]["createAuthor"]
     assert "author" in data
-    assert data["author"]["authorName"] == author_name
+    assert data["author"]["name"] == author_name
 
     assert "countryId" in data["author"]
     assert data["author"]["countryId"] == countries[0].id
 
     assert "languageId" in data["author"]
     assert data["author"]["languageId"] == languages[0].id
-
-
-@pytest.mark.asyncio
-async def test_create_author_fail(client):
-    response = await client.post("/author")
-
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-    data = response.json()
-
-    assert "detail" in data
 
 
 @pytest.mark.asyncio

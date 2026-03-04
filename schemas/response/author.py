@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 
 from schemas.item import AuthorSchema
 
-
 # class CreateAuthorResponse(BaseModel):
 #     author: AuthorSchema
 

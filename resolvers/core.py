@@ -31,7 +31,9 @@ async def get_authors_resolver(_, info, params: GetAuthorsRequest):
 
 
 @validate_graphql_input(CreateAuthorRequest)
-async def create_author_resolver(_, info, author: CreateAuthorRequest) -> dict[str, Any]:
+async def create_author_resolver(
+    _, info, author: CreateAuthorRequest
+) -> dict[str, Any]:
     new_author = await AuthorService(session=info.context["session"]).create_author(
         author=author
     )

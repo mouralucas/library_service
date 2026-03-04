@@ -2,7 +2,6 @@ from typing import Any
 
 from managers.author import AuthorManager
 from models import AuthorModel
-from schemas.item import AuthorSchema
 from schemas.request.author import CreateAuthorRequest, GetAuthorsRequest
 from services.base import BaseService
 
@@ -15,10 +14,8 @@ class AuthorService(BaseService):
         new_author = await AuthorManager(session=self.session).create_author(
             AuthorModel(**author.model_dump())
         )
-        
-        response = {
-            "author": new_author
-        }
+
+        response = {"author": new_author}
 
         return response
 
