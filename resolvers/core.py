@@ -63,13 +63,12 @@ async def get_collections_resolver(_, info) -> dict[str, Any]:
 
     return response
 
-
-async def create_collection_resolver(_, info, collection):
-    collection_ = CreateCollectionRequest.model_validate(collection)
+@validate_graphql_input(CreateCollectionRequest)
+async def create_collection_resolver(_, info, collection: CreateCollectionRequest):
 
     new_collection = await CollectionService(
         session=info.context["session"]
-    ).create_collection(collection=collection_)
+    ).create_collection(collection=collection)
 
     return new_collection.model_dump(by_alias=True)
 

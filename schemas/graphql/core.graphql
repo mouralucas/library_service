@@ -95,12 +95,14 @@ type GetCollectionResponse {
 }
 
 input CreateCollectionRequest {
-    collectionsName: String!
+    name: String!
     description: String
 }
 
 type CreateCollectionResponse {
-    collection: Collection
+    created: Boolean!
+    id: Int!
+    name: String!
 }
 
 type Collection {
