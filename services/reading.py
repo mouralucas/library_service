@@ -293,6 +293,13 @@ class ReadingService(BaseService):
 
         return response
 
+    async def get_reading_goals(self, year: int | None) -> dict[str, Any]:
+        goals = self.reading_manager.get_reading_goals(year=year)
+
+        response = {"goals": goals}
+
+        return response
+
     @staticmethod
     def __set_values(
         progress_entry: ReadingProgressModel,

@@ -6,6 +6,8 @@ extend type Query {
     getActiveReadings: GetActiveReadingsOutput!
     getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
     getReadingStats(params: GetReadingStatsInput): GetReadingStatsResponse!
+
+    getReadingGoals(params: GetReadingGoalsInput): GetReadingGoalsResponse!
 }
 
 extend type Mutation {
@@ -40,6 +42,10 @@ type CreateReadingOutput {
     reading: Reading!
 }
 
+type GetActiveReadingsOutput {
+    quantity: Int!
+    readings: [Reading]!
+}
 
 type Reading {
     id: String!
@@ -53,7 +59,6 @@ type Reading {
     statusId: String
     statusName: String
 }
-
 
 # Reading Progress schemas
 input GetReadingProgressInput {
@@ -93,12 +98,6 @@ type ReadingProgress {
     comment: String
 }
 
-# Active Readings schemas
-type GetActiveReadingsOutput {
-    quantity: Int!
-    readings: [Reading]!
-}
-
 # Reading status schemas
 input GetReadingStatsInput {
     itemId: Int!
@@ -116,4 +115,20 @@ type ReadingStats {
     currentPage: Int
     currentPercentage: Float
     lastReadings: [Reading]
+}
+
+# Reading goal schemas
+input GetReadingGoalsInput {
+    year: Int
+}
+
+type GetReadingGoalsResponse {
+    goals: [ReadingGoal]!
+}
+
+type ReadingGoal {
+    id: String!
+    itemId: Int!
+    itemTitle: String!
+    year: Int!
 }

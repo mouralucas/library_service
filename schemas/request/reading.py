@@ -125,3 +125,7 @@ class GetReadingStatsRequest(BaseModel):
     )
 
     item_id: int = Field(..., description="The id of the item")
+
+
+class GetReadingGoalsRquest(BaseModel):
+    year: int | None = Field(None, description="The year of the goals to be retrieved")

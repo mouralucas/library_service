@@ -6,6 +6,7 @@ from schemas.request.reading import (
     CreateProgressRequestV2,
     CreateReadingRequest,
     GetProgressRequest,
+    GetReadingGoalsRquest,
     GetReadingRequest,
     GetReadingStatsRequest,
 )
@@ -79,12 +80,22 @@ async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:
     return stats
 
 
+@validate_graphql_input(GetReadingGoalsRquest)
+async def get_reading_goals_resolver(_, info, params: GetReadingGoalsRquest):
+    goals = await ReadingService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_reading_goals(year=params.year)
+
+    return goals
+
+
 def bind_reading_resolvers(query, mutation):
     query.set_field("getReading", resolver=resolve_get_reading)
     query.set_field("getReadings", resolver=resolve_get_readings)
     query.set_field("getActiveReadings", resolver=resolve_get_active_readings)
     query.set_field("getReadingProgress", resolver=resolve_get_progress)
     query.set_field("getReadingStats", resolver=get_reading_stats_resolver)
+    query.set_field("getReadingGoals", resolver=get_reading_goals_resolver)
 
     mutation.set_field("createReading", resolver=create_reading_resolver)
     mutation.set_field(

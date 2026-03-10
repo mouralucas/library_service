@@ -9,7 +9,7 @@ from sqlalchemy.orm import aliased, joinedload
 
 from models.core import StatusModel
 from models.item import ItemModel
-from models.reading import ReadingModel, ReadingProgressModel
+from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
 
 
 class ReadingManager(BaseDataManager):
@@ -173,3 +173,23 @@ class ReadingManager(BaseDataManager):
         latest_progress = await self.get_first(query)
 
         return cast(ReadingProgressModel, latest_progress)
+
+    async def get_reading_goals(self, year: int | None):
+        query = (
+            select(
+                ReadingGoalModel.id,
+                ReadingGoalModel.item_id,
+                ItemModel.title.label("item_title"),
+                ItemModel.pages.label("item_pages"),
+                ReadingGoalModel.year,
+            )
+            .outerjoin(ItemModel, ReadingGoalModel.item_id == ItemModel.id)
+            .order_by(ReadingGoalModel.year, ReadingGoalModel.created_at.desc())
+        )
+
+        if year:
+            query = query.where(ReadingGoalModel.year == year)
+
+        result = await self.get_all(query)
+
+        return [dict(i) for i in result] if result else None

@@ -47,7 +47,7 @@ class ReadingProgressModel(SQLModel):
     comment: Mapped[str] = mapped_column("comment", nullable=True)
 
 
-class ReadingGoal(SQLModel):
+class ReadingGoalModel(SQLModel):
     __tablename__ = "reading_goal"
 
     owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")

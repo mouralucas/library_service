@@ -7,7 +7,6 @@ Este arquivo mostra:
 3. As vantagens de cada abordagem
 """
 
-
 import pytest
 from fastapi import status
 
