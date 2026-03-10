@@ -63,6 +63,7 @@ async def get_collections_resolver(_, info) -> dict[str, Any]:
 
     return response
 
+
 @validate_graphql_input(CreateCollectionRequest)
 async def create_collection_resolver(_, info, collection: CreateCollectionRequest):
 

@@ -2,7 +2,7 @@ from typing import Any, cast
 
 from fastapi import HTTPException
 from rolf_common.managers import BaseDataManager
-from sqlalchemy import RowMapping, asc, desc, select, update
+from sqlalchemy import RowMapping, asc, desc, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -14,7 +14,7 @@ from models import (
     SQLModel,
     StatusModel,
 )
-from models.item import ItemLocationModel, ItemModel, ItemStatusModel
+from models.item import ItemAuthorModel, ItemLocationModel, ItemModel, ItemStatusModel
 
 
 class ItemManager(BaseDataManager):
@@ -54,6 +54,17 @@ class ItemManager(BaseDataManager):
         status_id: str | None = None,
         order_by: Any = None,
     ) -> list[dict[Any, Any]] | None:
+        authors_subq = (
+            select(
+                ItemAuthorModel.item_id.label("item_id"),
+                func.array_agg(func.distinct(AuthorModel.id)).label("authors_ids"),
+                func.array_agg(func.distinct(AuthorModel.name)).label("authors_names"),
+            )
+            .where(ItemAuthorModel.is_main.is_(False))
+            .join(AuthorModel, AuthorModel.id == ItemAuthorModel.author_id)
+            .group_by(ItemAuthorModel.item_id)
+        ).subquery()
+
         query = (
             select(
                 ItemModel.id,
@@ -85,12 +96,15 @@ class ItemManager(BaseDataManager):
                 ItemModel.summary,
                 ItemModel.observation,
                 ItemModel.location_id,
+                authors_subq.c.authors_ids,
+                authors_subq.c.authors_names,
             )
             .join(AuthorModel, ItemModel.main_author_id == AuthorModel.id)
-            .join(SerieModel, ItemModel.serie_id == SerieModel.id)
-            .join(CollectionModel, ItemModel.collection_id == CollectionModel.id)
+            .outerjoin(SerieModel, ItemModel.serie_id == SerieModel.id)
             .outerjoin(PublisherModel, ItemModel.publisher_id == PublisherModel.id)
+            .join(CollectionModel, ItemModel.collection_id == CollectionModel.id)
             .join(StatusModel, ItemModel.last_status_id == StatusModel.id)
+            .outerjoin(authors_subq, authors_subq.c.item_id == ItemModel.id)
         )
 
         if item_id:
@@ -116,7 +130,7 @@ class ItemManager(BaseDataManager):
                 else:
                     query = query.order_by(desc(column))
 
-        items: list[RowMapping] | None = await self.get_all(query, unique_result=True)
+        items: list[RowMapping] | None = await self.get_all(query, unique_result=False)
 
         return [dict(i.items()) for i in items] if items else None
 
