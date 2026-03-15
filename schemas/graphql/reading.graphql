@@ -126,9 +126,9 @@ type GetReadingGoalsResponse {
     goals: [ReadingGoal]!
 }
 
+
 type ReadingGoal {
     id: String!
-    itemId: Int!
-    itemTitle: String!
+    item: Item!
     year: Int!
 }

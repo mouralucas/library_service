@@ -294,9 +294,11 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading_goals(self, year: int | None) -> dict[str, Any]:
-        goals = self.reading_manager.get_reading_goals(year=year)
+        goals = await self.reading_manager.get_reading_goals(year=year)
 
-        response = {"goals": goals}
+        response = {
+            "goals": goals if goals else [],
+        }
 
         return response
 

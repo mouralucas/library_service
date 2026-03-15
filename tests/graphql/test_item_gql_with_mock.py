@@ -17,7 +17,7 @@ from fastapi import status
 # @pytest.mark.asyncio
 # async def test_mutation_new_item_success(
 #     client,
-#     create_languages,        # Cria no banco
+#     create_languages,       # Cria no banco
 #     create_series,          # Cria no banco
 #     create_item_status,     # Cria no banco
 #     create_publisher,       # Cria no banco

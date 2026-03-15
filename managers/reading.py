@@ -179,8 +179,7 @@ class ReadingManager(BaseDataManager):
             select(
                 ReadingGoalModel.id,
                 ReadingGoalModel.item_id,
-                ItemModel.title.label("item_title"),
-                ItemModel.pages.label("item_pages"),
+                ItemModel,
                 ReadingGoalModel.year,
             )
             .outerjoin(ItemModel, ReadingGoalModel.item_id == ItemModel.id)
@@ -192,4 +191,16 @@ class ReadingManager(BaseDataManager):
 
         result = await self.get_all(query)
 
-        return [dict(i) for i in result] if result else None
+        return (
+            [
+                {
+                    "id": r.id,
+                    "item_id": r.item_id,
+                    "year": r.year,
+                    "item": r.ItemModel,
+                }
+                for r in result
+            ]
+            if result
+            else None
+        )

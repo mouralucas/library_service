@@ -34,12 +34,11 @@ async def resolve_get_readings(_, info, params: GetReadingRequest):
     return readings
 
 
-async def create_reading_resolver(_, info, reading):
-    new_reading = CreateReadingRequest.model_validate(reading)
-
+@validate_graphql_input(CreateReadingRequest)
+async def create_reading_resolver(_, info, reading: CreateReadingRequest):
     new_reading = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).create_reading(reading=new_reading)
+    ).create_reading(reading=reading)
 
     return new_reading.model_dump(by_alias=True)
 
@@ -52,12 +51,11 @@ async def resolve_get_progress(_, info, params):
     return progress.model_dump(by_alias=True)
 
 
-async def create_reading_progress_resolver(_, info, progress):
-    new_progress_ = CreateProgressRequestV2.model_validate(progress)
-
+@validate_graphql_input(CreateProgressRequestV2)
+async def create_reading_progress_resolver(_, info, progress: CreateProgressRequestV2):
     new_progress = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).create_progress_v2(progress=new_progress_)
+    ).create_progress_v2(progress=progress)
 
     return new_progress
 

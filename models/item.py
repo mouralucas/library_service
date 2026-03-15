@@ -25,14 +25,7 @@ class ItemModel(SQLModel):
     # isbn10: Mapped[str] = mapped_column("isbn10", nullable=True)
 
     title: Mapped[str] = mapped_column(index=True)
-    # Title/subtitle original may be in the metadata table
-    # title_original: Mapped[str] = mapped_column(
-    #     "title_original", nullable=True
-    # )  # remove
     subtitle: Mapped[str] = mapped_column("subtitle", nullable=True)
-    # subtitle_original: Mapped[str] = mapped_column(
-    #     "subtitle_original", nullable=True
-    # )  # remove
     pages: Mapped[int] = mapped_column("pages", default=0)
     publication_date: Mapped[datetime.date] = mapped_column(nullable=True)
     # Original publication date may be in the metadata table
