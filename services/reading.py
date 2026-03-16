@@ -33,35 +33,36 @@ class ReadingService(BaseService):
         self.user = user.model_dump()
         self.reading_manager = ReadingManager(session=self.session, user=self.user)
 
-    async def create_reading(
-        self, reading: CreateReadingRequest
-    ) -> CreateReadingResponseV2:
-        previous_readings = await self.reading_manager.get_readings(
+    async def create_reading(self, reading: CreateReadingRequest) -> dict[str, Any]:
+        # Check if the item have a reading in progress
+        active_reading = await self.reading_manager.get_item_active_reading(
             item_id=reading.item_id
         )
-        last_reading = previous_readings[0] if previous_readings else None
-
-        # Cannot start a new reading with another still active
-        if last_reading and last_reading.active:
+        if active_reading is not None:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Já existe uma leitura ativa para este item",
+                status_code=status.HTTP_412_PRECONDITION_FAILED,
+                detail="Já existe uma leitura iniciada para esse item!",
             )
+
+        last_readigns = await self.reading_manager.get_item_last_readings(
+            item_id=reading.item_id
+        )
+        previous_completed_reading = last_readigns[0] if last_readigns else None
 
         # The new reading cannot start before the last one finishes
         if (
-            last_reading
-            and last_reading.finish_date
-            and last_reading.finish_date > reading.start_date
+            previous_completed_reading
+            and previous_completed_reading["finish_date"]
+            and previous_completed_reading["finish_date"] > reading.start_date
         ):
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_412_PRECONDITION_FAILED,
                 detail="Uma leitura não pode ser iniciada \
                     antes de finalizar a anterior",
             )
 
         new_reading = ReadingModel(**reading.model_dump(exclude={"is_dropped"}))
-        new_reading.number = len(previous_readings) + 1 if previous_readings else 1
+        new_reading.number = len(last_readigns) + 1 if previous_completed_reading else 1
         new_reading.owner_id = self.user["user_id"]
 
         new_reading.status_id = "read" if reading.finish_date else "reading"
@@ -70,6 +71,7 @@ class ReadingService(BaseService):
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
 
         response = CreateReadingResponseV2(created=True, reading_id=new_reading.id)
+        response = {"created": True, "reading_id": new_reading.id}
         return response
 
     async def get_readings(

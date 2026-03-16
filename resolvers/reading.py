@@ -40,7 +40,7 @@ async def create_reading_resolver(_, info, reading: CreateReadingRequest):
         session=info.context["session"], user=info.context["user"]
     ).create_reading(reading=reading)
 
-    return new_reading.model_dump(by_alias=True)
+    return new_reading
 
 
 async def resolve_get_progress(_, info, params):

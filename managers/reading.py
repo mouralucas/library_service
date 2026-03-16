@@ -3,7 +3,7 @@ from typing import Any, cast
 
 from rolf_common.managers import BaseDataManager
 from rolf_common.models import SQLModel
-from sqlalchemy import select, update
+from sqlalchemy import RowMapping, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased, joinedload
 
@@ -55,8 +55,6 @@ class ReadingManager(BaseDataManager):
         reading_id: uuid.UUID | None = None,
         get_progress: bool = False,
     ) -> list[dict] | None:
-        # Only the owner can get the readings
-        # Maybe in future this can be a param, to get reading for someone the user want
         query = (
             select(
                 ReadingModel.id,
@@ -95,6 +93,34 @@ class ReadingManager(BaseDataManager):
 
         return [dict(reading) for reading in readings] if readings else None
 
+    async def get_item_last_readings(self, item_id: int) -> list[dict[str, Any]] | None:
+        query = (
+            select(
+                ReadingModel.id,
+                ReadingModel.owner_id,
+                ReadingModel.active,
+                ReadingModel.item_id,
+                ItemModel.title.label("item_title"),
+                ReadingModel.start_date,
+                ReadingModel.finish_date,
+                ReadingModel.number,
+                ReadingModel.status_id,
+                StatusModel.name.label("status_name"),
+            )
+            .join(StatusModel, ReadingModel.status_id == StatusModel.id)
+            .join(ItemModel, ReadingModel.item_id == ItemModel.id)
+            .where(
+                ReadingModel.owner_id == self.user["user_id"],
+                ReadingModel.item_id == item_id,
+                ReadingModel.active == False,  # noqa: E712
+            )
+            .order_by(ReadingModel.finish_date.desc())
+        )
+
+        last_readings: list[RowMapping] | None = await self.get_all(query)
+
+        return [dict(reading) for reading in last_readings] if last_readings else None
+
     async def get_active_readings(self) -> list[dict[Any, Any]] | None:
         query = (
             select(
@@ -124,7 +150,7 @@ class ReadingManager(BaseDataManager):
             ReadingModel.item_id == item_id, ReadingModel.active
         )
 
-        reading: SQLModel = await self.get_only_one(query)
+        reading: SQLModel | None = await self.get_only_one(query)
 
         return cast(ReadingModel, reading) if reading else None
 
