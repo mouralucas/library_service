@@ -7,13 +7,11 @@ from starlette import status
 from backend.database import get_session
 from schemas.request.reading import (
     CreateReadingRequest,
-    GetProgressRequest,
     GetReadingStatsRequest,
 )
 from schemas.response.reading import (
     CreateReadingResponseV2,
     GetActiveReadingsResponse,
-    GetProgressResponse,
     GetReadingStatsResponse,
 )
 from services.reading import ReadingService
@@ -63,23 +61,3 @@ async def get_reading_stats(
     return await ReadingService(session=session, user=user).get_reading_stats(
         params=params
     )
-
-
-@router.get(
-    "/progress",
-    summary="Get progress",
-    description="Get the progress for a reading",
-    response_model_exclude_none=True,
-)
-async def get_reading_progress(
-    params: GetProgressRequest = Depends(),
-    session: AsyncSession = Depends(get_session),
-    user: RequiredUser = Security(get_user),
-) -> GetProgressResponse:
-    # TODO: make accept item_id as param,
-    #   than returns the progress for the last reading if more than one
-    response = await ReadingService(session=session, user=user).get_progress(
-        params=params
-    )
-
-    return response

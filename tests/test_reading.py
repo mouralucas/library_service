@@ -558,16 +558,38 @@ async def test_get_progress(client, create_progress):
     progress = create_progress
 
     payload = {
-        "readingId": progress[0].reading_id,
+        "readingId": str(progress[0].reading_id),
     }
-    response = await client.get("/reading/progress", params=payload)
-
+    query = """
+        query GetReadingProgress($params: GetReadingProgressInput) {
+            getReadingProgress(params: $params ) {
+                quantity
+                itemTitle
+                pagesRead
+                progress {
+                    id
+                    progressDate
+                    page
+                    percentage
+                    rate
+                    comment
+                }
+            }
+        }
+    """
+    variables = {"params": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": query, "variables": variables}
+    )
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    assert "readingProgress" in data
-    assert type(data["readingProgress"]) is list
-    # assert 'page' in data['progress']
-    # assert 'percentage' in data['progress']
+    assert "data" in data
+    assert "getReadingProgress" in data["data"]
+
+    data = data["data"]["getReadingProgress"]
+
+    assert "progress" in data
+    assert type(data["progress"]) is list
 
 
 @pytest.mark.asyncio

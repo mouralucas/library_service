@@ -64,11 +64,6 @@ class ItemModel(SQLModel):
     cover_price: Mapped[float] = mapped_column("cover_price", default=0)
     paid_price: Mapped[float] = mapped_column("paid_price", default=0)
 
-    # dimensions: Mapped[str] = mapped_column("dimensions", nullable=True)
-    # height: Mapped[float] = mapped_column("height", nullable=True)
-    # width: Mapped[float] = mapped_column("width", nullable=True)
-    # thickness: Mapped[float] = mapped_column("thickness", nullable=True)
-
     summary: Mapped[str] = mapped_column("summary", nullable=True)  # continue here
     observation: Mapped[str] = mapped_column(
         "observation", nullable=True

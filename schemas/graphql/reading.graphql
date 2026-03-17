@@ -68,7 +68,6 @@ input GetReadingProgressInput {
 
 type GetReadingProgressOutput {
     quantity: Int!
-    item: Item!
     itemTitle: String
     pagesRead: String
     progress: [ReadingProgress]!
@@ -92,7 +91,7 @@ type CreateReadingProgressOutput {
 type ReadingProgress {
     id: String!
     reading: Reading!
-    date: String!
+    progressDate: String!
     page: Int
     percentage: Float
     rate: Int

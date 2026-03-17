@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
-from schemas.reading import ProgressSchema, ReadingSchema
+from schemas.reading import ReadingSchema
 from schemas.request.reading import (
     CreateProgressRequestV2,
     CreateReadingRequest,
@@ -20,7 +20,6 @@ from schemas.request.reading import (
 from schemas.response.reading import (
     CreateReadingResponseV2,
     GetActiveReadingsResponse,
-    GetProgressResponse,
     GetReadingsResponse,
 )
 from services.base import BaseService
@@ -224,7 +223,7 @@ class ReadingService(BaseService):
 
         return response
 
-    async def get_progress(self, params: GetProgressRequest) -> GetProgressResponse:
+    async def get_progress(self, params: GetProgressRequest) -> dict[str, Any]:
         reading = await self.reading_manager.get_reading_by_id(
             reading_id=params.reading_id
         )
@@ -239,13 +238,12 @@ class ReadingService(BaseService):
 
         item = reading.item
 
-        response = GetProgressResponse(
-            quantity=len(progress) if progress else 0,
-            item=item,
-            progress=(
-                [ProgressSchema.model_validate(i) for i in progress] if progress else []
-            ),
-        )
+        response = {
+            "quantity": len(progress) if progress else 0,
+            "item_title": item.title,
+            "pages_read": self._get_progess_pages_read(progress=progress, item=item),
+            "progress": progress,
+        }
 
         return response
 
@@ -303,6 +301,12 @@ class ReadingService(BaseService):
         }
 
         return response
+
+    def _get_progess_pages_read(self, progress, item):
+        pages_read = ""
+        if progress and progress[0].page and item.pages:
+            pages_read = f"{progress[0].page}/{item.pages} - {progress[0].percentage}%"
+        return pages_read
 
     @staticmethod
     def __set_values(

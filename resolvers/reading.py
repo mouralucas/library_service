@@ -43,12 +43,13 @@ async def create_reading_resolver(_, info, reading: CreateReadingRequest):
     return new_reading
 
 
-async def resolve_get_progress(_, info, params):
+@validate_graphql_input(GetProgressRequest)
+async def resolve_get_progress(_, info, params: GetProgressRequest) -> dict[str, Any]:
     progress = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).get_progress(params=GetProgressRequest.model_validate(params))
+    ).get_progress(params=params)
 
-    return progress.model_dump(by_alias=True)
+    return progress
 
 
 @validate_graphql_input(CreateProgressRequestV2)
