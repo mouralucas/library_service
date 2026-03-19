@@ -20,12 +20,12 @@ async def get_items_resolver(_, info, params: GetItemRequest):
     return items
 
 
-async def create_item_resolver(_, info, item):
-    item_ = CreateItemRequest.model_validate(item)
+@validate_graphql_input(CreateItemRequest)
+async def create_item_resolver(_, info, item: CreateItemRequest):
 
     new_item = await ItemService(
         session=info.context["session"], user=info.context["user"]
-    ).create_item(item=item_)
+    ).create_item(item=item)
 
     return new_item
 

@@ -23,7 +23,7 @@ class CreateItemRequest(BaseModel):
     main_author_id: int | None = Field(
         None, description="The id of the main author of the item"
     )
-    authors_id: list[int] | None = Field(
+    authors_ids: list[int] | None = Field(
         None, description="The ids of other authors of the item"
     )
     title: str = Field(..., description="The name of the item")

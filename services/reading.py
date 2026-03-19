@@ -8,6 +8,7 @@ from rolf_common.models import SQLModel
 from rolf_common.schemas.auth import RequiredUser
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from managers.item import ItemManager
 from managers.reading import ReadingManager
 from models.reading import ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
@@ -105,7 +106,7 @@ class ReadingService(BaseService):
         return response
 
     async def get_active_readings(self) -> GetActiveReadingsResponse:
-        active_readings = await self.reading_manager.get_active_readings()
+        active_readings = await self.reading_manager.get_all_active_readings()
 
         response = GetActiveReadingsResponse(
             quantity=len(active_readings) if active_readings else 0,
@@ -170,7 +171,7 @@ class ReadingService(BaseService):
 
         # Only one entry per day is allowed
         if last_progress and last_progress.progress_date == datetime.now().date():
-            seted_progress = self.__set_values(
+            seted_progress = self._set_values(
                 progress_entry=last_progress,
                 item_pages=item_pages,
                 current_page=page,
@@ -188,7 +189,7 @@ class ReadingService(BaseService):
             )
             new_progress_entry.item_id = reading.item_id
             new_entry = await self.reading_manager.create_progress(
-                progress=self.__set_values(
+                progress=self._set_values(
                     progress_entry=new_progress_entry,
                     item_pages=item_pages,
                     current_page=page,
@@ -202,15 +203,7 @@ class ReadingService(BaseService):
             or (percentage and percentage == 100)
             or (new_entry.percentage == 100)
         ):
-            await self.session.refresh(reading)
-            await self.reading_manager.update_reading(
-                reading=reading,
-                fields={
-                    "active": False,
-                    "status_id": "read",
-                    "finish_date": datetime.today(),
-                },
-            )
+            await self._finish_reading(reading_id=reading.id)
 
         await self.session.refresh(item)
         await self.session.refresh(new_entry)
@@ -294,7 +287,17 @@ class ReadingService(BaseService):
         return response
 
     async def get_reading_goals(self, year: int | None) -> dict[str, Any]:
+        item_manager = ItemManager(session=self.session)
+
         goals = await self.reading_manager.get_reading_goals(year=year)
+        goal_items_ids = [goal["item_id"] for goal in goals] if goals else None
+
+        if goals:
+            goal_items = await item_manager.get_items(id_list=goal_items_ids)
+            items_map = await item_manager.get_items_indexed(goal_items)
+
+            for goal in goals:
+                goal["item"] = items_map.get(goal["item_id"])
 
         response = {
             "goals": goals if goals else [],
@@ -302,14 +305,42 @@ class ReadingService(BaseService):
 
         return response
 
-    def _get_progess_pages_read(self, progress, item):
+    @staticmethod
+    def _get_progess_pages_read(progress, item):
         pages_read = ""
         if progress and progress[0].page and item.pages:
             pages_read = f"{progress[0].page}/{item.pages} - {progress[0].percentage}%"
         return pages_read
 
+    async def _finish_reading(self, reading_id: uuid.UUID):
+        reading = await self.reading_manager.get_reading_by_id(reading_id=reading_id)
+
+        if not reading:
+            raise  # TODO
+
+        item = reading.item
+        goal = await self.reading_manager.get_active_goal_by_item_id(item_id=item.id)
+
+        # update reading
+        await self.reading_manager.update_reading(
+            reading=reading,
+            fields={
+                "active": False,
+                "status_id": "read",
+                "finish_date": datetime.today(),
+            },
+        )
+
+        # If a goal exist for the item in current year, update the goal to acheived
+        if goal:
+            await self.reading_manager.update_goal(
+                goal=goal, fields={"acheived": True, "date_acheived": datetime.now()}
+            )
+
+        return True
+
     @staticmethod
-    def __set_values(
+    def _set_values(
         progress_entry: ReadingProgressModel,
         item_pages: int,
         current_page: int | None,

@@ -52,6 +52,7 @@ class ItemManager(BaseDataManager):
         main_author_id: int | None = None,
         type: str | None = None,
         status_id: str | None = None,
+        id_list: list[int] | None = None,
         order_by: Any = None,
     ) -> list[dict[Any, Any]] | None:
         authors_subq = (
@@ -122,6 +123,9 @@ class ItemManager(BaseDataManager):
         if type:
             query = query.where(ItemModel.type == type)
 
+        if id_list:
+            query = query.where(ItemModel.id.in_(id_list))
+
         if order_by:
             for item in order_by:
                 column = getattr(ItemModel, item.field)
@@ -183,3 +187,16 @@ class ItemManager(BaseDataManager):
         items: list[RowMapping] | None = await self.get_all(query, unique_result=True)
 
         return [dict(item.items()) for item in items] if items else None
+
+    async def get_items_indexed(self, items: list[dict[str, Any]] | None):
+        """
+        :Name: create_author
+        :Created by: Lucas Penha de Moura - 17/03/2026
+            This method creates a mapper for items, item returns indexed by item Id
+
+            Params:
+                item: a list of items
+        """
+        mapped_items = {item["id"]: item for item in items} if items else {}
+
+        return mapped_items

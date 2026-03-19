@@ -554,6 +554,41 @@ async def test_create_progress_complete_reading_percentage(
 
 
 @pytest.mark.asyncio
+async def test_create_progress_complete_reading_percentage_with_goal(
+    client, create_active_active_readings
+):
+    reading = create_active_active_readings[0]
+
+    current_reading = reading
+    reading_id = current_reading.id
+    current_percentage = 100
+
+    payload = {
+        "readingId": str(reading_id),
+        "progressType": "percentage",
+        "value": current_percentage,
+    }
+    mutation = """
+        mutation CreateReadingProgress($progress: CreateReadingProgressInput!) {
+            createReadingProgress(progress: $progress) {
+                itemTitle
+                itemTitle
+                created
+            }
+        }
+    """
+    variables = {"progress": payload}
+    response = await client.post(
+        "/graphql/library", json={"query": mutation, "variables": variables}
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert "data" in data
+    assert "createReadingProgress" in data["data"]
+
+
+@pytest.mark.asyncio
 async def test_get_progress(client, create_progress):
     progress = create_progress
 

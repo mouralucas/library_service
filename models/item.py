@@ -22,7 +22,6 @@ class ItemModel(SQLModel):
     id: Mapped[int] = mapped_column("id", primary_key=True)
     owner_id: Mapped[uuid.UUID]
     isbn: Mapped[str] = mapped_column("isbn", nullable=True)
-    # isbn10: Mapped[str] = mapped_column("isbn10", nullable=True)
 
     title: Mapped[str] = mapped_column(index=True)
     subtitle: Mapped[str] = mapped_column("subtitle", nullable=True)

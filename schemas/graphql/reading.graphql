@@ -117,7 +117,7 @@ type ReadingStats {
     lastReadings: [Reading]
 }
 
-# Reading goal schemas
+# Reading goal schemas`
 input GetReadingGoalsInput {
     year: Int
 }
@@ -126,9 +126,10 @@ type GetReadingGoalsResponse {
     goals: [ReadingGoal]!
 }
 
-
 type ReadingGoal {
     id: String!
     item: Item!
     year: Int!
+    acheived: Boolean
+    dateAcheived: DateTime
 }

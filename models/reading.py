@@ -43,8 +43,8 @@ class ReadingProgressModel(SQLModel):
     progress_date: Mapped[datetime.date] = mapped_column("date")
     page: Mapped[int] = mapped_column("page", nullable=True)
     percentage: Mapped[float] = mapped_column("percentage", nullable=True)
-    rate: Mapped[int] = mapped_column("rate", nullable=True)
-    comment: Mapped[str] = mapped_column("comment", nullable=True)
+    rate: Mapped[int | None] = mapped_column("rate", nullable=True)
+    comment: Mapped[str | None] = mapped_column("comment", nullable=True)
 
 
 class ReadingGoalModel(SQLModel):
@@ -53,4 +53,6 @@ class ReadingGoalModel(SQLModel):
     owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
     item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="noload")
+    acheived: Mapped[bool] = mapped_column(default=False)
+    date_acheived: Mapped[datetime.datetime] = mapped_column(nullable=True)
     year: Mapped[int] = mapped_column("year", doc="Year of the goal")

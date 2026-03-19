@@ -20,14 +20,14 @@ class ItemService(BaseService):
         item.owner_id = self.user["user_id"]
 
         new_item = await ItemManager(session=self.session).create_item(
-            ItemModel(**item.model_dump(exclude={"authors_id"}))
+            ItemModel(**item.model_dump(exclude={"authors_ids"}))
         )
 
         await self.__update_status(new_item)
         await self.__add_author(
             item_id=new_item.id,
             main_author_id=new_item.main_author_id,
-            other_authors_id=item.authors_id,
+            other_authors_id=item.authors_ids,
         )
 
         await self.session.refresh(new_item)
@@ -43,9 +43,7 @@ class ItemService(BaseService):
     async def update_item(self, item: UpdateItemRequest) -> CreateItemResponse:
         current_item = await ItemManager(self.session).get_item_by_id(item_id=item.id)
 
-        clean_item_fields = item.model_dump(
-            exclude={"other_authors_id"}, exclude_unset=True
-        )
+        clean_item_fields = item.model_dump(exclude={"authors_ids"}, exclude_unset=True)
         updated_item = await ItemManager(session=self.session).update_item(
             current_item, fields=clean_item_fields
         )
@@ -54,7 +52,7 @@ class ItemService(BaseService):
             await self.__update_status(updated_item)
 
         if clean_item_fields.get("main_author_id") or clean_item_fields.get(
-            "other_authors_id"
+            "authors_ids"
         ):
             pass
 

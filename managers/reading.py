@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Any, cast
 
@@ -121,7 +122,7 @@ class ReadingManager(BaseDataManager):
 
         return [dict(reading) for reading in last_readings] if last_readings else None
 
-    async def get_active_readings(self) -> list[dict[Any, Any]] | None:
+    async def get_all_active_readings(self) -> list[dict[Any, Any]] | None:
         query = (
             select(
                 ReadingModel.id,
@@ -200,33 +201,68 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingProgressModel, latest_progress)
 
+    async def create_goal(self):
+        # Can only create a goal for a item if not exist yet
+        # Can a item be in the goal twice in same year?
+        pass
+
+    async def update_goal(
+        self, goal: ReadingGoalModel, fields: dict[str, Any]
+    ) -> ReadingGoalModel:
+        query = (
+            update(ReadingModel).where(ReadingGoalModel.id == goal.id).values(**fields)
+        )
+
+        updated_reading: SQLModel = await self.update_one(
+            sql_statement=query, sql_model=goal
+        )
+
+        return cast(ReadingGoalModel, updated_reading)
+
     async def get_reading_goals(self, year: int | None):
         query = (
             select(
                 ReadingGoalModel.id,
                 ReadingGoalModel.item_id,
-                ItemModel,
+                ReadingGoalModel.acheived,
+                ReadingGoalModel.date_acheived,
                 ReadingGoalModel.year,
             )
-            .outerjoin(ItemModel, ReadingGoalModel.item_id == ItemModel.id)
-            .order_by(ReadingGoalModel.year, ReadingGoalModel.created_at.desc())
+            .where(ReadingGoalModel.owner_id == self.user["user_id"])
+            .order_by(
+                ReadingGoalModel.year,
+                ReadingGoalModel.created_at.desc(),
+            )
         )
 
         if year:
             query = query.where(ReadingGoalModel.year == year)
 
-        result = await self.get_all(query)
+        goals = await self.get_all(query)
 
-        return (
-            [
-                {
-                    "id": r.id,
-                    "item_id": r.item_id,
-                    "year": r.year,
-                    "item": r.ItemModel,
-                }
-                for r in result
-            ]
-            if result
-            else None
+        return [dict(goal) for goal in goals] if goals else None
+
+    async def get_active_goal_by_item_id(self, item_id: int) -> ReadingGoalModel | None:
+        """
+        :Created by: Lucas Penha de Moura - 17/03/2026
+            Get the active goal for a item (not achieved yet)
+
+            Params:
+                item_id: the id of the item
+        """
+        query = select(
+            ReadingGoalModel.id,
+            ReadingGoalModel.item_id,
+            ReadingGoalModel.acheived,
+            ReadingGoalModel.date_acheived,
+            ReadingGoalModel.year,
+        ).where(
+            ReadingGoalModel.owner_id == self.user["user_id"],
+            ReadingGoalModel.item_id == item_id,
+            ReadingGoalModel.acheived.is_(False),
+            ReadingGoalModel.year == datetime.datetime.now().year,
         )
+
+        goal = await self.get_only_one(query)
+
+        return cast(ReadingGoalModel, goal) if goal else None

@@ -32,7 +32,7 @@ input CreateItemInput {
   lastStatusId: String!
   lastStatusDate: String!
   mainAuthorId: Int!
-  authorsId: [Int]
+  authorsIds: [Int]
   translatorId: Int
   otherAuthorsId: [Int]
   title: String!
@@ -65,7 +65,7 @@ input UpdateItemInput {
   lastStatusId: String
   lastStatusDate: String
   mainAuthorId: Int
-  authorsId: [Int]
+  authorsIds: [Int]
   translatorId: Int
   otherAuthorsId: [Int]
   title: String
