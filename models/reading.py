@@ -40,7 +40,7 @@ class ReadingProgressModel(SQLModel):
     # TODO: after update the table, change table in database to not null
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
     item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
-    progress_date: Mapped[datetime.date] = mapped_column("date")
+    progress_date: Mapped[datetime.date] = mapped_column("progress_date")
     page: Mapped[int] = mapped_column("page", nullable=True)
     percentage: Mapped[float] = mapped_column("percentage", nullable=True)
     rate: Mapped[int | None] = mapped_column("rate", nullable=True)
