@@ -1,5 +1,6 @@
-from typing import Any, cast
 import datetime
+from typing import Any, cast
+
 from fastapi import HTTPException
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import RowMapping, asc, desc, func, select, update
@@ -142,8 +143,8 @@ class ItemManager(BaseDataManager):
 
     async def get_item_summary(
         self,
-        itemId: int | None = None,
-        itemTypeId: str | None = None,
+        item_id: int | None = None,
+        item_type_id: str | None = None,
         active_goal: bool = False,
         active_reading: bool = False,
         order_by: Any = None,
@@ -155,7 +156,7 @@ class ItemManager(BaseDataManager):
             Params:
                 itemId: the id of the item
                 itemTypeId: the type of the item
-                active_goal: if true, return only items with active reading goal 
+                active_goal: if true, return only items with active reading goal
                     for the current year
                 active_reading: if true, return only items with active reading
                 order_by: a list of dict with field and direction to order the result
@@ -243,11 +244,11 @@ class ItemManager(BaseDataManager):
             .outerjoin(AuthorModel, AuthorModel.id == ItemModel.main_author_id)
         )
 
-        if itemId:
-            query = query.where(ItemModel.id == itemId)
+        if item_id:
+            query = query.where(ItemModel.id == item_id)
 
-        if itemTypeId:
-            query = query.where(ItemModel.type == itemTypeId)
+        if item_type_id:
+            query = query.where(ItemModel.type == item_type_id)
 
         if active_goal:
             query = query.where(reading_goal_subq.c.id.is_not(None))
@@ -255,7 +256,8 @@ class ItemManager(BaseDataManager):
         if active_reading:
             query = query.outerjoin(
                 ReadingModel,
-                (ReadingModel.item_id == ItemModel.id) & (ReadingModel.active == True),
+                (ReadingModel.item_id == ItemModel.id)
+                & (ReadingModel.active.is_(True)),
             )
             query = query.where(ReadingModel.id.is_not(None))
 

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from fastapi import HTTPException, status
@@ -170,7 +170,7 @@ class ReadingService(BaseService):
             )
 
         # Only one entry per day is allowed
-        if last_progress and last_progress.progress_date == datetime.now().date():
+        if last_progress and last_progress.progress_date == date.today():
             seted_progress = self._set_values(
                 progress_entry=last_progress,
                 item_pages=item_pages,

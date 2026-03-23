@@ -93,12 +93,19 @@ class GetItemSummaryRequest(BaseModel):
     id: int | None = Field(None, ge=1, alias="id")
     title: str | None = Field(None, min_length=3)
     main_author_id: int | None = Field(None)
-    itemTypeId: str | None = Field(None)
+    item_type_id: str | None = Field(None)
     status_id: str | None = Field(None)
-    active_goal: bool= Field(False, description="If true, return only items with active reading goal for the current year")
-    active_reading: bool = Field(False, description="If true, return only items with active reading")
+    active_goal: bool = Field(
+        False,
+        description="If true, return only items with active reading\
+            goal for the current year",
+    )
+    active_reading: bool = Field(
+        False, description="If true, return only items with active reading"
+    )
     order_by: list[OrderBySchemaRequest] | None = Field(None)
-    
+
+
 class GetItemRequest(BaseModel):
     model_config = ConfigDict(
         from_attributes=True, alias_generator=AliasGenerator(alias=to_camel)

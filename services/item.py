@@ -83,8 +83,8 @@ class ItemService(BaseService):
                 language: the list of items and its relations
         """
         summary = await self.item_manager.get_item_summary(
-            itemId=params.id,
-            itemTypeId=params.itemTypeId,
+            item_id=params.id,
+            item_type_id=params.item_type_id,
             active_goal=params.active_goal,
             active_reading=params.active_reading,
             order_by=params.order_by,

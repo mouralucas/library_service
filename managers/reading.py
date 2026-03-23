@@ -113,7 +113,7 @@ class ReadingManager(BaseDataManager):
             .where(
                 ReadingModel.owner_id == self.user["user_id"],
                 ReadingModel.item_id == item_id,
-                ReadingModel.active == False,  # noqa: E712
+                ReadingModel.active.is_(False),
             )
             .order_by(ReadingModel.finish_date.desc())
         )

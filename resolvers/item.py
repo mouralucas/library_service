@@ -5,8 +5,8 @@ from rolf_common.util.graphql_input_validation import validate_graphql_input
 from schemas.request.item import (
     CreateItemRequest,
     GetItemRequest,
-    GetItemSummaryRequest,
     GetItemsByLocationRequest,
+    GetItemSummaryRequest,
     UpdateItemRequest,
 )
 from services.item import ItemService
