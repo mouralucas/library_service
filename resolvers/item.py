@@ -5,6 +5,7 @@ from rolf_common.util.graphql_input_validation import validate_graphql_input
 from schemas.request.item import (
     CreateItemRequest,
     GetItemRequest,
+    GetItemSummaryRequest,
     GetItemsByLocationRequest,
     UpdateItemRequest,
 )
@@ -56,8 +57,17 @@ async def get_items_by_location_resolver(_, info, params: GetItemsByLocationRequ
     return items
 
 
+@validate_graphql_input(GetItemSummaryRequest)
+async def get_item_summary(_, info, params: GetItemSummaryRequest):
+    summary = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_item_summary(params=params)
+    return summary
+
+
 def bind_item_resolvers(query, mutation):
     query.set_field("getItems", get_items_resolver)
+    query.set_field("getItemSummary", resolver=get_item_summary)
     query.set_field("getItemLocations", get_item_locations_resolver)
     query.set_field("getItemsByLocation", get_items_by_location_resolver)
 

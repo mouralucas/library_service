@@ -17,6 +17,8 @@ check_venv:
 		echo "Virtualenv já existe em $(VENV_PATH)"; \
 	fi
 
+build: 
+	docker compose build
 
 # Run the Alembic upgrade command
 apply-migrations:

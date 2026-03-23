@@ -331,10 +331,10 @@ class ReadingService(BaseService):
             },
         )
 
-        # If a goal exist for the item in current year, update the goal to acheived
+        # If a goal exist for the item in current year, update the goal to achieved
         if goal:
             await self.reading_manager.update_goal(
-                goal=goal, fields={"acheived": True, "date_acheived": datetime.now()}
+                goal=goal, fields={"achieved": True, "date_achieved": datetime.now()}
             )
 
         return True

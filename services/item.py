@@ -6,7 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from managers.item import ItemManager
 from models import ItemAuthorModel, ItemModel, ItemStatusModel
 from schemas.item import ItemSchema
-from schemas.request.item import CreateItemRequest, GetItemRequest, UpdateItemRequest
+from schemas.request.item import (
+    CreateItemRequest,
+    GetItemRequest,
+    GetItemSummaryRequest,
+    UpdateItemRequest,
+)
 from schemas.response.item import CreateItemResponse
 from services.base import BaseService
 
@@ -15,6 +20,7 @@ class ItemService(BaseService):
     def __init__(self, session: AsyncSession, user: RequiredUser):
         super().__init__(session)
         self.user = user.model_dump()
+        self.item_manager = ItemManager(session=self.session)
 
     async def create_item(self, item: CreateItemRequest) -> dict[str, Any]:
         item.owner_id = self.user["user_id"]
@@ -68,6 +74,28 @@ class ItemService(BaseService):
 
         return response
 
+    async def get_item_summary(self, params: GetItemSummaryRequest):
+        """
+        :Created by: Lucas Penha de Moura - 19/03/2026
+            Fetch items and all its relation, like reading, reading goals, etc
+
+            Params:
+                language: the list of items and its relations
+        """
+        summary = await self.item_manager.get_item_summary(
+            itemId=params.id,
+            itemTypeId=params.itemTypeId,
+            active_goal=params.active_goal,
+            active_reading=params.active_reading,
+            order_by=params.order_by,
+        )
+
+        response = {
+            "quantity": len(summary) if summary else 0,
+            "summary": summary,
+        }
+        return response
+
     async def get_items(self, params: GetItemRequest) -> dict[str, Any]:
         items: list[dict[Any, Any]] | None = await ItemManager(self.session).get_items(
             item_id=params.id,
@@ -99,6 +127,28 @@ class ItemService(BaseService):
         }
 
         return response
+
+    async def get_items_by_location(self, location_ids: list[int] | None):
+        items = await ItemManager(self.session).get_items_by_location(
+            location_ids=location_ids
+        )
+
+        response_items = {}
+        for item in items or []:
+            location_id = item.get("location_id")
+            location_name = item.get("location_name")
+            item["location_id"] = location_id
+            item["location_name"] = location_name
+
+            if location_id not in response_items:
+                response_items[location_id] = {
+                    "location_id": location_id,
+                    "location_name": location_name,
+                    "items": [],
+                }
+            response_items[location_id]["items"].append(item)
+
+        return list(response_items.values())
 
     async def __update_status(self, item: ItemModel, is_update: bool = False):
         """
@@ -155,25 +205,3 @@ class ItemService(BaseService):
             await ItemManager(self.session).add_all(other_authors)
 
         return
-
-    async def get_items_by_location(self, location_ids: list[int] | None):
-        items = await ItemManager(self.session).get_items_by_location(
-            location_ids=location_ids
-        )
-
-        response_items = {}
-        for item in items or []:
-            location_id = item.get("location_id")
-            location_name = item.get("location_name")
-            item["location_id"] = location_id
-            item["location_name"] = location_name
-
-            if location_id not in response_items:
-                response_items[location_id] = {
-                    "location_id": location_id,
-                    "location_name": location_name,
-                    "items": [],
-                }
-            response_items[location_id]["items"].append(item)
-
-        return list(response_items.values())
