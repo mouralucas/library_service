@@ -120,10 +120,10 @@ class ReadingService(BaseService):
         return response
 
     async def create_progress_v2(self, progress: CreateProgressRequestV2):
+        # Set values for page and percentage based on the progress type
         page = progress.value if progress.progress_type == "page" else None
         percentage = progress.value if progress.progress_type == "percentage" else None
 
-        # TODO: add raise_exception param or kwarg for it
         reading = await self.reading_manager.get_reading_by_id(
             progress.reading_id, get_item=True
         )
