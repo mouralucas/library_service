@@ -52,8 +52,8 @@ class ItemModel(SQLModel):
     collection: Mapped["CollectionModel"] = relationship(
         foreign_keys=[collection_id], lazy="noload"
     )
-    format: Mapped[str] = mapped_column("format", nullable=True)
-    type: Mapped[str] = mapped_column("type", nullable=True)
+    format_id: Mapped[str] = mapped_column("format", nullable=True)
+    item_type_id: Mapped[str] = mapped_column("type", nullable=True)
     last_status_id: Mapped[str] = mapped_column(ForeignKey("status.id"))
     last_status: Mapped["StatusModel"] = relationship(
         foreign_keys=[last_status_id], lazy="noload"

@@ -41,7 +41,7 @@ class ItemManager(BaseDataManager):
     ) -> ItemModel | None:
         query = select(ItemModel).where(ItemModel.id == item_id)
 
-        item: SQLModel = await self.get_only_one(query)
+        item: SQLModel | None = await self.get_only_one(query)
 
         if not item and raise_exception:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Item not found")
@@ -89,8 +89,8 @@ class ItemManager(BaseDataManager):
                 AuthorModel.name.label("main_author_name"),
                 ItemModel.collection_id,
                 CollectionModel.name.label("collection_name"),
-                ItemModel.format.label("format_id"),
-                ItemModel.type.label("item_type_id"),
+                ItemModel.format_id.label("format_id"),
+                ItemModel.item_type_id.label("item_type_id"),
                 ItemModel.last_status_id,
                 StatusModel.name.label("last_status_name"),
                 ItemModel.last_status_date,
@@ -124,7 +124,7 @@ class ItemManager(BaseDataManager):
             query = query.where(ItemModel.last_status_id == status_id)
 
         if type:
-            query = query.where(ItemModel.type == type)
+            query = query.where(ItemModel.item_type_id == type)
 
         if id_list:
             query = query.where(ItemModel.id.in_(id_list))
@@ -248,7 +248,7 @@ class ItemManager(BaseDataManager):
             query = query.where(ItemModel.id == item_id)
 
         if item_type_id:
-            query = query.where(ItemModel.type == item_type_id)
+            query = query.where(ItemModel.item_type_id == item_type_id)
 
         if active_goal:
             query = query.where(reading_goal_subq.c.id.is_not(None))

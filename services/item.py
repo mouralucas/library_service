@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.item import ItemManager
 from models import ItemAuthorModel, ItemModel, ItemStatusModel
-from schemas.item import ItemSchema
 from schemas.request.item import (
     CreateItemRequest,
     GetItemRequest,
@@ -101,7 +100,7 @@ class ItemService(BaseService):
             item_id=params.id,
             title=params.title,
             main_author_id=params.main_author_id,
-            type=params.type,
+            type=params.item_type_id,
             status_id=params.status_id,
             order_by=params.order_by,
         )
@@ -113,10 +112,14 @@ class ItemService(BaseService):
 
         return response
 
-    async def get_item_by_id(self, item_id: int) -> ItemSchema:
+    async def get_item_by_id(self, item_id: int) -> dict[str, Any]:
         item = await ItemManager(self.session).get_item_by_id(item_id)
 
-        return ItemSchema.model_validate(item)
+        response = {
+            "item": item,
+        }
+
+        return response
 
     async def get_item_locations(self) -> dict[str, Any]:
         locations = await ItemManager(self.session).get_item_locations()

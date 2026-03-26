@@ -28,16 +28,8 @@ class CreateItemRequest(BaseModel):
     )
     title: str = Field(..., description="The name of the item")
     subtitle: str | None = Field(None, description="The subtitle of the item")
-    # title_original: str | None = Field(
-    #     None, description="The original title of the item"
-    # )
-    # subtitle_original: str | None = Field(
-    #     None, description="The original subtitle of the item"
-    # )
     isbn: str | None = Field(None, description="The ISBN of the item")
-    type: str | None = Field(
-        None, alias="itemTypeId", description="The type of the item"
-    )
+    item_type_id: str | None = Field(None, description="The type of the item")
     pages: int | None = Field(0, description="The number of pages of the item")
     volume: int | None = Field(0, description="The volume of the item")
     publication_date: datetime.date | None = Field(
@@ -49,9 +41,7 @@ class CreateItemRequest(BaseModel):
     serie_id: int = Field(0, description="The id of the serie")
     collection_id: int = Field(0, description="The id of the collection")
     publisher_id: int | None = Field(None, description="The publisher of the item")
-    format: str | None = Field(
-        None, alias="formatId", description="The id of the format"
-    )
+    format_id: str | None = Field(None, description="The id of the format")
     language_id: str | None = Field(None, description="The id of the language")
     cover_price: float | None = Field(None, description="The price of the item")
     paid_price: float | None = Field(None, description="The price of the item")
@@ -114,7 +104,7 @@ class GetItemRequest(BaseModel):
     id: int | None = Field(None, ge=1, alias="itemId")
     title: str | None = Field(None, min_length=3, alias="title")
     main_author_id: int | None = Field(None, alias="mainAuthorId")
-    type: str | None = Field(None, alias="itemTypeId")
+    item_type_id: str | None = Field(None)
     status_id: str | None = Field(None, alias="statusId")
     order_by: list[OrderBySchemaRequest] | None = Field(None)
 

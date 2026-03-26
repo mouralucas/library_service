@@ -1,7 +1,8 @@
 extend type Query {
   # Item queries
-  getItem(id: Int!): Item
-  getItems(params: GetItemInput): GetItemResponse
+  # getItem(id: Int!): Item
+  getItems(params: GetItemsInput): GetItemsResponse
+  getItemById(id: Int!): GetItemByIdResponse
   getItemSummary(params: GetItemSummaryInput): GetItemSummaryResponse
   getItemLocations: GetItemLocationResponse
   getItemsByLocation(params: GetItemsByLocationInput): [ItemsByLocation]!
@@ -14,7 +15,7 @@ extend type Mutation {
 
 
 # Item schemas
-input GetItemInput {
+input GetItemsInput {
   itemId: Int
   title: String
   mainAuthorId: Int
@@ -23,9 +24,13 @@ input GetItemInput {
   orderBy: [OrderByInput]
 }
 
-type GetItemResponse {
+type GetItemsResponse {
     quantity: Int,
     items: [Item]
+}
+
+type GetItemByIdResponse {
+  item: Item
 }
 
 input CreateItemInput {

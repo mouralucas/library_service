@@ -21,6 +21,14 @@ async def get_items_resolver(_, info, params: GetItemRequest):
     return items
 
 
+async def get_item_by_id_resolver(_, info, id: int):
+    item = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_item_by_id(item_id=id)
+
+    return item
+
+
 @validate_graphql_input(CreateItemRequest)
 async def create_item_resolver(_, info, item: CreateItemRequest):
 
@@ -66,10 +74,11 @@ async def get_item_summary(_, info, params: GetItemSummaryRequest):
 
 
 def bind_item_resolvers(query, mutation):
-    query.set_field("getItems", get_items_resolver)
+    query.set_field("getItems", resolver=get_items_resolver)
     query.set_field("getItemSummary", resolver=get_item_summary)
-    query.set_field("getItemLocations", get_item_locations_resolver)
-    query.set_field("getItemsByLocation", get_items_by_location_resolver)
+    query.set_field("getItemById", resolver=get_item_by_id_resolver)
+    query.set_field("getItemLocations", resolver=get_item_locations_resolver)
+    query.set_field("getItemsByLocation", resolver=get_items_by_location_resolver)
 
     mutation.set_field("createItem", create_item_resolver)
     mutation.set_field("updateItem", update_item_resolver)
