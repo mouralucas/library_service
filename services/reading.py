@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from fastapi import HTTPException, status
@@ -120,10 +120,10 @@ class ReadingService(BaseService):
         return response
 
     async def create_progress_v2(self, progress: CreateProgressRequestV2):
+        # Set values for page and percentage based on the progress type
         page = progress.value if progress.progress_type == "page" else None
         percentage = progress.value if progress.progress_type == "percentage" else None
 
-        # TODO: add raise_exception param or kwarg for it
         reading = await self.reading_manager.get_reading_by_id(
             progress.reading_id, get_item=True
         )
@@ -170,7 +170,7 @@ class ReadingService(BaseService):
             )
 
         # Only one entry per day is allowed
-        if last_progress and last_progress.progress_date == datetime.now().date():
+        if last_progress and last_progress.progress_date == date.today():
             seted_progress = self._set_values(
                 progress_entry=last_progress,
                 item_pages=item_pages,
@@ -293,7 +293,7 @@ class ReadingService(BaseService):
         goal_items_ids = [goal["item_id"] for goal in goals] if goals else None
 
         if goals:
-            goal_items = await item_manager.get_items(id_list=goal_items_ids)
+            goal_items = await item_manager.get_detailed_items(id_list=goal_items_ids)
             items_map = await item_manager.get_items_indexed(goal_items)
 
             for goal in goals:
@@ -331,10 +331,10 @@ class ReadingService(BaseService):
             },
         )
 
-        # If a goal exist for the item in current year, update the goal to acheived
+        # If a goal exist for the item in current year, update the goal to achieved
         if goal:
             await self.reading_manager.update_goal(
-                goal=goal, fields={"acheived": True, "date_acheived": datetime.now()}
+                goal=goal, fields={"achieved": True, "date_achieved": datetime.now()}
             )
 
         return True

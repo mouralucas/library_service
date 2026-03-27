@@ -1,9 +1,11 @@
+import datetime
 from typing import Any, cast
 
 from fastapi import HTTPException
 from rolf_common.managers import BaseDataManager
 from sqlalchemy import RowMapping, asc, desc, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 from starlette import status
 
 from models import (
@@ -15,6 +17,7 @@ from models import (
     StatusModel,
 )
 from models.item import ItemAuthorModel, ItemLocationModel, ItemModel, ItemStatusModel
+from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
 
 
 class ItemManager(BaseDataManager):
@@ -38,19 +41,19 @@ class ItemManager(BaseDataManager):
     ) -> ItemModel | None:
         query = select(ItemModel).where(ItemModel.id == item_id)
 
-        item: SQLModel = await self.get_only_one(query)
+        item: SQLModel | None = await self.get_only_one(query)
 
         if not item and raise_exception:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Item not found")
 
         return cast(ItemModel, item)
 
-    async def get_items(
+    async def get_detailed_items(
         self,
         item_id: int | None = None,
         title: str | None = None,
         main_author_id: int | None = None,
-        type: str | None = None,
+        item_type_id: str | None = None,
         status_id: str | None = None,
         id_list: list[int] | None = None,
         order_by: Any = None,
@@ -86,8 +89,8 @@ class ItemManager(BaseDataManager):
                 AuthorModel.name.label("main_author_name"),
                 ItemModel.collection_id,
                 CollectionModel.name.label("collection_name"),
-                ItemModel.format.label("format_id"),
-                ItemModel.type.label("item_type_id"),
+                ItemModel.format_id.label("format_id"),
+                ItemModel.item_type_id.label("item_type_id"),
                 ItemModel.last_status_id,
                 StatusModel.name.label("last_status_name"),
                 ItemModel.last_status_date,
@@ -120,8 +123,8 @@ class ItemManager(BaseDataManager):
         if status_id:
             query = query.where(ItemModel.last_status_id == status_id)
 
-        if type:
-            query = query.where(ItemModel.type == type)
+        if item_type_id:
+            query = query.where(ItemModel.item_type_id == item_type_id)
 
         if id_list:
             query = query.where(ItemModel.id.in_(id_list))
@@ -137,6 +140,138 @@ class ItemManager(BaseDataManager):
         items: list[RowMapping] | None = await self.get_all(query, unique_result=False)
 
         return [dict(i.items()) for i in items] if items else None
+
+    async def get_item_summary(
+        self,
+        item_id: int | None = None,
+        item_type_id: str | None = None,
+        active_goal: bool = False,
+        active_reading: bool = False,
+        order_by: Any = None,
+    ) -> list[dict[Any, Any]] | None:
+        """
+        :Created by: Lucas Penha de Moura - 19/03/2026
+            Fetch the current state of an item
+
+            Params:
+                itemId: the id of the item
+                itemTypeId: the type of the item
+                active_goal: if true, return only items with active reading goal
+                    for the current year
+                active_reading: if true, return only items with active reading
+                order_by: a list of dict with field and direction to order the result
+        """
+        # TODO: if this query start to be a bottleneck try Materialized view or
+        #   something similar
+        current_year = datetime.datetime.now().year
+
+        # --- Subquery: Current year ReadingGoal ---
+        reading_goal_subq = (
+            select(
+                ReadingGoalModel.id,
+                ReadingGoalModel.year,
+                ReadingGoalModel.achieved,
+                ReadingGoalModel.item_id,
+            )
+            .where(ReadingGoalModel.year == current_year)
+            .subquery()
+        )
+
+        # --- Subquery: Last Reading fot the item ---
+        reading_subq = select(
+            ReadingModel.id,
+            ReadingModel.item_id,
+            ReadingModel.start_date,
+            func.row_number()
+            .over(
+                partition_by=ReadingModel.item_id,
+                order_by=ReadingModel.start_date.desc(),
+            )
+            .label("rn"),
+        ).subquery()
+
+        latest_reading = aliased(reading_subq)
+
+        # --- Subquery: Last ReadingProgress for the last Reading ---
+        progress_subq = select(
+            ReadingProgressModel.reading_id,
+            ReadingProgressModel.page,
+            ReadingProgressModel.percentage,
+            ReadingProgressModel.progress_date,
+            func.row_number()
+            .over(
+                partition_by=ReadingProgressModel.reading_id,
+                order_by=ReadingProgressModel.progress_date.desc(),
+            )
+            .label("rn"),
+        ).subquery()
+
+        latest_progress = aliased(progress_subq)
+
+        # --- Main Query ---
+        query = (
+            select(
+                ItemModel.id,
+                ItemModel.title,
+                ItemModel.cover,
+                ItemModel.main_author_id,
+                AuthorModel.name.label("main_author_name"),
+                # Goal
+                reading_goal_subq.c.id.label("reading_goal_id"),
+                reading_goal_subq.c.year.label("reading_goal_year"),
+                reading_goal_subq.c.achieved.label("reading_goal_achieved"),
+                # Latest Reading
+                latest_reading.c.id.label("reading_id"),
+                latest_reading.c.start_date.label("reading_start_date"),
+                # Latest Progress
+                latest_progress.c.page.label("last_page"),
+                latest_progress.c.percentage.label("last_percentage"),
+            )
+            # Goal
+            .outerjoin(
+                reading_goal_subq,
+                ItemModel.id == reading_goal_subq.c.item_id,
+            )
+            .outerjoin(
+                latest_reading,
+                (latest_reading.c.item_id == ItemModel.id) & (latest_reading.c.rn == 1),
+            )
+            .outerjoin(
+                latest_progress,
+                (latest_progress.c.reading_id == latest_reading.c.id)
+                & (latest_progress.c.rn == 1),
+            )
+            .outerjoin(AuthorModel, AuthorModel.id == ItemModel.main_author_id)
+        )
+
+        if item_id:
+            query = query.where(ItemModel.id == item_id)
+
+        if item_type_id:
+            query = query.where(ItemModel.item_type_id == item_type_id)
+
+        if active_goal:
+            query = query.where(reading_goal_subq.c.id.is_not(None))
+
+        if active_reading:
+            query = query.outerjoin(
+                ReadingModel,
+                (ReadingModel.item_id == ItemModel.id)
+                & (ReadingModel.active.is_(True)),
+            )
+            query = query.where(ReadingModel.id.is_not(None))
+
+        if order_by:
+            for item in order_by:
+                column = getattr(ItemModel, item.field)
+                if item.direction == "ASC":
+                    query = query.order_by(asc(column))
+                else:
+                    query = query.order_by(desc(column))
+
+        items = await self.get_all(query)
+
+        return [dict(location.items()) for location in items] if items else None
 
     async def get_item_status_history(
         self, item_id: int

@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 from fastapi import status
 
@@ -203,6 +205,7 @@ async def test_create_progress_with_page(client, create_active_active_readings):
     payload = {
         "readingId": str(reading_id),
         "progressType": progress_type,
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_page,
     }
     mutation = """
@@ -247,6 +250,7 @@ async def test_create_progress_with_percentage(client, create_active_active_read
     payload = {
         "readingId": str(reading_id),
         "progressType": progress_type,
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_percentage,
     }
     mutation = """
@@ -291,6 +295,7 @@ async def test_create_progress_lt_last_progress(client, create_progress):
     payload = {
         "readingId": str(reading_id),
         "progressType": "page",
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_progress_page,
     }
     mutation = """
@@ -408,6 +413,7 @@ async def test_create_progress_complete_reading_pages(
     payload = {
         "readingId": str(reading_id),
         "progressType": "page",
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_page,
     }
     mutation = """
@@ -488,6 +494,7 @@ async def test_create_progress_complete_reading_percentage(
     payload = {
         "readingId": str(reading_id),
         "progressType": "percentage",
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_percentage,
     }
     mutation = """
@@ -566,6 +573,7 @@ async def test_create_progress_complete_reading_percentage_with_goal(
     payload = {
         "readingId": str(reading_id),
         "progressType": "percentage",
+        "progressDate": date.today().strftime("%Y-%m-%d"),
         "value": current_percentage,
     }
     mutation = """

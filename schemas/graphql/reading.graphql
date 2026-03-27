@@ -130,6 +130,6 @@ type ReadingGoal {
     id: String!
     item: Item!
     year: Int!
-    acheived: Boolean
-    dateAcheived: DateTime
+    achieved: Boolean
+    dateAchieved: DateTime
 }

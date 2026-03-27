@@ -6,18 +6,27 @@ from schemas.request.item import (
     CreateItemRequest,
     GetItemRequest,
     GetItemsByLocationRequest,
+    GetItemSummaryRequest,
     UpdateItemRequest,
 )
 from services.item import ItemService
 
 
 @validate_graphql_input(GetItemRequest)
-async def get_items_resolver(_, info, params: GetItemRequest):
+async def get_detailed_items_resolver(_, info, params: GetItemRequest):
     items = await ItemService(
         session=info.context["session"], user=info.context["user"]
-    ).get_items(params=params)
+    ).get_detailed_items(params=params)
 
     return items
+
+
+async def get_item_by_id_resolver(_, info, id: int):
+    item = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_item_by_id(item_id=id)
+
+    return item
 
 
 @validate_graphql_input(CreateItemRequest)
@@ -56,10 +65,20 @@ async def get_items_by_location_resolver(_, info, params: GetItemsByLocationRequ
     return items
 
 
+@validate_graphql_input(GetItemSummaryRequest)
+async def get_item_summary(_, info, params: GetItemSummaryRequest):
+    summary = await ItemService(
+        session=info.context["session"], user=info.context["user"]
+    ).get_item_summary(params=params)
+    return summary
+
+
 def bind_item_resolvers(query, mutation):
-    query.set_field("getItems", get_items_resolver)
-    query.set_field("getItemLocations", get_item_locations_resolver)
-    query.set_field("getItemsByLocation", get_items_by_location_resolver)
+    query.set_field("getDetailedItems", resolver=get_detailed_items_resolver)
+    query.set_field("getItemSummary", resolver=get_item_summary)
+    query.set_field("getItem", resolver=get_item_by_id_resolver)
+    query.set_field("getItemLocations", resolver=get_item_locations_resolver)
+    query.set_field("getItemsByLocation", resolver=get_items_by_location_resolver)
 
     mutation.set_field("createItem", create_item_resolver)
     mutation.set_field("updateItem", update_item_resolver)

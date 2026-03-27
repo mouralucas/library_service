@@ -5,8 +5,8 @@ from rolf_common.services import get_user
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.database import get_session
-from schemas.request.item import GetItemRequest, UpdateItemRequest
-from schemas.response.item import CreateItemResponse, GetItemResponse
+from schemas.request.item import UpdateItemRequest
+from schemas.response.item import CreateItemResponse
 from services.item import ItemService
 
 router = APIRouter(prefix="/item", tags=["Items"])
@@ -20,22 +20,5 @@ async def update_item(
     user: RequiredUser = Security(get_user),
 ) -> CreateItemResponse:
     response = await ItemService(session=session, user=user).update_item(item)
-
-    return response
-
-
-@router.get(
-    "",
-    summary="Get items",
-    description="Get items based on passed filters",
-)
-async def get_items(
-    params: GetItemRequest = Depends(),
-    session: AsyncSession = Depends(get_session),
-    user: RequiredUser = Security(
-        get_user, scopes=["permission_test", "another_permission_test"]
-    ),
-) -> GetItemResponse:
-    response = await ItemService(session=session, user=user).get_items(params)
 
     return response

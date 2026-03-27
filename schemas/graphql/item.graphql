@@ -1,7 +1,9 @@
 extend type Query {
   # Item queries
-  getItem(id: Int!): Item
-  getItems(params: GetItemInput): GetItemResponse
+  # getItem(id: Int!): Item
+  getDetailedItems(params: GetItemsInput): GetItemsResponse
+  getItem(id: Int!): GetItemByIdResponse
+  getItemSummary(params: GetItemSummaryInput): GetItemSummaryResponse
   getItemLocations: GetItemLocationResponse
   getItemsByLocation(params: GetItemsByLocationInput): [ItemsByLocation]!
 }
@@ -13,7 +15,7 @@ extend type Mutation {
 
 
 # Item schemas
-input GetItemInput {
+input GetItemsInput {
   itemId: Int
   title: String
   mainAuthorId: Int
@@ -22,9 +24,13 @@ input GetItemInput {
   orderBy: [OrderByInput]
 }
 
-type GetItemResponse {
+type GetItemsResponse {
     quantity: Int,
     items: [Item]
+}
+
+type GetItemByIdResponse {
+  item: Item
 }
 
 input CreateItemInput {
@@ -139,6 +145,36 @@ type Item {
   lastStatusDate: String
 
   reading: Reading
+}
+
+# Item summary schemas
+input GetItemSummaryInput {
+  itemId: Int
+  itemType: String
+  activeGoal: Boolean
+  activeReading: Boolean
+  orderBy: [OrderByInput]
+}
+
+type GetItemSummaryResponse {
+  quantity: Int!
+  summary: [ItemSummary]!
+}
+
+type ItemSummary {
+  id: Int! # itemId
+  title: String!
+  cover: String
+  mainAuthorId: Int!
+  mainAuthorName: String!
+  readingGoalId: String
+  readingGoalYear: Int
+  readingGoalAchieved: Boolean
+  readingGoalDateAchieved: Date
+  readingId: String
+  readingStartDate: Date
+  lastPage: Int
+  lastPercentage: Float
 }
 
 # Item location

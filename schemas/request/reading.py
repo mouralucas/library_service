@@ -89,9 +89,7 @@ class CreateProgressRequestV2(BaseModel):
         ..., description="The type of the progress (page or percentage)"
     )
     value: int = Field(..., description="The value of the progress")
-    progress_date: date = Field(
-        default_factory=date.today, description="The date that progress was taken"
-    )
+    progress_date: date = Field(..., description="The date that progress was taken")
     rate: int | None = Field(None, description="The rate of the reading so far")
     comment: str | None = Field(None, description="The comments for the reading so far")
 

@@ -113,7 +113,7 @@ class ReadingManager(BaseDataManager):
             .where(
                 ReadingModel.owner_id == self.user["user_id"],
                 ReadingModel.item_id == item_id,
-                ReadingModel.active == False,  # noqa: E712
+                ReadingModel.active.is_(False),
             )
             .order_by(ReadingModel.finish_date.desc())
         )
@@ -224,8 +224,8 @@ class ReadingManager(BaseDataManager):
             select(
                 ReadingGoalModel.id,
                 ReadingGoalModel.item_id,
-                ReadingGoalModel.acheived,
-                ReadingGoalModel.date_acheived,
+                ReadingGoalModel.achieved,
+                ReadingGoalModel.date_achieved,
                 ReadingGoalModel.year,
             )
             .where(ReadingGoalModel.owner_id == self.user["user_id"])
@@ -253,13 +253,13 @@ class ReadingManager(BaseDataManager):
         query = select(
             ReadingGoalModel.id,
             ReadingGoalModel.item_id,
-            ReadingGoalModel.acheived,
-            ReadingGoalModel.date_acheived,
+            ReadingGoalModel.achieved,
+            ReadingGoalModel.date_achieved,
             ReadingGoalModel.year,
         ).where(
             ReadingGoalModel.owner_id == self.user["user_id"],
             ReadingGoalModel.item_id == item_id,
-            ReadingGoalModel.acheived.is_(False),
+            ReadingGoalModel.achieved.is_(False),
             ReadingGoalModel.year == datetime.datetime.now().year,
         )
 
