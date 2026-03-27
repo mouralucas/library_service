@@ -15,6 +15,7 @@ from data_mock.core import (
 )
 from data_mock.item import (
     get_item_author_relation_mock,
+    get_item_locations_mock,
     get_item_mock,
     get_item_status_relation_mock,
 )
@@ -30,6 +31,7 @@ from models import (
     SerieModel,
     StatusModel,
 )
+from models.item import ItemLocationModel
 
 
 async def populate():
@@ -61,6 +63,9 @@ async def populate():
         )
         await BaseDataManager(session).add_or_ignore_all(
             ItemAuthorModel, get_item_author_relation_mock()
+        )
+        await BaseDataManager(session).add_or_ignore_all(
+            ItemLocationModel, get_item_locations_mock()
         )
 
 
