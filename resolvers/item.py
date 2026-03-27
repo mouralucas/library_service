@@ -13,10 +13,10 @@ from services.item import ItemService
 
 
 @validate_graphql_input(GetItemRequest)
-async def get_items_resolver(_, info, params: GetItemRequest):
+async def get_detailed_items_resolver(_, info, params: GetItemRequest):
     items = await ItemService(
         session=info.context["session"], user=info.context["user"]
-    ).get_items(params=params)
+    ).get_detailed_items(params=params)
 
     return items
 
@@ -74,9 +74,9 @@ async def get_item_summary(_, info, params: GetItemSummaryRequest):
 
 
 def bind_item_resolvers(query, mutation):
-    query.set_field("getItems", resolver=get_items_resolver)
+    query.set_field("getDetailedItems", resolver=get_detailed_items_resolver)
     query.set_field("getItemSummary", resolver=get_item_summary)
-    query.set_field("getItemById", resolver=get_item_by_id_resolver)
+    query.set_field("getItem", resolver=get_item_by_id_resolver)
     query.set_field("getItemLocations", resolver=get_item_locations_resolver)
     query.set_field("getItemsByLocation", resolver=get_items_by_location_resolver)
 

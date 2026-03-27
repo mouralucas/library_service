@@ -293,7 +293,7 @@ class ReadingService(BaseService):
         goal_items_ids = [goal["item_id"] for goal in goals] if goals else None
 
         if goals:
-            goal_items = await item_manager.get_items(id_list=goal_items_ids)
+            goal_items = await item_manager.get_detailed_items(id_list=goal_items_ids)
             items_map = await item_manager.get_items_indexed(goal_items)
 
             for goal in goals:

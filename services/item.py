@@ -95,12 +95,14 @@ class ItemService(BaseService):
         }
         return response
 
-    async def get_items(self, params: GetItemRequest) -> dict[str, Any]:
-        items: list[dict[Any, Any]] | None = await ItemManager(self.session).get_items(
+    async def get_detailed_items(self, params: GetItemRequest) -> dict[str, Any]:
+        items: list[dict[Any, Any]] | None = await ItemManager(
+            self.session
+        ).get_detailed_items(
             item_id=params.id,
             title=params.title,
             main_author_id=params.main_author_id,
-            type=params.item_type_id,
+            item_type_id=params.item_type_id,
             status_id=params.status_id,
             order_by=params.order_by,
         )

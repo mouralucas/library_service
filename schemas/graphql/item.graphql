@@ -1,8 +1,8 @@
 extend type Query {
   # Item queries
   # getItem(id: Int!): Item
-  getItems(params: GetItemsInput): GetItemsResponse
-  getItemById(id: Int!): GetItemByIdResponse
+  getDetailedItems(params: GetItemsInput): GetItemsResponse
+  getItem(id: Int!): GetItemByIdResponse
   getItemSummary(params: GetItemSummaryInput): GetItemSummaryResponse
   getItemLocations: GetItemLocationResponse
   getItemsByLocation(params: GetItemsByLocationInput): [ItemsByLocation]!

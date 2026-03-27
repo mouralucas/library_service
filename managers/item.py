@@ -48,12 +48,12 @@ class ItemManager(BaseDataManager):
 
         return cast(ItemModel, item)
 
-    async def get_items(
+    async def get_detailed_items(
         self,
         item_id: int | None = None,
         title: str | None = None,
         main_author_id: int | None = None,
-        type: str | None = None,
+        item_type_id: str | None = None,
         status_id: str | None = None,
         id_list: list[int] | None = None,
         order_by: Any = None,
@@ -123,8 +123,8 @@ class ItemManager(BaseDataManager):
         if status_id:
             query = query.where(ItemModel.last_status_id == status_id)
 
-        if type:
-            query = query.where(ItemModel.item_type_id == type)
+        if item_type_id:
+            query = query.where(ItemModel.item_type_id == item_type_id)
 
         if id_list:
             query = query.where(ItemModel.id.in_(id_list))

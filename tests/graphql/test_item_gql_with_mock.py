@@ -136,14 +136,14 @@ async def test_query_books_with_mock(mocker, client):
         {"id": 3, "title": "Book 3", "item_type_id": "book"},
     ]
 
-    mock_instance.get_items = AsyncMock(
+    mock_instance.get_detailed_items = AsyncMock(
         return_value={"quantity": len(mock_books), "items": mock_books}
     )
 
     # GraphQL query
     query = """
-        query GetItems($params: GetItemsInput) {
-            getItems(params: $params) {
+        query GetDetailedItems($params: GetItemsInput) {
+            getDetailedItems(params: $params) {
                 quantity
                 items {
                     id
@@ -166,17 +166,17 @@ async def test_query_books_with_mock(mocker, client):
     data = response.json()
 
     assert "data" in data
-    assert "getItems" in data["data"]
-    assert data["data"]["getItems"]["quantity"] == 3
+    assert "getDetailedItems" in data["data"]
+    assert data["data"]["getDetailedItems"]["quantity"] == 3
 
-    items = data["data"]["getItems"]["items"]
+    items = data["data"]["getDetailedItems"]["items"]
     assert len(items) == 3
 
     for item in items:
         assert item["itemTypeId"] == "book"
 
     # Verificar que o serviço foi chamado com filtro correto
-    mock_instance.get_items.assert_called_once()
+    mock_instance.get_detailed_items.assert_called_once()
 
 
 # ============================================================================
@@ -200,13 +200,13 @@ async def test_query_books_with_order_by_mock(mocker, client):
         {"id": 1, "title": "Mmm Book", "item_type_id": "book"},
     ]
 
-    mock_instance.get_items = AsyncMock(
+    mock_instance.get_detailed_items = AsyncMock(
         return_value={"quantity": len(ordered_books), "items": ordered_books}
     )
 
     query = """
-        query GetItems($params: GetItemsInput) {
-            getItems(params: $params) {
+        query GetDetailedItems($params: GetItemsInput) {
+            getDetailedItems(params: $params) {
                 quantity
                 items {
                     id
@@ -231,7 +231,7 @@ async def test_query_books_with_order_by_mock(mocker, client):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    items = data["data"]["getItems"]["items"]
+    items = data["data"]["getDetailedItems"]["items"]
 
     # Verificar que estão ordenados (simulado pelo mock)
     assert items[0]["title"] == "Aaa Book"
