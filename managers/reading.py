@@ -210,12 +210,18 @@ class ReadingManager(BaseDataManager):
         self, goal: ReadingGoalModel, fields: dict[str, Any]
     ) -> ReadingGoalModel:
         query = (
-            update(ReadingModel).where(ReadingGoalModel.id == goal.id).values(**fields)
+            update(ReadingGoalModel)
+            .where(ReadingGoalModel.id == goal.id)
+            .values(**fields)
         )
 
-        updated_reading: SQLModel = await self.update_one(
-            sql_statement=query, sql_model=goal
-        )
+        try:
+            updated_reading: SQLModel = await self.update_one(
+                sql_statement=query, sql_model=goal
+            )
+        except Exception as e:
+            print(f"Error updating goal: {e}")
+            raise e
 
         return cast(ReadingGoalModel, updated_reading)
 
@@ -256,13 +262,7 @@ class ReadingManager(BaseDataManager):
             Params:
                 item_id: the id of the item
         """
-        query = select(
-            ReadingGoalModel.id,
-            ReadingGoalModel.item_id,
-            ReadingGoalModel.achieved,
-            ReadingGoalModel.date_achieved,
-            ReadingGoalModel.year,
-        ).where(
+        query = select(ReadingGoalModel).where(
             ReadingGoalModel.owner_id == self.user["user_id"],
             ReadingGoalModel.item_id == item_id,
             ReadingGoalModel.achieved.is_(False),
