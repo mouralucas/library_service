@@ -125,5 +125,16 @@ class GetReadingStatsRequest(BaseModel):
     item_id: int = Field(..., description="The id of the item")
 
 
+class CreateReadingGoalRequest(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=AliasGenerator(alias=to_camel),
+    )
+
+    item_id: int = Field(..., description="The id of the item")
+    year: int = Field(..., description="The year of the goal")
+
+
 class GetReadingGoalsRquest(BaseModel):
     year: int | None = Field(None, description="The year of the goals to be retrieved")

@@ -219,6 +219,12 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingGoalModel, updated_reading)
 
+    # Reading goals
+    async def create_reading_goal(self, goal: ReadingGoalModel) -> ReadingGoalModel:
+        new_goal = await self.add_one(goal)
+
+        return cast(ReadingGoalModel, new_goal)
+
     async def get_reading_goals(self, year: int | None):
         query = (
             select(

@@ -14,6 +14,7 @@ extend type Mutation {
     # Reading mutations
     createReading(reading: CreateReadingInput!): CreateReadingOutput!
     createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
+    createReadingGoal(goal: CreateReadingGoalInput!): CreateItemGoalResponse!
 }
 
 
@@ -118,6 +119,16 @@ type ReadingStats {
 }
 
 # Reading goal schemas`
+input CreateReadingGoalInput {
+    itemId: Int!
+    year: Int!
+}
+
+type CreateItemGoalResponse {
+    created: Boolean!
+    readingGoalId: String!
+}
+
 input GetReadingGoalsInput {
     year: Int
 }

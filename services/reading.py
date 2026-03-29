@@ -10,10 +10,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.item import ItemManager
 from managers.reading import ReadingManager
-from models.reading import ReadingModel, ReadingProgressModel
+from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
 from schemas.reading import ReadingSchema
 from schemas.request.reading import (
     CreateProgressRequestV2,
+    CreateReadingGoalRequest,
     CreateReadingRequest,
     GetProgressRequest,
     GetReadingStatsRequest,
@@ -236,6 +237,29 @@ class ReadingService(BaseService):
             "item_title": item.title,
             "pages_read": self._get_progess_pages_read(progress=progress, item=item),
             "progress": progress,
+        }
+
+        return response
+
+    # Goals
+    async def create_goal(self, goal: CreateReadingGoalRequest) -> dict[str, Any]:
+        current_goal = await self.reading_manager.get_active_goal_by_item_id(
+            item_id=goal.item_id
+        )
+        if current_goal:
+            raise HTTPException(
+                status_code=status.HTTP_412_PRECONDITION_FAILED,
+                detail="Já existe uma meta ativa para esse item!",
+            )
+
+        new_goal = ReadingGoalModel(**goal.model_dump())
+        new_goal.owner_id = self.user["user_id"]
+
+        new_goal = await self.reading_manager.create_reading_goal(goal=new_goal)
+
+        response = {
+            "created": True,
+            "reading_goal_id": new_goal.id,
         }
 
         return response

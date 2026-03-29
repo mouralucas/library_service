@@ -4,6 +4,7 @@ from rolf_common.util.graphql_input_validation import validate_graphql_input
 
 from schemas.request.reading import (
     CreateProgressRequestV2,
+    CreateReadingGoalRequest,
     CreateReadingRequest,
     GetProgressRequest,
     GetReadingGoalsRquest,
@@ -79,6 +80,16 @@ async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:
     return stats
 
 
+# Goals
+@validate_graphql_input(CreateReadingGoalRequest)
+async def create_reading_goal_resolver(_, info, goal: CreateReadingGoalRequest):
+    new_goal = await ReadingService(
+        session=info.context["session"], user=info.context["user"]
+    ).create_goal(goal=goal)
+
+    return new_goal
+
+
 @validate_graphql_input(GetReadingGoalsRquest)
 async def get_reading_goals_resolver(_, info, params: GetReadingGoalsRquest):
     goals = await ReadingService(
@@ -100,3 +111,4 @@ def bind_reading_resolvers(query, mutation):
     mutation.set_field(
         "createReadingProgress", resolver=create_reading_progress_resolver
     )
+    mutation.set_field("createReadingGoal", resolver=create_reading_goal_resolver)
