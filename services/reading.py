@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from managers.item import ItemManager
 from managers.reading import ReadingManager
-from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
+from models.reading import ReadingModel, ReadingProgressModel, ReadingQueueModel
 from schemas.reading import ReadingSchema
 from schemas.request.reading import (
     CreateProgressRequestV2,
@@ -252,7 +252,7 @@ class ReadingService(BaseService):
                 detail="Já existe uma meta ativa para esse item!",
             )
 
-        new_goal = ReadingGoalModel(**goal.model_dump())
+        new_goal = ReadingQueueModel(**goal.model_dump())
         new_goal.owner_id = self.user["user_id"]
 
         new_goal = await self.reading_manager.create_reading_goal(goal=new_goal)

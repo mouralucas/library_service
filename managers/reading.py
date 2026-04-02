@@ -10,7 +10,7 @@ from sqlalchemy.orm import aliased, joinedload
 
 from models.core import StatusModel
 from models.item import ItemModel
-from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
+from models.reading import ReadingModel, ReadingProgressModel, ReadingQueueModel
 
 
 class ReadingManager(BaseDataManager):
@@ -207,11 +207,11 @@ class ReadingManager(BaseDataManager):
         pass
 
     async def update_goal(
-        self, goal: ReadingGoalModel, fields: dict[str, Any]
-    ) -> ReadingGoalModel:
+        self, goal: ReadingQueueModel, fields: dict[str, Any]
+    ) -> ReadingQueueModel:
         query = (
-            update(ReadingGoalModel)
-            .where(ReadingGoalModel.id == goal.id)
+            update(ReadingQueueModel)
+            .where(ReadingQueueModel.id == goal.id)
             .values(**fields)
         )
 
@@ -223,38 +223,40 @@ class ReadingManager(BaseDataManager):
             print(f"Error updating goal: {e}")
             raise e
 
-        return cast(ReadingGoalModel, updated_reading)
+        return cast(ReadingQueueModel, updated_reading)
 
     # Reading goals
-    async def create_reading_goal(self, goal: ReadingGoalModel) -> ReadingGoalModel:
+    async def create_reading_goal(self, goal: ReadingQueueModel) -> ReadingQueueModel:
         new_goal = await self.add_one(goal)
 
-        return cast(ReadingGoalModel, new_goal)
+        return cast(ReadingQueueModel, new_goal)
 
     async def get_reading_goals(self, year: int | None):
         query = (
             select(
-                ReadingGoalModel.id,
-                ReadingGoalModel.item_id,
-                ReadingGoalModel.achieved,
-                ReadingGoalModel.date_achieved,
-                ReadingGoalModel.year,
+                ReadingQueueModel.id,
+                ReadingQueueModel.item_id,
+                ReadingQueueModel.achieved,
+                ReadingQueueModel.date_achieved,
+                ReadingQueueModel.year,
             )
-            .where(ReadingGoalModel.owner_id == self.user["user_id"])
+            .where(ReadingQueueModel.owner_id == self.user["user_id"])
             .order_by(
-                ReadingGoalModel.year,
-                ReadingGoalModel.created_at.desc(),
+                ReadingQueueModel.year,
+                ReadingQueueModel.created_at.desc(),
             )
         )
 
         if year:
-            query = query.where(ReadingGoalModel.year == year)
+            query = query.where(ReadingQueueModel.year == year)
 
         goals = await self.get_all(query)
 
         return [dict(goal) for goal in goals] if goals else None
 
-    async def get_active_goal_by_item_id(self, item_id: int) -> ReadingGoalModel | None:
+    async def get_active_goal_by_item_id(
+        self, item_id: int
+    ) -> ReadingQueueModel | None:
         """
         :Created by: Lucas Penha de Moura - 17/03/2026
             Get the active goal for a item (not achieved yet)
@@ -262,13 +264,13 @@ class ReadingManager(BaseDataManager):
             Params:
                 item_id: the id of the item
         """
-        query = select(ReadingGoalModel).where(
-            ReadingGoalModel.owner_id == self.user["user_id"],
-            ReadingGoalModel.item_id == item_id,
-            ReadingGoalModel.achieved.is_(False),
-            ReadingGoalModel.year == datetime.datetime.now().year,
+        query = select(ReadingQueueModel).where(
+            ReadingQueueModel.owner_id == self.user["user_id"],
+            ReadingQueueModel.item_id == item_id,
+            ReadingQueueModel.achieved.is_(False),
+            ReadingQueueModel.year == datetime.datetime.now().year,
         )
 
         goal = await self.get_only_one(query)
 
-        return cast(ReadingGoalModel, goal) if goal else None
+        return cast(ReadingQueueModel, goal) if goal else None

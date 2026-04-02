@@ -17,7 +17,7 @@ from models import (
     StatusModel,
 )
 from models.item import ItemAuthorModel, ItemLocationModel, ItemModel, ItemStatusModel
-from models.reading import ReadingGoalModel, ReadingModel, ReadingProgressModel
+from models.reading import ReadingModel, ReadingProgressModel, ReadingQueueModel
 
 
 class ItemManager(BaseDataManager):
@@ -168,12 +168,12 @@ class ItemManager(BaseDataManager):
         # --- Subquery: Current year ReadingGoal ---
         reading_goal_subq = (
             select(
-                ReadingGoalModel.id,
-                ReadingGoalModel.year,
-                ReadingGoalModel.achieved,
-                ReadingGoalModel.item_id,
+                ReadingQueueModel.id,
+                ReadingQueueModel.year,
+                ReadingQueueModel.achieved,
+                ReadingQueueModel.item_id,
             )
-            .where(ReadingGoalModel.year == current_year)
+            .where(ReadingQueueModel.year == current_year)
             .subquery()
         )
 
