@@ -42,6 +42,7 @@ input CreateReadingInput {
 type CreateReadingOutput {
     created: Boolean!
     readingId: String!
+    itemTtitle: String!
 }
 
 type GetActiveReadingsOutput {

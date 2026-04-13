@@ -51,6 +51,8 @@ class ReadingService(BaseService):
         previous_completed_reading = last_readigns[0] if last_readigns else None
 
         # The new reading cannot start before the last one finishes
+        # TODO: chek what happens when try to start a new reading with last reading
+        #   without finish date, maybe we need to check only the last completed reading
         if (
             previous_completed_reading
             and previous_completed_reading["finish_date"]
@@ -63,7 +65,11 @@ class ReadingService(BaseService):
             )
 
         new_reading = ReadingModel(**reading.model_dump(exclude={"is_dropped"}))
-        new_reading.number = len(last_readigns) + 1 if previous_completed_reading else 1
+        new_reading.number = (
+            len(last_readigns) + 1
+            if previous_completed_reading and last_readigns
+            else 1
+        )
         new_reading.owner_id = self.user["user_id"]
 
         new_reading.status_id = "read" if reading.finish_date else "reading"
@@ -72,7 +78,11 @@ class ReadingService(BaseService):
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
 
         response = CreateReadingResponseV2(created=True, reading_id=new_reading.id)
-        response = {"created": True, "reading_id": new_reading.id}
+        response = {
+            "created": True,
+            "reading_id": new_reading.id,
+            "item_title": new_reading.item.title,
+        }
         return response
 
     async def get_readings(
