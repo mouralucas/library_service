@@ -67,7 +67,7 @@ async def resolve_get_active_readings(_, info):
         session=info.context["session"], user=info.context["user"]
     ).get_active_readings()
 
-    return readings.model_dump(by_alias=True)
+    return readings
 
 
 async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:

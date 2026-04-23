@@ -116,17 +116,22 @@ class ReadingService(BaseService):
 
         return response
 
-    async def get_active_readings(self) -> GetActiveReadingsResponse:
+    async def get_active_readings(self) -> dict[str, Any]:
         active_readings = await self.reading_manager.get_all_active_readings()
 
-        response = GetActiveReadingsResponse(
-            quantity=len(active_readings) if active_readings else 0,
-            readings=(
-                [ReadingSchema.model_validate(reading) for reading in active_readings]
-                if active_readings
-                else []
-            ),
-        )
+        # response = GetActiveReadingsResponse(
+        #     quantity=len(active_readings) if active_readings else 0,
+        #     readings=(
+        #         [ReadingSchema.model_validate(reading) for reading in active_readings]
+        #         if active_readings
+        #         else []
+        #     ),
+        # )
+        
+        response = {
+            "quantity": len(active_readings) if active_readings else 0,
+            "readings": active_readings if active_readings else [],
+        }
 
         return response
 
