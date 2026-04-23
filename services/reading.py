@@ -21,7 +21,6 @@ from schemas.request.reading import (
 )
 from schemas.response.reading import (
     CreateReadingResponseV2,
-    GetActiveReadingsResponse,
     GetReadingsResponse,
 )
 from services.base import BaseService
@@ -119,15 +118,6 @@ class ReadingService(BaseService):
     async def get_active_readings(self) -> dict[str, Any]:
         active_readings = await self.reading_manager.get_all_active_readings()
 
-        # response = GetActiveReadingsResponse(
-        #     quantity=len(active_readings) if active_readings else 0,
-        #     readings=(
-        #         [ReadingSchema.model_validate(reading) for reading in active_readings]
-        #         if active_readings
-        #         else []
-        #     ),
-        # )
-        
         response = {
             "quantity": len(active_readings) if active_readings else 0,
             "readings": active_readings if active_readings else [],
