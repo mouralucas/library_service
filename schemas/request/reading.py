@@ -136,5 +136,25 @@ class CreateReadingGoalRequest(BaseModel):
     year: int = Field(..., description="The year of the goal")
 
 
-class GetReadingGoalsRquest(BaseModel):
+class GetReadingGoalsRequest(BaseModel):
     year: int | None = Field(None, description="The year of the goals to be retrieved")
+
+
+class UpdateReadingStatusRequest(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        alias_generator=AliasGenerator(alias=to_camel),
+    )
+
+    reading_id: uuid.UUID | None = Field(None, description="The id of the reading")
+    item_id: int | None = Field(None, description="The id of the item")
+    new_status: Literal["reading", "completed", "dropped"] = Field(
+        ..., description="The new status of the reading"
+    )
+    
+    # @model_validator(mode="before")
+    # def check_reading_or_item_id(self) -> "UpdateReadingStatusRequest":
+    #     if not self.reading_id and not self.item_id:
+    #         raise ValueError("Either reading_id or item_id must be specified")
+    #     return self

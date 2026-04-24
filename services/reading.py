@@ -18,6 +18,7 @@ from schemas.request.reading import (
     CreateReadingRequest,
     GetProgressRequest,
     GetReadingStatsRequest,
+    UpdateReadingStatusRequest,
 )
 from schemas.response.reading import (
     CreateReadingResponseV2,
@@ -330,6 +331,48 @@ class ReadingService(BaseService):
 
         response = {
             "goals": goals if goals else [],
+        }
+
+        return response
+
+    async def update_reading_status(
+        self, params: UpdateReadingStatusRequest
+    ) -> dict[str, Any]:
+        reading = None
+        if params.reading_id:
+            reading = await self.reading_manager.get_reading_by_id(
+                reading_id=params.reading_id
+            )
+        elif params.item_id:
+            reading = await self.reading_manager.get_item_active_reading(
+                item_id=params.item_id
+            )
+
+        if not reading:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Reading not found"
+            )
+
+        new_status = params.new_status
+
+        # If the new status is "completed",
+        #   set the finish date as today and active as false
+        if new_status == "completed":
+            await self._finish_reading(reading_id=reading.id)
+        else:
+            # If the new status is "reading",
+            #   set the finish date as null and active as true
+            # If the new status is "dropped",
+            #   set the finish date as today and active as false
+            fields = {
+                "active": True if new_status == "reading" else False,
+                "finish_date": None if new_status == "reading" else datetime.today(),
+                "status_id": new_status,
+            }
+            await self.reading_manager.update_reading(reading=reading, fields=fields)
+
+        response = {
+            "updatedStatus": new_status,
         }
 
         return response

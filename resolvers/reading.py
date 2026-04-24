@@ -7,9 +7,10 @@ from schemas.request.reading import (
     CreateReadingGoalRequest,
     CreateReadingRequest,
     GetProgressRequest,
-    GetReadingGoalsRquest,
+    GetReadingGoalsRequest,
     GetReadingRequest,
     GetReadingStatsRequest,
+    UpdateReadingStatusRequest,
 )
 from services.reading import ReadingService
 
@@ -90,14 +91,22 @@ async def create_reading_goal_resolver(_, info, goal: CreateReadingGoalRequest):
     return new_goal
 
 
-@validate_graphql_input(GetReadingGoalsRquest)
-async def get_reading_goals_resolver(_, info, params: GetReadingGoalsRquest):
+@validate_graphql_input(GetReadingGoalsRequest)
+async def get_reading_goals_resolver(_, info, params: GetReadingGoalsRequest):
     goals = await ReadingService(
         session=info.context["session"], user=info.context["user"]
     ).get_reading_goals(year=params.year)
 
     return goals
 
+
+@validate_graphql_input(UpdateReadingStatusRequest)
+async def update_reading_status_resolver(_, info, params: UpdateReadingStatusRequest):
+    response = await ReadingService(
+        session=info.context["session"], user=info.context["user"]
+    ).update_reading_status(params=params)
+    
+    return response
 
 def bind_reading_resolvers(query, mutation):
     query.set_field("getReading", resolver=resolve_get_reading)
@@ -112,3 +121,4 @@ def bind_reading_resolvers(query, mutation):
         "createReadingProgress", resolver=create_reading_progress_resolver
     )
     mutation.set_field("createReadingGoal", resolver=create_reading_goal_resolver)
+    mutation.set_field("updateReadingStatus", resolver=update_reading_status_resolver)

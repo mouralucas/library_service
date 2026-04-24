@@ -46,7 +46,7 @@ class ReadingManager(BaseDataManager):
         if get_item:
             query = query.options(joinedload(ReadingModel.item))
 
-        reading: SQLModel = await self.get_only_one(query)
+        reading: SQLModel | None = await self.get_only_one(query)
 
         return cast(ReadingModel, reading)
 
