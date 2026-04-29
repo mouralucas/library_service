@@ -152,7 +152,7 @@ class UpdateReadingStatusRequest(BaseModel):
     new_status: Literal["reading", "completed", "dropped"] = Field(
         ..., description="The new status of the reading"
     )
-    
+
     # @model_validator(mode="before")
     # def check_reading_or_item_id(self) -> "UpdateReadingStatusRequest":
     #     if not self.reading_id and not self.item_id:

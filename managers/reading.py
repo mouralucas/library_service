@@ -225,13 +225,13 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingQueueModel, updated_reading)
 
-    # Reading goals
-    async def create_reading_goal(self, goal: ReadingQueueModel) -> ReadingQueueModel:
+    # Reading queue
+    async def add_reading_queue(self, goal: ReadingQueueModel) -> ReadingQueueModel:
         new_goal = await self.add_one(goal)
 
         return cast(ReadingQueueModel, new_goal)
 
-    async def get_reading_goals(self, year: int | None):
+    async def get_reading_queue(self, year: int | None):
         query = (
             select(
                 ReadingQueueModel.id,

@@ -105,7 +105,7 @@ async def update_reading_status_resolver(_, info, params: UpdateReadingStatusReq
     response = await ReadingService(
         session=info.context["session"], user=info.context["user"]
     ).update_reading_status(params=params)
-    
+
     return response
 
 def bind_reading_resolvers(query, mutation):

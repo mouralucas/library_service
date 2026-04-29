@@ -21,7 +21,6 @@ from schemas.request.reading import (
     UpdateReadingStatusRequest,
 )
 from schemas.response.reading import (
-    CreateReadingResponseV2,
     GetReadingsResponse,
 )
 from services.base import BaseService
@@ -77,7 +76,18 @@ class ReadingService(BaseService):
 
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
 
-        response = CreateReadingResponseV2(created=True, reading_id=new_reading.id)
+        # check if the item is in queue, if not, add to queue
+        is_item_in_queue = await self.reading_manager.get_active_goal_by_item_id(
+            item_id=reading.item_id
+        )
+        if not is_item_in_queue:
+            new_goal = ReadingQueueModel(
+                owner_id=self.user["user_id"],
+                item_id=reading.item_id,
+                year=reading.start_date.year,
+            )
+            await self.reading_manager.add_reading_queue(goal=new_goal)
+
         response = {
             "created": True,
             "reading_id": new_reading.id,
@@ -261,7 +271,7 @@ class ReadingService(BaseService):
         new_goal = ReadingQueueModel(**goal.model_dump())
         new_goal.owner_id = self.user["user_id"]
 
-        new_goal = await self.reading_manager.create_reading_goal(goal=new_goal)
+        new_goal = await self.reading_manager.add_reading_queue(goal=new_goal)
 
         response = {
             "created": True,
@@ -319,7 +329,7 @@ class ReadingService(BaseService):
     async def get_reading_goals(self, year: int | None) -> dict[str, Any]:
         item_manager = ItemManager(session=self.session)
 
-        goals = await self.reading_manager.get_reading_goals(year=year)
+        goals = await self.reading_manager.get_reading_queue(year=year)
         goal_items_ids = [goal["item_id"] for goal in goals] if goals else None
 
         if goals:
@@ -373,6 +383,7 @@ class ReadingService(BaseService):
 
         response = {
             "updatedStatus": new_status,
+            "itemTitle": reading.item.title,
         }
 
         return response
