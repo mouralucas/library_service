@@ -108,6 +108,7 @@ async def update_reading_status_resolver(_, info, params: UpdateReadingStatusReq
 
     return response
 
+
 def bind_reading_resolvers(query, mutation):
     query.set_field("getReading", resolver=resolve_get_reading)
     query.set_field("getReadings", resolver=resolve_get_readings)
