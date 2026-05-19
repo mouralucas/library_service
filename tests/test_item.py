@@ -151,7 +151,7 @@ async def test_get_item_id_out_range(client, create_item):
         "itemId": 0,
     }
     query = """
-        query GetDetailedItems($params: GetItemsInput) {
+        query GetDetailedItems($params: GetDetailedItemsInput) {
             getDetailedItems(params: $params) {
                 items {
                     id

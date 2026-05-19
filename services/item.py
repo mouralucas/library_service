@@ -76,10 +76,17 @@ class ItemService(BaseService):
     async def get_item_summary(self, params: GetItemSummaryRequest):
         """
         :Created by: Lucas Penha de Moura - 19/03/2026
-            Fetch items and all its relation, like reading, reading goals, etc
+            Fetch a summary of items based on the provided filters.
+            The summary includes the quantity of items
+                and a list of items with their details.
 
             Params:
-                language: the list of items and its relations
+                item_id: filter by item id
+                item_type_id: filter by item type id
+                active_goal: if true, return only the active goal for the item
+                active_reading: if true, return only the active reading for the item
+                order_by: order the summary by a specific field
+                    (e.g., title, author, etc.)
         """
         summary = await self.item_manager.get_item_summary(
             item_id=params.id,

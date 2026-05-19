@@ -7,14 +7,15 @@ extend type Query {
     getReadingProgress(params: GetReadingProgressInput): GetReadingProgressOutput!
     getReadingStats(params: GetReadingStatsInput): GetReadingStatsResponse!
 
-    getReadingGoals(params: GetReadingGoalsInput): GetReadingGoalsResponse!
+    getReadingQueue(params: GetReadingQueueInput): GetReadingQueueResponse!
 }
 
 extend type Mutation {
     # Reading mutations
     createReading(reading: CreateReadingInput!): CreateReadingOutput!
     createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
-    createReadingGoal(goal: CreateReadingGoalInput!): CreateItemGoalResponse!
+    
+    updateReadingQueue(goal: UpdateReadingQueueInput!): UpdateReadingQueueResponse!
 
     updateReadingStatus(params: UpdatedReadingStatusInput): UpdatedReadingStatusResponse
 }
@@ -122,21 +123,24 @@ type ReadingStats {
 }
 
 # Reading goal schemas`
-input CreateReadingGoalInput {
+input UpdateReadingQueueInput {
     itemId: Int!
-    year: Int!
-}
-
-type CreateItemGoalResponse {
-    created: Boolean!
-    readingGoalId: String!
-}
-
-input GetReadingGoalsInput {
     year: Int
 }
 
-type GetReadingGoalsResponse {
+type UpdateReadingQueueResponse {
+    created: Boolean!
+    readingGoalId: String!
+    currentStatus: String!
+    itemId: Int
+    itemTitle: String
+}
+
+input GetReadingQueueInput {
+    year: Int
+}
+
+type GetReadingQueueResponse {
     goals: [ReadingGoal]!
 }
 

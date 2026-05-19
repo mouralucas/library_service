@@ -133,10 +133,10 @@ class CreateReadingGoalRequest(BaseModel):
     )
 
     item_id: int = Field(..., description="The id of the item")
-    year: int = Field(..., description="The year of the goal")
+    year: int | None = Field(None, description="The year of the goal")
 
 
-class GetReadingGoalsRequest(BaseModel):
+class GetReadingQueueRequest(BaseModel):
     year: int | None = Field(None, description="The year of the goals to be retrieved")
 
 

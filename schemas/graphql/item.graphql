@@ -1,7 +1,6 @@
 extend type Query {
   # Item queries
-  # getItem(id: Int!): Item
-  getDetailedItems(params: GetItemsInput): GetItemsResponse
+  getDetailedItems(params: GetDetailedItemsInput): GetDetailedItemsResponse
   getItem(id: Int!): GetItemByIdResponse
   getItemSummary(params: GetItemSummaryInput): GetItemSummaryResponse
   getItemLocations: GetItemLocationResponse
@@ -15,7 +14,7 @@ extend type Mutation {
 
 
 # Item schemas
-input GetItemsInput {
+input GetDetailedItemsInput {
   itemId: Int
   title: String
   mainAuthorId: Int
@@ -24,7 +23,7 @@ input GetItemsInput {
   orderBy: [OrderByInput]
 }
 
-type GetItemsResponse {
+type GetDetailedItemsResponse {
     quantity: Int,
     items: [Item]
 }
@@ -143,7 +142,7 @@ type Item {
   locationId: Int
   lastStatusName: String
   lastStatusDate: String
-
+  isInReadingQueue: Boolean
   reading: Reading
 }
 
@@ -162,7 +161,7 @@ type GetItemSummaryResponse {
 }
 
 type ItemSummary {
-  id: Int! # itemId
+  id: Int!
   title: String!
   cover: String
   mainAuthorId: Int!

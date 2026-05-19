@@ -51,7 +51,7 @@ class ReadingQueueModel(SQLModel):
 
     owner_id: Mapped[uuid.UUID] = mapped_column("owner_id")
     item_id: Mapped[int] = mapped_column("item_id", ForeignKey("item.id"))
-    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="noload")
+    item: Mapped[ItemModel] = relationship(foreign_keys=[item_id], lazy="subquery")
     achieved: Mapped[bool] = mapped_column(default=False)
     date_achieved: Mapped[datetime.datetime] = mapped_column(nullable=True)
     year: Mapped[int] = mapped_column("year", doc="Year of the goal")

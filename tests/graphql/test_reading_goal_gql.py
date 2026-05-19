@@ -25,7 +25,7 @@ async def test_create_reading_goal_success(mocker, client, create_item):
     mock_reading_service = mocker.patch("resolvers.reading.ReadingService")
     mock_instance = mock_reading_service.return_value
 
-    mock_instance.create_goal = AsyncMock(
+    mock_instance.update_reading_queue = AsyncMock(
         return_value={
             "created": True,
             "reading_goal_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -37,8 +37,8 @@ async def test_create_reading_goal_success(mocker, client, create_item):
     year = 2025
 
     mutation = """
-        mutation CreateReadingGoal($input: CreateReadingGoalInput!) {
-            createReadingGoal(goal: $input) {
+        mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
+            updateReadingQueue(goal: $input) {
                 created
                 readingGoalId
             }
@@ -62,12 +62,12 @@ async def test_create_reading_goal_success(mocker, client, create_item):
     data = response.json()
 
     assert "data" in data
-    assert "createReadingGoal" in data["data"]
-    assert data["data"]["createReadingGoal"]["created"] is True
-    assert "readingGoalId" in data["data"]["createReadingGoal"]
+    assert "updateReadingQueue" in data["data"]
+    assert data["data"]["updateReadingQueue"]["created"] is True
+    assert "readingGoalId" in data["data"]["updateReadingQueue"]
 
     # Verificar que o serviço foi chamado corretamente
-    mock_instance.create_goal.assert_called_once()
+    mock_instance.update_reading_queue.assert_called_once()
 
 
 @pytest.mark.asyncio
@@ -85,7 +85,7 @@ async def test_create_reading_goal_already_exists(mocker, client, create_item):
     # Simular erro do serviço
     from fastapi import HTTPException
 
-    mock_instance.create_goal = AsyncMock(
+    mock_instance.update_reading_queue = AsyncMock(
         side_effect=HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
             detail="Já existe uma meta ativa para esse item!",
@@ -96,8 +96,8 @@ async def test_create_reading_goal_already_exists(mocker, client, create_item):
     year = 2025
 
     mutation = """
-        mutation CreateReadingGoal($input: CreateReadingGoalInput!) {
-            createReadingGoal(goal: $input) {
+        mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
+            updateReadingQueue(goal: $input) {
                 created
                 readingGoalId
             }
@@ -120,7 +120,7 @@ async def test_create_reading_goal_already_exists(mocker, client, create_item):
     data = response.json()
 
     # Deve conter mensagem de erro
-    assert "errors" in data or response.status_code >= 400
+    assert "errors" in data
 
 
 @pytest.mark.asyncio
@@ -161,11 +161,11 @@ async def test_get_reading_goals_success(mocker, client, create_item):
         },
     ]
 
-    mock_instance.get_reading_goals = AsyncMock(return_value={"goals": mock_goals})
+    mock_instance.get_reading_queue = AsyncMock(return_value={"goals": mock_goals})
 
     query = """
-        query GetReadingGoals($params: GetReadingGoalsInput) {
-            getReadingGoals(params: $params) {
+        query GetReadingQueue($params: GetReadingQueueInput) {
+            getReadingQueue(params: $params) {
                 goals {
                     id
                     year
@@ -190,10 +190,10 @@ async def test_get_reading_goals_success(mocker, client, create_item):
     data = response.json()
 
     assert "data" in data
-    assert "getReadingGoals" in data["data"]
-    assert "goals" in data["data"]["getReadingGoals"]
+    assert "getReadingQueue" in data["data"]
+    assert "goals" in data["data"]["getReadingQueue"]
 
-    goals = data["data"]["getReadingGoals"]["goals"]
+    goals = data["data"]["getReadingQueue"]["goals"]
     assert len(goals) == 2
 
     # Validar estrutura de cada meta
@@ -204,7 +204,7 @@ async def test_get_reading_goals_success(mocker, client, create_item):
         assert "dateAchieved" in goal
         assert "item" in goal
 
-    mock_instance.get_reading_goals.assert_called_once()
+    mock_instance.get_reading_queue.assert_called_once()
 
 
 @pytest.mark.asyncio
@@ -218,11 +218,11 @@ async def test_get_reading_goals_empty(mocker, client):
     mock_reading_service = mocker.patch("resolvers.reading.ReadingService")
     mock_instance = mock_reading_service.return_value
 
-    mock_instance.get_reading_goals = AsyncMock(return_value={"goals": []})
+    mock_instance.get_reading_queue = AsyncMock(return_value={"goals": []})
 
     query = """
-        query GetReadingGoals($params: GetReadingGoalsInput) {
-            getReadingGoals(params: $params) {
+        query GetReadingQueue($params: GetReadingQueueInput) {
+            getReadingQueue(params: $params) {
                 goals {
                     id
                     year
@@ -242,9 +242,9 @@ async def test_get_reading_goals_empty(mocker, client):
     data = response.json()
 
     assert "data" in data
-    assert "getReadingGoals" in data["data"]
+    assert "getReadingQueue" in data["data"]
 
-    goals = data["data"]["getReadingGoals"]["goals"]
+    goals = data["data"]["getReadingQueue"]["goals"]
     assert len(goals) == 0
 
 
@@ -270,11 +270,11 @@ async def test_get_reading_goals_by_year(mocker, client, create_item):
         },
     ]
 
-    mock_instance.get_reading_goals = AsyncMock(return_value={"goals": mock_goals_2025})
+    mock_instance.get_reading_queue = AsyncMock(return_value={"goals": mock_goals_2025})
 
     query = """
-        query GetReadingGoals($params: GetReadingGoalsInput) {
-            getReadingGoals(params: $params) {
+        query GetReadingQueue($params: GetReadingQueueInput) {
+            getReadingQueue(params: $params) {
                 goals {
                     year
                 }
@@ -291,7 +291,7 @@ async def test_get_reading_goals_by_year(mocker, client, create_item):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    goals = data["data"]["getReadingGoals"]["goals"]
+    goals = data["data"]["getReadingQueue"]["goals"]
     assert len(goals) == 1
     assert goals[0]["year"] == 2025
 
@@ -326,13 +326,13 @@ async def test_get_reading_goals_without_year_filter(mocker, client, create_item
         },
     ]
 
-    mock_instance.get_reading_goals = AsyncMock(
+    mock_instance.get_reading_queue = AsyncMock(
         return_value={"goals": mock_goals_all_years}
     )
 
     query = """
-        query GetReadingGoals($params: GetReadingGoalsInput) {
-            getReadingGoals(params: $params) {
+        query GetReadingQueue($params: GetReadingQueueInput) {
+            getReadingQueue(params: $params) {
                 goals {
                     year
                 }
@@ -350,7 +350,7 @@ async def test_get_reading_goals_without_year_filter(mocker, client, create_item
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
 
-    goals = data["data"]["getReadingGoals"]["goals"]
+    goals = data["data"]["getReadingQueue"]["goals"]
     assert len(goals) == 2
 
     years = [goal["year"] for goal in goals]
@@ -376,8 +376,8 @@ async def test_create_reading_goal_invalid_item_id(mocker, client):
     mock_instance.create_goal = AsyncMock()
 
     mutation = """
-        mutation CreateReadingGoal($input: CreateReadingGoalInput!) {
-            createReadingGoal(goal: $input) {
+        mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
+            updateReadingQueue(goal: $input) {
                 created
                 readingGoalId
             }
@@ -416,8 +416,8 @@ async def test_create_reading_goal_missing_required_fields(mocker, client):
     mock_instance.create_goal = AsyncMock()
 
     mutation = """
-        mutation CreateReadingGoal($input: CreateReadingGoalInput!) {
-            createReadingGoal(goal: $input) {
+        mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
+            updateReadingQueue(goal: $input) {
                 created
                 readingGoalId
             }

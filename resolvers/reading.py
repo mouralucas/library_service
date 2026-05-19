@@ -7,7 +7,7 @@ from schemas.request.reading import (
     CreateReadingGoalRequest,
     CreateReadingRequest,
     GetProgressRequest,
-    GetReadingGoalsRequest,
+    GetReadingQueueRequest,
     GetReadingRequest,
     GetReadingStatsRequest,
     UpdateReadingStatusRequest,
@@ -83,19 +83,19 @@ async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:
 
 # Goals
 @validate_graphql_input(CreateReadingGoalRequest)
-async def create_reading_goal_resolver(_, info, goal: CreateReadingGoalRequest):
+async def update_reading_queue(_, info, goal: CreateReadingGoalRequest):
     new_goal = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).create_goal(goal=goal)
+    ).update_reading_queue(queue_request=goal)
 
     return new_goal
 
 
-@validate_graphql_input(GetReadingGoalsRequest)
-async def get_reading_goals_resolver(_, info, params: GetReadingGoalsRequest):
+@validate_graphql_input(GetReadingQueueRequest)
+async def get_reading_queue_resolver(_, info, params: GetReadingQueueRequest):
     goals = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).get_reading_goals(year=params.year)
+    ).get_reading_queue(year=params.year)
 
     return goals
 
@@ -115,11 +115,11 @@ def bind_reading_resolvers(query, mutation):
     query.set_field("getActiveReadings", resolver=resolve_get_active_readings)
     query.set_field("getReadingProgress", resolver=resolve_get_progress)
     query.set_field("getReadingStats", resolver=get_reading_stats_resolver)
-    query.set_field("getReadingGoals", resolver=get_reading_goals_resolver)
+    query.set_field("getReadingQueue", resolver=get_reading_queue_resolver)
 
     mutation.set_field("createReading", resolver=create_reading_resolver)
     mutation.set_field(
         "createReadingProgress", resolver=create_reading_progress_resolver
     )
-    mutation.set_field("createReadingGoal", resolver=create_reading_goal_resolver)
+    mutation.set_field("updateReadingQueue", resolver=update_reading_queue)
     mutation.set_field("updateReadingStatus", resolver=update_reading_status_resolver)

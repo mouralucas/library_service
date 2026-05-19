@@ -201,30 +201,6 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingProgressModel, latest_progress)
 
-    async def create_goal(self):
-        # Can only create a goal for a item if not exist yet
-        # Can a item be in the goal twice in same year?
-        pass
-
-    async def update_goal(
-        self, goal: ReadingQueueModel, fields: dict[str, Any]
-    ) -> ReadingQueueModel:
-        query = (
-            update(ReadingQueueModel)
-            .where(ReadingQueueModel.id == goal.id)
-            .values(**fields)
-        )
-
-        try:
-            updated_reading: SQLModel = await self.update_one(
-                sql_statement=query, sql_model=goal
-            )
-        except Exception as e:
-            print(f"Error updating goal: {e}")
-            raise e
-
-        return cast(ReadingQueueModel, updated_reading)
-
     # Reading queue
     async def add_reading_queue(self, goal: ReadingQueueModel) -> ReadingQueueModel:
         new_goal = await self.add_one(goal)
@@ -232,6 +208,12 @@ class ReadingManager(BaseDataManager):
         return cast(ReadingQueueModel, new_goal)
 
     async def get_reading_queue(self, year: int | None):
+        """
+        :Created by: Lucas Penha de Moura - 09/03/2026
+            Get the reading queue for the user,
+            with the items that are in the queue and if they are achieved or not
+
+        """
         query = (
             select(
                 ReadingQueueModel.id,
@@ -240,7 +222,10 @@ class ReadingManager(BaseDataManager):
                 ReadingQueueModel.date_achieved,
                 ReadingQueueModel.year,
             )
-            .where(ReadingQueueModel.owner_id == self.user["user_id"])
+            .where(
+                ReadingQueueModel.owner_id == self.user["user_id"],
+                ReadingQueueModel.active.is_(True),
+            )
             .order_by(
                 ReadingQueueModel.year,
                 ReadingQueueModel.created_at.desc(),
@@ -254,9 +239,7 @@ class ReadingManager(BaseDataManager):
 
         return [dict(goal) for goal in goals] if goals else None
 
-    async def get_active_goal_by_item_id(
-        self, item_id: int
-    ) -> ReadingQueueModel | None:
+    async def get_item_in_active_queue(self, item_id: int) -> ReadingQueueModel | None:
         """
         :Created by: Lucas Penha de Moura - 17/03/2026
             Get the active goal for a item (not achieved yet)
@@ -268,9 +251,26 @@ class ReadingManager(BaseDataManager):
             ReadingQueueModel.owner_id == self.user["user_id"],
             ReadingQueueModel.item_id == item_id,
             ReadingQueueModel.achieved.is_(False),
+            ReadingQueueModel.active.is_(True),
+            ReadingQueueModel.active,
             ReadingQueueModel.year == datetime.datetime.now().year,
         )
 
         goal = await self.get_only_one(query)
 
         return cast(ReadingQueueModel, goal) if goal else None
+
+    async def update_item_status_in_queue(
+        self, item_in_queue: ReadingQueueModel, fields: dict[str, Any]
+    ) -> ReadingQueueModel:
+        query = (
+            update(ReadingQueueModel)
+            .where(ReadingQueueModel.id == item_in_queue.id)
+            .values(**fields)
+        )
+
+        updated_goal = await self.update_one(
+            sql_statement=query, sql_model=item_in_queue
+        )
+
+        return cast(ReadingQueueModel, updated_goal)

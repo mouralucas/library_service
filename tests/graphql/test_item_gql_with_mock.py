@@ -142,7 +142,7 @@ async def test_query_books_with_mock(mocker, client):
 
     # GraphQL query
     query = """
-        query GetDetailedItems($params: GetItemsInput) {
+        query GetDetailedItems($params: GetDetailedItemsInput) {
             getDetailedItems(params: $params) {
                 quantity
                 items {
@@ -205,7 +205,7 @@ async def test_query_books_with_order_by_mock(mocker, client):
     )
 
     query = """
-        query GetDetailedItems($params: GetItemsInput) {
+        query GetDetailedItems($params: GetDetailedItemsInput) {
             getDetailedItems(params: $params) {
                 quantity
                 items {

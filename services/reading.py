@@ -77,7 +77,7 @@ class ReadingService(BaseService):
         new_reading = await self.reading_manager.create_reading(reading=new_reading)
 
         # check if the item is in queue, if not, add to queue
-        is_item_in_queue = await self.reading_manager.get_active_goal_by_item_id(
+        is_item_in_queue = await self.reading_manager.get_item_in_active_queue(
             item_id=reading.item_id
         )
         if not is_item_in_queue:
@@ -258,24 +258,53 @@ class ReadingService(BaseService):
         return response
 
     # Goals
-    async def create_goal(self, goal: CreateReadingGoalRequest) -> dict[str, Any]:
-        current_goal = await self.reading_manager.get_active_goal_by_item_id(
-            item_id=goal.item_id
+    async def update_reading_queue(
+        self, queue_request: CreateReadingGoalRequest
+    ) -> dict[str, Any]:
+        # Check if the item is already in queue for current year
+        current_in_queue = await self.reading_manager.get_item_in_active_queue(
+            item_id=queue_request.item_id
         )
-        if current_goal:
+        if current_in_queue:
+            # If the item already exists just change the status to active or not active
+            await self.reading_manager.update_item_status_in_queue(
+                item_in_queue=current_in_queue,
+                fields={
+                    "active": False,
+                },
+            )
+            return {
+                "created": False,
+                "reading_goal_id": current_in_queue.id,
+                "current_status": "inactive",
+                "item_id": current_in_queue.item_id,
+                "item_title": current_in_queue.item.title,
+            }
+
+        # Check if the item exists
+        item = await ItemManager(session=self.session).get_item_by_id(
+            item_id=queue_request.item_id
+        )
+        if not item:
             raise HTTPException(
-                status_code=status.HTTP_412_PRECONDITION_FAILED,
-                detail="Já existe uma meta ativa para esse item!",
+                status_code=status.HTTP_404_NOT_FOUND, detail="Item not found"
             )
 
-        new_goal = ReadingQueueModel(**goal.model_dump())
-        new_goal.owner_id = self.user["user_id"]
+        # If not exist yet, create a new entry in the queue with status active
+        new_item_in_queue = ReadingQueueModel(**queue_request.model_dump())
+        new_item_in_queue.year = queue_request.year or datetime.now().year
+        new_item_in_queue.owner_id = self.user["user_id"]
 
-        new_goal = await self.reading_manager.add_reading_queue(goal=new_goal)
+        new_item_in_queue = await self.reading_manager.add_reading_queue(
+            goal=new_item_in_queue
+        )
 
         response = {
             "created": True,
-            "reading_goal_id": new_goal.id,
+            "reading_goal_id": new_item_in_queue.id,
+            "current_status": "active",
+            "item_id": new_item_in_queue.item_id,
+            "item_title": new_item_in_queue.item.title,
         }
 
         return response
@@ -326,7 +355,7 @@ class ReadingService(BaseService):
 
         return response
 
-    async def get_reading_goals(self, year: int | None) -> dict[str, Any]:
+    async def get_reading_queue(self, year: int | None) -> dict[str, Any]:
         item_manager = ItemManager(session=self.session)
 
         goals = await self.reading_manager.get_reading_queue(year=year)
@@ -402,7 +431,7 @@ class ReadingService(BaseService):
             raise  # TODO
 
         item = reading.item
-        goal = await self.reading_manager.get_active_goal_by_item_id(item_id=item.id)
+        goal = await self.reading_manager.get_item_in_active_queue(item_id=item.id)
 
         # update reading
         await self.reading_manager.update_reading(

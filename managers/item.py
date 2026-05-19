@@ -39,6 +39,18 @@ class ItemManager(BaseDataManager):
     async def get_item_by_id(
         self, item_id: int, raise_exception: bool = False
     ) -> ItemModel | None:
+        """
+        :Name:  get_item_by_id
+        :Created by: Lucas Penha de Moura - 03/04/2024
+            Get an item by its ID.
+
+            The method returns the Item object, without any relation.
+            If the item is not found, it returns None or raises an exception
+                if raise_exception is True.
+
+        Params:
+            item_id: the ID of the item to retrieve
+        """
         query = select(ItemModel).where(ItemModel.id == item_id)
 
         item: SQLModel | None = await self.get_only_one(query)
@@ -58,6 +70,34 @@ class ItemManager(BaseDataManager):
         id_list: list[int] | None = None,
         order_by: Any = None,
     ) -> list[dict[Any, Any]] | None:
+        """
+        :Name:  get_detailed_items
+        :Created by: Lucas Penha de Moura - 03/04/2024
+            Get detailed information about items.
+
+            The method returns a list of dictionaries containing
+                the detailed item information.
+            If no items are found, it returns an empty list.
+
+        Params:
+            item_id: the ID of the item to retrieve
+            title: the title of the item to retrieve
+            main_author_id: the ID of the main author of the item to retrieve
+            item_type_id: the type of the item to retrieve
+            status_id: the status of the item to retrieve
+            id_list: a list of item IDs to retrieve
+            order_by: a list of dict with field and direction to order the result
+        """
+        reading_queue_exists = (
+            select(1)
+            .where(
+                ReadingQueueModel.item_id == ItemModel.id,
+                ReadingQueueModel.owner_id == ItemModel.owner_id,
+                ReadingQueueModel.year == datetime.datetime.now().year,
+            )
+            .exists()
+        )
+
         authors_subq = (
             select(
                 ItemAuthorModel.item_id.label("item_id"),
@@ -102,6 +142,7 @@ class ItemManager(BaseDataManager):
                 ItemModel.location_id,
                 authors_subq.c.authors_ids,
                 authors_subq.c.authors_names,
+                reading_queue_exists.label("is_in_reading_queue"),
             )
             .join(AuthorModel, ItemModel.main_author_id == AuthorModel.id)
             .outerjoin(SerieModel, ItemModel.serie_id == SerieModel.id)
@@ -172,8 +213,12 @@ class ItemManager(BaseDataManager):
                 ReadingQueueModel.year,
                 ReadingQueueModel.achieved,
                 ReadingQueueModel.item_id,
+                ReadingQueueModel,
             )
-            .where(ReadingQueueModel.year == current_year)
+            .where(
+                ReadingQueueModel.year == current_year,
+                ReadingQueueModel.active.is_(True),
+            )
             .subquery()
         )
 
