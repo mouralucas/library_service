@@ -266,7 +266,18 @@ class ReadingService(BaseService):
             item_id=queue_request.item_id
         )
         if current_in_queue:
-            # If the item already exists just change the status to active or not active
+            # if in active in queue, check if there is an active reading for the item
+            active_reading = await self.reading_manager.get_item_active_reading(
+                item_id=queue_request.item_id
+            )
+            if active_reading:
+                raise HTTPException(
+                    status_code=status.HTTP_412_PRECONDITION_FAILED,
+                    detail="Item possui uma leitura ativa e não pode ser removido!",
+                )
+
+            # If the item already exists and have no active reading
+            #   just change the status to not active
             await self.reading_manager.update_item_status_in_queue(
                 item_in_queue=current_in_queue,
                 fields={
@@ -277,6 +288,7 @@ class ReadingService(BaseService):
                 "created": False,
                 "reading_goal_id": current_in_queue.id,
                 "current_status": "inactive",
+                "is_currently_in_queue": False,
                 "item_id": current_in_queue.item_id,
                 "item_title": current_in_queue.item.title,
             }
@@ -303,6 +315,7 @@ class ReadingService(BaseService):
             "created": True,
             "reading_goal_id": new_item_in_queue.id,
             "current_status": "active",
+            "is_currently_in_queue": True,
             "item_id": new_item_in_queue.item_id,
             "item_title": new_item_in_queue.item.title,
         }

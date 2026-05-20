@@ -147,6 +147,11 @@ class ReadingManager(BaseDataManager):
         return [dict(reading.items()) for reading in readings] if readings else None
 
     async def get_item_active_reading(self, item_id: int) -> ReadingModel | None:
+        """
+        created by: Lucas Penha de Moura - 04/08/2024
+
+            Get the active reading for an item, if exists
+        """
         query = select(ReadingModel).where(
             ReadingModel.item_id == item_id, ReadingModel.active
         )

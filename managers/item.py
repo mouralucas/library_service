@@ -93,6 +93,7 @@ class ItemManager(BaseDataManager):
             .where(
                 ReadingQueueModel.item_id == ItemModel.id,
                 ReadingQueueModel.owner_id == ItemModel.owner_id,
+                ReadingQueueModel.active.is_(True),
                 ReadingQueueModel.year == datetime.datetime.now().year,
             )
             .exists()

@@ -15,7 +15,7 @@ extend type Mutation {
     createReading(reading: CreateReadingInput!): CreateReadingOutput!
     createReadingProgress(progress: CreateReadingProgressInput!): CreateReadingProgressOutput!
     
-    updateReadingQueue(goal: UpdateReadingQueueInput!): UpdateReadingQueueResponse!
+    updateReadingQueue(params: UpdateReadingQueueInput!): UpdateReadingQueueResponse!
 
     updateReadingStatus(params: UpdatedReadingStatusInput): UpdatedReadingStatusResponse
 }
@@ -134,6 +134,7 @@ type UpdateReadingQueueResponse {
     currentStatus: String!
     itemId: Int
     itemTitle: String
+    isCurrentlyInQueue: Boolean!
 }
 
 input GetReadingQueueInput {

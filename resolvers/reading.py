@@ -83,10 +83,10 @@ async def get_reading_stats_resolver(_, info, params) -> dict[str, Any]:
 
 # Goals
 @validate_graphql_input(CreateReadingGoalRequest)
-async def update_reading_queue(_, info, goal: CreateReadingGoalRequest):
+async def update_reading_queue(_, info, params: CreateReadingGoalRequest):
     new_goal = await ReadingService(
         session=info.context["session"], user=info.context["user"]
-    ).update_reading_queue(queue_request=goal)
+    ).update_reading_queue(queue_request=params)
 
     return new_goal
 

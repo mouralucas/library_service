@@ -38,7 +38,7 @@ async def test_create_reading_goal_success(mocker, client, create_item):
 
     mutation = """
         mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
-            updateReadingQueue(goal: $input) {
+            updateReadingQueue(params: $input) {
                 created
                 readingGoalId
             }
@@ -97,7 +97,7 @@ async def test_create_reading_goal_already_exists(mocker, client, create_item):
 
     mutation = """
         mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
-            updateReadingQueue(goal: $input) {
+            updateReadingQueue(params: $input) {
                 created
                 readingGoalId
             }
@@ -377,7 +377,7 @@ async def test_create_reading_goal_invalid_item_id(mocker, client):
 
     mutation = """
         mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
-            updateReadingQueue(goal: $input) {
+            updateReadingQueue(params: $input) {
                 created
                 readingGoalId
             }
@@ -417,7 +417,7 @@ async def test_create_reading_goal_missing_required_fields(mocker, client):
 
     mutation = """
         mutation UpdateReadingQueue($input: UpdateReadingQueueInput!) {
-            updateReadingQueue(goal: $input) {
+            updateReadingQueue(params: $input) {
                 created
                 readingGoalId
             }
