@@ -257,7 +257,7 @@ class ReadingService(BaseService):
 
         return response
 
-    # Goals
+    # Queue
     async def update_reading_queue(
         self, queue_request: CreateReadingGoalRequest
     ) -> dict[str, Any]:
@@ -266,6 +266,13 @@ class ReadingService(BaseService):
             item_id=queue_request.item_id
         )
         if current_in_queue:
+            if current_in_queue.achieved:
+                raise HTTPException(
+                    status_code=status.HTTP_412_PRECONDITION_FAILED,
+                    detail="Item já possui uma meta \
+                        de leitura alcançada para o ano atual!",
+                )
+            
             # if in active in queue, check if there is an active reading for the item
             active_reading = await self.reading_manager.get_item_active_reading(
                 item_id=queue_request.item_id
@@ -458,8 +465,8 @@ class ReadingService(BaseService):
 
         # If a goal exist for the item in current year, update the goal to achieved
         if goal:
-            await self.reading_manager.update_goal(
-                goal=goal, fields={"achieved": True, "date_achieved": datetime.now()}
+            await self.reading_manager.update_item_status_in_queue(
+                item_in_queue=goal, fields={"achieved": True, "date_achieved": datetime.now()}
             )
 
         return True

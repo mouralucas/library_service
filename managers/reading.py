@@ -160,6 +160,8 @@ class ReadingManager(BaseDataManager):
 
         return cast(ReadingModel, reading) if reading else None
 
+    
+
     # Progress Methods
     async def create_progress(self, progress: SQLModel) -> ReadingProgressModel:
         new_progress = await self.add_one(progress)
