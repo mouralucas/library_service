@@ -18,7 +18,7 @@ aiosqlite==0.21.0
 
 # Tests
 # To run in Pycharm Configuration, change working directory to project root
-pytest==8.4.1 # updated to the latest version
+pytest==9.0.3 # updated to the latest version
 pytest-asyncio==1.1.0 # updated to the latest version
 pytest-mock==3.15.1
 
